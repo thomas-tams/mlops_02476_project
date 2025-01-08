@@ -1,0 +1,4 @@
+defaults:
+    - dataset: mnist
+    - model: vae_medium
+    - hyperparameter: hyper1

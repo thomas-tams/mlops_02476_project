@@ -1,0 +1,3 @@
+dataset_path: '~/datasets'
+dataset_name: 'mnist'
+batch_size: 16

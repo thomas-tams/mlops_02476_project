@@ -1,0 +1,4 @@
+x_dim: 784
+hidden_dim: 400
+latent_dim: 50
+model_name: 'medium_vae'

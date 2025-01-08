@@ -7,9 +7,7 @@ name = "mlops_project_tcs"
 version = "0.0.1"
 description = "MLOps project from the DTU course '02476 - Machine Learning Operations' TODO(UPDATE WITH INFORMATION ABOUT WHAT THE PROJECT DOES)"
 authors = [
-  { name = "thomas", email = "tamstamsthomas@gmail.com" },
-  { name = "TODO", email = "TODO@TODO" },
-  { name = "TODO", email = "TODO@TODO" }
+  { name = "thomas", email = "tamstamsthomas@gmail.com" }
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
