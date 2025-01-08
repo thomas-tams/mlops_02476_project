@@ -13,4 +13,4 @@ WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["python", "-u", "src/session2_cookie/train.py"]
+ENTRYPOINT ["python", "-u", "src/mlops_project_tcs/train.py"]

@@ -3,7 +3,7 @@ import os
 from invoke import Context, task
 
 WINDOWS = os.name == "nt"
-PROJECT_NAME = "session2_cookie"
+PROJECT_NAME = "mlops_project_tcs"
 PYTHON_VERSION = "3.11"
 
 # Setup commands

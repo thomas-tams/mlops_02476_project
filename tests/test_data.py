@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 
-from session2_cookie.data import MyDataset
+from mlops_project_tcs.data import MyDataset
 
 
 def test_my_dataset():

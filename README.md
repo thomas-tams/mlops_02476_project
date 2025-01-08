@@ -1,6 +1,6 @@
-# session2_cookie
+# mlops_project_tcs
 
-session 2 mlops cookiecutter try
+MLOps project from the DTU course '02476 - Machine Learning Operations'
 
 ## Project structure
 
