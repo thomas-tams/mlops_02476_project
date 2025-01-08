@@ -4,7 +4,7 @@ MLOps project from the DTU course *02476 - Machine Learning Operations*
 
 ## Init project using pip
 
-Create a python>=3.9 environment with pip
+Create a python>=3.9 environment with pip>=24.2
 
 Example using conda:
 ```
