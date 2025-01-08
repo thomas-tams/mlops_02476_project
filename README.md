@@ -1,6 +1,24 @@
 # mlops_project_tcs
 
-MLOps project from the DTU course '02476 - Machine Learning Operations'
+MLOps project from the DTU course *02476 - Machine Learning Operations*
+
+## Init project using pip
+
+Create a python>=3.9 environment with pip
+
+Example using conda:
+```
+$ conda create -n py39_mlops python=3.9
+$ conda activate py39_mlops
+```
+
+To install the python package and depencies run
+```
+$ pip install .
+```
+
+
+
 
 ## Project structure
 
