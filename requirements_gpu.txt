@@ -1,0 +1,5 @@
+typer==0.15.1
+fastapi==0.115.6
+uvicorn==0.33.0
+omegaconf==2.3.0
+hydra-core==1.3
