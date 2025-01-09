@@ -5,10 +5,10 @@ import cv2
 import imutils
 from torchvision import transforms
 
-class CropSquareAroundPoints:
+class CropExtremePoints:
     def __init__(self, add_pixels_value=0, target_size=(224, 224)):
         """
-        Initialize the CropSquareAroundPoints class.
+        Initialize the CropExtremePoints class.
         
             add_pixels_value (int): Number of pixels to expand the crop around the extreme points.
             target_size (tuple): Target size for the output image after cropping and resizing (default is 224x224).
@@ -18,7 +18,7 @@ class CropSquareAroundPoints:
 
     def __call__(self, img) -> torch.tensor:
         """
-        Perform the square cropping and resizing operation.
+        Perform the cropping and resizing operation.
             img (PIL Image, ndarray, or torch.Tensor): Input image.
             
         Returns:
@@ -62,26 +62,12 @@ class CropSquareAroundPoints:
             extTop   = tuple(c[c[:, :, 1].argmin()][0])
             extBot   = tuple(c[c[:, :, 1].argmax()][0])
 
-            # Calculate the width and height of the bounding box
-            width = extRight[0] - extLeft[0]
-            height = extBot[1] - extTop[1]
-
-            # Ensure the crop is square by selecting the larger dimension
-            crop_size = max(width, height) + 2 * self.add_pixels_value
-
-            # Calculate the center of the bounding box
-            center_x = (extLeft[0] + extRight[0]) // 2
-            center_y = (extTop[1] + extBot[1]) // 2
-
-            # Calculate the square crop region, ensuring it stays within the image boundaries
-            half_crop_size = crop_size // 2
-            top_left_x = max(0, center_x - half_crop_size)
-            top_left_y = max(0, center_y - half_crop_size)
-            bottom_right_x = min(img.shape[1], center_x + half_crop_size)
-            bottom_right_y = min(img.shape[0], center_y + half_crop_size)
-
-            # Crop the image
-            cropped_img = img[top_left_y:bottom_right_y, top_left_x:bottom_right_x]
+            # Apply cropping
+            ADD_PIXELS = self.add_pixels_value
+            cropped_img = img[
+                max(0, extTop[1] - ADD_PIXELS):min(img.shape[0], extBot[1] + ADD_PIXELS),
+                max(0, extLeft[0] - ADD_PIXELS):min(img.shape[1], extRight[0] + ADD_PIXELS)
+            ]
 
             # Resize cropped image to the target size (224x224)
             cropped_img_resized = cv2.resize(cropped_img, self.target_size)
