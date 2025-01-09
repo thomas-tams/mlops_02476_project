@@ -1,40 +1,28 @@
-# Code modified from
-# https://www.kaggle.com/code/khoatran311/augment-brain-mri-scans-for-additional-images
-
 import numpy as np
-import pandas as pd
-import seaborn as sea
-import matplotlib.pyplot as plt
-import os
-import random
+import torch
 from PIL import Image
 import cv2
 import imutils
-
-import torch
 from torchvision import transforms
 
-
-ROOT = "/kaggle/input/brain-mri-images-for-brain-tumor-detection"
-CATEGORIES = ["no", "yes"]
-IMG_ENDINGS = (".jpg", "jpeg", "JPG", "JPEG", "png", "PNG")
-
-class CropExtremePoints:
-    def __init__(self, add_pixels_value=0):
+class CropSquareAroundPoints:
+    def __init__(self, add_pixels_value=0, target_size=(224, 224)):
         """
-        Initialize the CropExtremePoints class.
+        Initialize the CropSquareAroundPoints class.
         
             add_pixels_value (int): Number of pixels to expand the crop around the extreme points.
+            target_size (tuple): Target size for the output image after cropping and resizing (default is 224x224).
         """
         self.add_pixels_value = add_pixels_value
+        self.target_size = target_size
 
     def __call__(self, img) -> torch.tensor:
         """
-        Perform the cropping operation.
+        Perform the square cropping and resizing operation.
             img (PIL Image, ndarray, or torch.Tensor): Input image.
             
         Returns:
-            torch.Tensor: Cropped image.
+            torch.Tensor: Cropped and resized image.
         """
         # PIL image -> numpy array
         if isinstance(img, Image.Image):
@@ -74,16 +62,34 @@ class CropExtremePoints:
             extTop   = tuple(c[c[:, :, 1].argmin()][0])
             extBot   = tuple(c[c[:, :, 1].argmax()][0])
 
-            # Apply cropping
-            ADD_PIXELS = self.add_pixels_value
-            cropped_img = img[
-                max(0, extTop[1] - ADD_PIXELS):min(img.shape[0], extBot[1] + ADD_PIXELS),
-                max(0, extLeft[0] - ADD_PIXELS):min(img.shape[1], extRight[0] + ADD_PIXELS)
-            ]
+            # Calculate the width and height of the bounding box
+            width = extRight[0] - extLeft[0]
+            height = extBot[1] - extTop[1]
 
-            # Convert cropped image back to tensor
+            # Ensure the crop is square by selecting the larger dimension
+            crop_size = max(width, height) + 2 * self.add_pixels_value
+
+            # Calculate the center of the bounding box
+            center_x = (extLeft[0] + extRight[0]) // 2
+            center_y = (extTop[1] + extBot[1]) // 2
+
+            # Calculate the square crop region, ensuring it stays within the image boundaries
+            half_crop_size = crop_size // 2
+            top_left_x = max(0, center_x - half_crop_size)
+            top_left_y = max(0, center_y - half_crop_size)
+            bottom_right_x = min(img.shape[1], center_x + half_crop_size)
+            bottom_right_y = min(img.shape[0], center_y + half_crop_size)
+
+            # Crop the image
+            cropped_img = img[top_left_y:bottom_right_y, top_left_x:bottom_right_x]
+
+            # Resize cropped image to the target size (224x224)
+            cropped_img_resized = cv2.resize(cropped_img, self.target_size)
+
+            # Convert cropped and resized image back to tensor
             # (H,W,C) -> (C, H, W)
-            cropped_img = torch.from_numpy(cropped_img).permute(2, 0, 1)  
-            return cropped_img
+            cropped_img_resized = torch.from_numpy(cropped_img_resized).permute(2, 0, 1)
+
+            return cropped_img_resized
         else:
             raise ValueError("Input image must be a 3D ndarray or a Tensor with 3 channels.")
