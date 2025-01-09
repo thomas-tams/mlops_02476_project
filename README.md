@@ -7,15 +7,15 @@ Sven Finderup -
 MLOps project from the DTU course *02476 - Machine Learning Operations*
 
 ## Project description
-Brain MRI image analysis is an extensive procedure requiring many advanced tools and expert knowledge to properly use the images for diagnosis. The time from the scanning of has occurred to a diagnosis is given to the patient can take several days. To speed up and support this process, deep learning models provide many tools. Convolutional neural networks have shown promising results in solving complex imaging tasks and much research is centered around applying these tools in medical imaging.
+Brain MRI image analysis plays a critical role in diagnosing conditions such as brain tumors. This process typically requires advanced tools and expert interpretation, often taking days to provide a diagnosis. To accelerate and support this workflow, deep learning models offer effective solutions. Among these, convolutional neural networks (CNNs) have demonstrated exceptional performance in complex imaging tasks, making them a valuable tool in medical imaging.
 
-The overall goal of the project is to build a CNN image classifier. The model should be able to input an MRI image of a brain scan and detect if there is a tumor present or not. The goal is to achieve relatively high accuracy using powerful pretrained network in a reproducible setting.
+This project aims to develop a CNN-based classifier capable of detecting the presence of tumors in brain MRI scans. The classifier will take an MRI image as input and output whether a tumor is present, targeting high accuracy through the use of pretrained network architectures in a reproducible and collaborative framework.
 
-The framework used in the project will be a PyTorch implementation in VS code using GitHub collaboration. The projects aims to both have a local setup but also docker reproducibility.
+The implementation will utilize PyTorch and be developed in VS Code with version control and collaboration facilitated through GitHub. The project emphasizes reproducibility by incorporating a local development setup alongside a Dockerized environment.
 
-The data for this project consists of 98 brain scan images with no tumors and 279 images with tumors. The data exists as part of a kaggle challenge 
+The dataset for this task is publicly available from a Kaggle challenge and consists of 98 images without tumors and 279 images with tumors. These images will be preprocessed and used to train and evaluate the model.
 
-For this task, a relevant convolutional NN architecture will be used such as VGG-16 or ResNet.
+For the model architecture, state-of-the-art CNNs such as VGG-16 and ResNet will be explored. These networks, pretrained on large image datasets, provide robust feature extraction capabilities and can be fine-tuned for the specific task of tumor classification. By leveraging these powerful architectures, the project aims to produce a reliable and efficient tool for medical imaging analysis, contributing to faster and more accurate diagnoses.
 
 
 ## Init project using pip
