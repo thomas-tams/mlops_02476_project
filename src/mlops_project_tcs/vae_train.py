@@ -17,6 +17,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
 
+
 log = logging.getLogger(__name__)
 
 
@@ -92,7 +93,7 @@ def train(config) -> None:
 
     # save weights
     model_path = hydra_output_dir / f"{model_conf['model_name']}_trained.pt"
-    torch.save(model, model_path)
+    torch.save(model.state_dict(), model_path)
 
     # Generate reconstructions
     model.eval()
