@@ -23,13 +23,19 @@ log = logging.getLogger(__name__)
 @hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
 def train(config) -> None:
     """Train VAE on MNIST."""
-    print(f"configuration: \n {OmegaConf.to_yaml(config)}")
+    log.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
+    
     hydra_output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
     dataset_conf = config.experiment.dataset
     model_conf = config.experiment.model
     hparams = config.experiment.hyperparameter
     torch.manual_seed(hparams["seed"])
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    if device == "cuda":
+        log.info(f"Training on device type: {device} ({torch.cuda.get_device_name(device)})")
+    else:
+        log.info(f"Training on device type: {device}")
 
     # Data loading
     mnist_transform = transforms.Compose([transforms.ToTensor()])

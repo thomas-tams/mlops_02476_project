@@ -4,7 +4,7 @@ from invoke import Context, task
 
 WINDOWS = os.name == "nt"
 PROJECT_NAME = "mlops_project_tcs"
-PYTHON_VERSION = "3.11"
+PYTHON_VERSION = "3.9"
 
 # Setup commands
 @task
@@ -51,6 +51,11 @@ def docker_build(ctx: Context) -> None:
     """Build docker images."""
     ctx.run("docker build -t train:latest . -f dockerfiles/train.dockerfile", echo=True, pty=not WINDOWS)
     ctx.run("docker build -t api:latest . -f dockerfiles/api.dockerfile", echo=True, pty=not WINDOWS)
+
+@task(docker_build)
+def docker_build_gpu(ctx: Context) -> None:
+    """Build docker images with gpu support"""
+    ctx.run("docker build -t train_gpu:latest . -f dockerfiles/train_gpu.dockerfile", echo=True, pty=not WINDOWS)
 
 # Documentation commands
 @task(dev_requirements)
