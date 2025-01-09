@@ -19,6 +19,24 @@ $ pip install .
 
 
 
+## Init project using docker
+
+Requires invoke>=2.2.0
+
+To build docker images run
+```
+$ invoke docker-build
+```
+
+### Setup with with gpu support
+
+Requires [Install NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+
+To build all images including gpu supported run
+```
+$ invoke docker-build-gpu
+```
+
 
 ## Project structure
 
