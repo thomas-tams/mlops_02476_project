@@ -14,9 +14,19 @@ from omegaconf import OmegaConf, DictConfig
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
-from torch.profiler import profile, ProfilerActivity
+from torch.profiler import profile, ProfilerActivity, tensorboard_trace_handler
 
 app = typer.Typer()
+
+# Initialize the logger
+logging.basicConfig(
+    level=logging.INFO,  # Set logging level to INFO or DEBUG for more verbosity
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),  # Log to console
+        logging.FileHandler("evaluate.log"),  # Log to a file
+    ],
+)
 log = logging.getLogger(__name__)
 
 def load_model(model_path:Path, config: DictConfig):
@@ -42,10 +52,13 @@ def load_model(model_path:Path, config: DictConfig):
 
     return model
 
-def evaluate_model(model: Model, config: DictConfig):
+def evaluate_model(model: Model, config: DictConfig, profiler: profile=None):
+    
     # Load config
     dataset_conf = config.experiment.dataset
     model_conf = config.experiment.model
+
+    log.info(f"Evaluating model {model_conf['model_name']} on {dataset_conf['dataset_name']}")
 
     # Set device
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -59,21 +72,28 @@ def evaluate_model(model: Model, config: DictConfig):
     test_dataset = MNIST(dataset_conf["dataset_path"], transform=mnist_transform, train=False, download=True)
     test_loader = DataLoader(dataset=test_dataset, batch_size=dataset_conf["batch_size"], shuffle=False)
 
+
     # Generate reconstructions
     model.to(device)
     model.eval()
+
+    if profiler is not None:
+        profiler.step()
     with torch.no_grad():
         for batch_idx, (x, _) in enumerate(test_loader):
-            if batch_idx % 100 == 0:
-                print(batch_idx)
-            x = x.view(dataset_conf["batch_size"], model_conf["x_dim"])
+            x = x.view(x.size(0), -1)
             x = x.to(device)
             x_hat, _, _ = model(x)
+
+            if profiler is not None:
+                profiler.step()
+
 
 # Typer CLI function
 @app.command()
 def evaluate(
-    train_run_output_dir: Annotated[str, typer.Option("--train_output", "-to", help="Output directory of a training run. Created from running vae_train.py")]
+    train_run_output_dir: Annotated[str, typer.Option("--train_output", "-to", help="Output directory of a training run. Created from running vae_train.py")] = "outputs/2025-01-09/18-47-30/",
+    profiling: Annotated[bool, typer.Option("--profiling", "-p", help="Return profiling from running the evaluation")] = False
 ) -> None:
     """
     Command-line entry point to load the model using Hydra configuration.
@@ -84,13 +104,20 @@ def evaluate(
     torch.manual_seed(config.experiment.hyperparameter["seed"])
 
     model_path = Path(train_run_output_dir) / f"{config.experiment.model.model_name}_trained.pt"
-
     model = load_model(model_path=model_path, config=config)
-
-    evaluate_model(model = model, config=config)
+    
+    if profiling:
+        trace_path = Path(train_run_output_dir) / 'evaluation_profiling_trace'
+        with profile(
+            activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], 
+            record_shapes=True,
+            profile_memory=True,
+            on_trace_ready=tensorboard_trace_handler(trace_path)
+        ) as prof:
+            log.info("Profiling evaluation run")
+            evaluate_model(config=config, model=model, profiler=prof)
+    else:
+        evaluate_model(config=config, model=model)
 
 if __name__ == "__main__":
-    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], record_shapes=True) as prof:
-        app()
-        print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
-        print(prof.key_averages(group_by_input_shape=True).table(sort_by="cpu_time_total", row_limit=30))
+    app()
