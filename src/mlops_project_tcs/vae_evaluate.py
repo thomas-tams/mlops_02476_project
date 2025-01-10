@@ -4,16 +4,17 @@ from pathlib import Path
 
 from typing import Annotated
 import typer
-
 import hydra
+from omegaconf import OmegaConf, DictConfig
+import contextlib
+
+from vae_model import Decoder, Encoder, Model
+
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
-from vae_model import Decoder, Encoder, Model
-from omegaconf import OmegaConf, DictConfig
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
-from torchvision.utils import save_image
 from torch.profiler import profile, ProfilerActivity, tensorboard_trace_handler
 
 app = typer.Typer()
@@ -52,11 +53,11 @@ def load_model(model_path:Path, config: DictConfig):
 
     return model
 
-def evaluate_model(model: Model, config: DictConfig, profiler: profile=None):
-    
+def evaluate_model(model: Model, config: DictConfig, outdir: Path):
     # Load config
     dataset_conf = config.experiment.dataset
     model_conf = config.experiment.model
+    evaluation_profiling = config.profiling["evaluation_profiling"]
 
     log.info(f"Evaluating model {model_conf['model_name']} on {dataset_conf['dataset_name']}")
 
@@ -77,47 +78,49 @@ def evaluate_model(model: Model, config: DictConfig, profiler: profile=None):
     model.to(device)
     model.eval()
 
-    if profiler is not None:
-        profiler.step()
-    with torch.no_grad():
-        for batch_idx, (x, _) in enumerate(test_loader):
-            x = x.view(x.size(0), -1)
-            x = x.to(device)
-            x_hat, _, _ = model(x)
+    # Setup profiling
+    if evaluation_profiling:
+        trace_path = outdir / "evaluation_profiling_trace"
+        profiler_context = profile(
+            activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], 
+            record_shapes=True,
+            profile_memory=True,
+            on_trace_ready=tensorboard_trace_handler(trace_path)
+        )
+        
+        log.info(f"Profiling training loops: {evaluation_profiling}")
+    else:
+        profiler_context = contextlib.nullcontext()
+    
+    with profiler_context as prof:
+       with torch.no_grad():
+           for batch_idx, (x, _) in enumerate(test_loader):
+               x = x.view(x.size(0), -1)
+               x = x.to(device)
+               x_hat, _, _ = model(x)
 
-            if profiler is not None:
-                profiler.step()
+               if evaluation_profiling is not None:
+                   prof.step()
 
 
 # Typer CLI function
 @app.command()
 def evaluate(
     train_run_output_dir: Annotated[str, typer.Option("--train_output", "-to", help="Output directory of a training run. Created from running vae_train.py")] = "outputs/2025-01-09/18-47-30/",
-    profiling: Annotated[bool, typer.Option("--profiling", "-p", help="Return profiling from running the evaluation")] = False
 ) -> None:
     """
     Command-line entry point to load the model using Hydra configuration.
     """
-    config_dir = Path(train_run_output_dir) / ".hydra" / "config.yaml"
-    config = OmegaConf.load(config_dir)
+    train_run_output_dir = Path(train_run_output_dir)
+
+    config = OmegaConf.load(train_run_output_dir / ".hydra" / "config.yaml")
 
     torch.manual_seed(config.experiment.hyperparameter["seed"])
 
-    model_path = Path(train_run_output_dir) / f"{config.experiment.model.model_name}_trained.pt"
+    model_path = train_run_output_dir / ".hydra" / "config.yaml" / f"{config.experiment.model.model_name}_trained.pt"
     model = load_model(model_path=model_path, config=config)
     
-    if profiling:
-        trace_path = Path(train_run_output_dir) / 'evaluation_profiling_trace'
-        with profile(
-            activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], 
-            record_shapes=True,
-            profile_memory=True,
-            on_trace_ready=tensorboard_trace_handler(trace_path)
-        ) as prof:
-            log.info("Profiling evaluation run")
-            evaluate_model(config=config, model=model, profiler=prof)
-    else:
-        evaluate_model(config=config, model=model)
+    evaluate_model(config=config, model=model, out_dir = train_run_output_dir)
 
 if __name__ == "__main__":
     app()
