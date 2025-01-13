@@ -6,6 +6,18 @@ Sven Finderup -
 
 MLOps project from the DTU course *02476 - Machine Learning Operations*
 
+## Project description
+Brain MRI image analysis plays a critical role in diagnosing conditions such as brain tumors. This process typically requires advanced tools and expert interpretation, often taking days to provide a diagnosis. To accelerate and support this workflow, deep learning models offer effective solutions. Among these, convolutional neural networks (CNNs) have demonstrated exceptional performance in complex imaging tasks, making them a valuable tool in medical imaging.
+
+This project aims to develop a CNN-based classifier capable of detecting the presence of tumors in brain MRI scans. The classifier will take an MRI image as input and output whether a tumor is present, targeting high accuracy through the use of pretrained network architectures in a reproducible and collaborative framework.
+
+The implementation will utilize PyTorch and be developed in VS Code with version control and collaboration facilitated through GitHub. The project emphasizes reproducibility by incorporating a local development setup alongside a Dockerized environment.
+
+The dataset for this task is publicly available from a Kaggle challenge and consists of 98 images without tumors and 279 images with tumors. These images will be preprocessed and used to train and evaluate the model.
+
+For the model architecture, state-of-the-art CNNs such as VGG-16 and ResNet will be explored. These networks, pretrained on large image datasets, provide robust feature extraction capabilities and can be fine-tuned for the specific task of tumor classification. By leveraging these powerful architectures, the project aims to produce a reliable and efficient tool for medical imaging analysis, contributing to faster and more accurate diagnoses.
+
+
 ## Init project using pip
 
 Create a python>=3.9 environment with pip>=24.2
@@ -22,6 +34,24 @@ $ pip install .
 ```
 
 
+
+## Init project using docker
+
+Requires invoke>=2.2.0
+
+To build docker images run
+```
+$ invoke docker-build
+```
+
+### Setup with with gpu support
+
+Requires [Install NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+
+To build all images including gpu supported run
+```
+$ invoke docker-build-gpu
+```
 
 
 ## Project structure
