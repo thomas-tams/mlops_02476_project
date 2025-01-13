@@ -1,0 +1,4 @@
+dataset_path: '~/datasets'
+dataset_name: 'kaggle_brain'
+num_classes: 2
+batch_size: 300

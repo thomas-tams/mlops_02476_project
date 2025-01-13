@@ -1,11 +1,24 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
+import pytorch_lightning as pl
 
-class VGG16Classifier(nn.Module):
-    def __init__(self, num_classes):
+from loguru import logger
+from omegaconf import OmegaConf, DictConfig
+import hydra
+
+class VGG16Classifier(pl.LightningModule):
+    def __init__(
+            self,
+            config: DictConfig
+    ) -> None:
         super(VGG16Classifier, self).__init__()
+        self.criterion = None
+        self.optimizer = None
 
+        self.cfg = config
+        self.criterion = hydra.utils.instantiate(self.cfg.experiment.model.loss_fn)
+        
         # Load the pretrained VGG16 model
         self.vgg16 = models.vgg16(pretrained=True)
 
@@ -13,30 +26,44 @@ class VGG16Classifier(nn.Module):
         for param in self.vgg16.features.parameters():
             param.requires_grad = False
 
-        # Replace the classifier head with a custom head for num_classes
+        # Setup dnn for interpretation of feature extractor output
         self.vgg16.classifier = nn.Sequential(
-            nn.Linear(25088, 4096),
+            nn.Linear(self.cfg.experiment.model["input_size"], self.cfg.experiment.model["hidden_size"]),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
-            nn.Linear(4096, 4096),
+            nn.Dropout(self.cfg.experiment.model["dropout_p"]),
+            nn.Linear(self.cfg.experiment.model["hidden_size"], self.cfg.experiment.model["hidden_size"]),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
-            nn.Linear(4096, num_classes),
+            nn.Dropout(self.cfg.experiment.model["dropout_p"]),
+            nn.Linear(self.cfg.experiment.model["hidden_size"], self.cfg.experiment.dataset.num_classes),
         )
 
     def forward(self, x):
         return self.vgg16(x)
+    
+    def training_step(self, batch):
+        """Training step."""
+        img, target = batch
+        y_pred = self(img)
+        return self.criterion(y_pred, target)
+    
+    def configure_optimizers(self):
+        """Configure optimizer."""
+        self.optimizer = hydra.utils.instantiate(self.cfg.experiment.hyperparameter.optimizer, params=self.parameters())
+        return self.optimizer
 
 # Example usage
-def main():
-    num_classes = 10  # Set this to the number of classes in your dataset
-    model = VGG16Classifier(num_classes)
+@hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
+def main(config):
+    logger.add("logs/setup_model_example.log", level="DEBUG")
+    logger.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
+
+    model = VGG16Classifier(config=config)
 
     # Test the model with dummy input
-    input_tensor = torch.randn(1, 3, 224, 224)  # Batch size 1, 3 channels, 224x224 image
+    input_tensor = torch.randn(4, 3, 224, 224)  # Batch size 4, 3 channels, 224x224 image
     output = model(input_tensor)
 
-    print("Model output shape:", output.shape)  # Should be (1, num_classes)
+    print("Model output shape:", output.shape)  # Should be (4, num_classes)
 
 if __name__ == "__main__":
     main()
