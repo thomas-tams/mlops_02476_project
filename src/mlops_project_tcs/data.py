@@ -1,3 +1,5 @@
+from loguru import logger
+from typing import Union
 from pathlib import Path
 import os
 import shutil
@@ -8,30 +10,31 @@ import typer
 from torchvision import transforms  # <-- Add this import
 from crop_img import CropExtremePoints
 
-def download_raw_data(raw_data_path: Path) -> None:
+
+app = typer.Typer()
+
+def get_kaggle_dataset(
+        kaggle_handle: Union[Path, str],
+        raw_data_dir: Union[Path, str]
+) -> None:
     """Download dataset using kagglehub and place it in the specified raw data folder."""
-    # Download the dataset
-    downloaded_path = kagglehub.dataset_download("navoneel/brain-mri-images-for-brain-tumor-detection")
-    print(f"Dataset downloaded to: {downloaded_path}")
+    
+    try:
+        # Access data from kaggle
+        downloaded_path = kagglehub.dataset_download(kaggle_handle)
+        logger.info(f"Initial path to downloaded kaggle data: {downloaded_path}")
+    except Exception as e:
+        logger.error(f"Failed to download dataset from Kaggle: {e}")
+        return
 
     # Ensure the target folder exists
-    raw_data_path.mkdir(parents=True, exist_ok=True)
+    raw_data_dir = Path(raw_data_dir)    
+    raw_data_dir.mkdir(parents=True, exist_ok=True)
 
-    # Identify the folder that contains the "yes" and "no" subfolders
-    dataset_folder = Path(downloaded_path)  # Assuming the downloaded dataset has a single folder
-    for subfolder in os.listdir(dataset_folder):
-        if subfolder.lower() == "brain_tumor_dataset":
-            brain_tumor_dataset_path = dataset_folder / subfolder
-            break
-
-    # Check if the dataset folder was found
-    if 'brain_tumor_dataset_path' in locals():
-        print(f"Copying dataset contents from {brain_tumor_dataset_path} to {raw_data_path}...")
-        shutil.copytree(brain_tumor_dataset_path, raw_data_path, dirs_exist_ok=True)
-        print(f"Dataset successfully placed in: {raw_data_path}")
-    else:
-        raise ValueError("Expected 'brain_tumor_dataset' folder not found in the downloaded dataset.")
-
+    # Copy files to raw directory
+    logger.info(f"Copying dataset contents from {downloaded_path} to {raw_data_dir}...")
+    shutil.copytree(downloaded_path, raw_data_dir, dirs_exist_ok=True)
+    logger.info(f"Dataset successfully placed in: {raw_data_dir}")
 
 class MyDataset(Dataset):
     """Custom dataset for preprocessing brain MRI images."""
@@ -76,13 +79,17 @@ class MyDataset(Dataset):
             processed_image_pil.save(output_path)
             print(f"Processed and saved: {output_path}")
 
-def preprocess(raw_data_path: Path, output_folder: Path) -> None:
+@app.command()
+def preprocess(
+    kaggle_handle: str = "navoneel/brain-mri-images-for-brain-tumor-detection",
+    raw_data_dir: str = "data/raw"
+) -> None:
     print("Downloading and preparing raw data...")
-    download_raw_data(raw_data_path)
+    get_kaggle_dataset(kaggle_handle, raw_data_dir)
 
-    print("Preprocessing data...")
-    dataset = MyDataset(raw_data_path)
-    dataset.preprocess(output_folder)
+    #print("Preprocessing data...")
+    #dataset = MyDataset(raw_data_path)
+    #dataset.preprocess(output_folder)
 
 if __name__ == "__main__":
-    typer.run(preprocess)
+    app()
