@@ -11,3 +11,4 @@ opencv-python==4.10.0.84
 imutils==0.5.4
 kagglehub==0.3.6
 torch_tb_profiler==0.4.3
+loguru==0.7.3
