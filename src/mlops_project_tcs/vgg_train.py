@@ -60,5 +60,5 @@ def train_model(config) -> None:
     logger.info("Finish!!")
 
 if __name__ == "__main__":
-    """ Train VAE on MNIST using hydra configurations """
+    """ Train VGG16 using hydra configurations """
     train_model()
