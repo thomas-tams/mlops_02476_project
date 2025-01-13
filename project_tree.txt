@@ -1,0 +1,512 @@
+.
+├── configs
+├── data
+│   ├── processed
+│   │   ├── no
+│   │   │   ├── 10 no.jpg
+│   │   │   ├── 11 no.jpg
+│   │   │   ├── 12 no.jpg
+│   │   │   ├── 13 no.jpg
+│   │   │   ├── 14 no.jpg
+│   │   │   ├── 15 no.jpg
+│   │   │   ├── 17 no.jpg
+│   │   │   ├── 18 no.jpg
+│   │   │   ├── 19 no.jpg
+│   │   │   ├── 1 no.jpeg
+│   │   │   ├── 20 no.jpg
+│   │   │   ├── 21 no.jpg
+│   │   │   ├── 22 no.jpg
+│   │   │   ├── 23 no.jpg
+│   │   │   ├── 24 no.jpg
+│   │   │   ├── 25 no.jpg
+│   │   │   ├── 26 no.jpg
+│   │   │   ├── 27 no.jpg
+│   │   │   ├── 28 no.jpg
+│   │   │   ├── 29 no.jpg
+│   │   │   ├── 2 no.jpeg
+│   │   │   ├── 30 no.jpg
+│   │   │   ├── 31 no.jpg
+│   │   │   ├── 32 no.jpg
+│   │   │   ├── 33 no.jpg
+│   │   │   ├── 34 no.jpg
+│   │   │   ├── 35 no.jpg
+│   │   │   ├── 36 no.jpg
+│   │   │   ├── 37 no.jpg
+│   │   │   ├── 38 no.jpg
+│   │   │   ├── 39 no.jpg
+│   │   │   ├── 3 no.jpg
+│   │   │   ├── 40 no.jpg
+│   │   │   ├── 41 no.jpg
+│   │   │   ├── 42 no.jpg
+│   │   │   ├── 43 no.jpg
+│   │   │   ├── 44no.jpg
+│   │   │   ├── 45 no.jpg
+│   │   │   ├── 46 no.jpg
+│   │   │   ├── 47 no.jpg
+│   │   │   ├── 48 no.jpeg
+│   │   │   ├── 49 no.jpg
+│   │   │   ├── 4 no.jpg
+│   │   │   ├── 50 no.jpg
+│   │   │   ├── 5 no.jpg
+│   │   │   ├── 6 no.jpg
+│   │   │   ├── 7 no.jpg
+│   │   │   ├── 8 no.jpg
+│   │   │   ├── 9 no.jpg
+│   │   │   ├── N11.jpg
+│   │   │   ├── N15.jpg
+│   │   │   ├── N16.jpg
+│   │   │   ├── N17.jpg
+│   │   │   ├── N21.jpg
+│   │   │   ├── N3.jpg
+│   │   │   ├── N5.jpg
+│   │   │   ├── N6.jpg
+│   │   │   ├── no 100.jpg
+│   │   │   ├── no 10.jpg
+│   │   │   ├── No11.jpg
+│   │   │   ├── No12.jpg
+│   │   │   ├── No13.jpg
+│   │   │   ├── No14.jpg
+│   │   │   ├── No15.jpg
+│   │   │   ├── No16.jpg
+│   │   │   ├── No17.jpg
+│   │   │   ├── No18.jpg
+│   │   │   ├── No19.jpg
+│   │   │   ├── no 1.jpg
+│   │   │   ├── No20.jpg
+│   │   │   ├── No21.jpg
+│   │   │   ├── No22.jpg
+│   │   │   ├── no 2.jpg
+│   │   │   ├── no 3.jpg
+│   │   │   ├── no 4.jpg
+│   │   │   ├── no 5.jpeg
+│   │   │   ├── no 6.jpg
+│   │   │   ├── no 7.jpeg
+│   │   │   ├── no 89.jpg
+│   │   │   ├── no 8.jpg
+│   │   │   ├── no 90.jpg
+│   │   │   ├── no 91.jpeg
+│   │   │   ├── no 923.jpg
+│   │   │   ├── no 92.jpg
+│   │   │   ├── no 94.jpg
+│   │   │   ├── no 95.jpg
+│   │   │   ├── no 96.jpg
+│   │   │   ├── no 97.jpg
+│   │   │   ├── no 98.jpg
+│   │   │   ├── no 99.jpg
+│   │   │   ├── no 9.png
+│   │   │   └── no.jpg
+│   │   └── yes
+│   │       ├── Y101.jpg
+│   │       ├── Y102.jpg
+│   │       ├── Y103.jpg
+│   │       ├── Y104.jpg
+│   │       ├── Y105.jpg
+│   │       ├── Y106.jpg
+│   │       ├── Y107.jpg
+│   │       ├── Y108.jpg
+│   │       ├── Y10.jpg
+│   │       ├── Y11.jpg
+│   │       ├── Y12.jpg
+│   │       ├── Y13.jpg
+│   │       ├── Y14.jpg
+│   │       ├── Y153.jpg
+│   │       ├── Y154.jpg
+│   │       ├── Y15.jpg
+│   │       ├── Y162.jpg
+│   │       ├── Y168.jpg
+│   │       ├── Y169.jpg
+│   │       ├── Y17.jpg
+│   │       ├── Y180.jpg
+│   │       ├── Y181.jpg
+│   │       ├── Y183.jpg
+│   │       ├── Y185.jpg
+│   │       ├── Y186.jpg
+│   │       ├── Y187.jpg
+│   │       ├── Y188.jpg
+│   │       ├── Y194.jpg
+│   │       ├── Y1.jpg
+│   │       ├── Y20.jpg
+│   │       ├── Y21.jpg
+│   │       ├── Y22.jpg
+│   │       ├── Y245.jpg
+│   │       ├── Y24.jpg
+│   │       ├── Y250.jpg
+│   │       ├── Y252.jpg
+│   │       ├── Y254.jpg
+│   │       ├── Y257.jpg
+│   │       ├── Y25.jpg
+│   │       ├── Y26.jpg
+│   │       ├── Y27.jpg
+│   │       ├── Y28.jpg
+│   │       ├── Y29.jpg
+│   │       ├── Y2.jpg
+│   │       ├── Y30.jpg
+│   │       ├── Y31.jpg
+│   │       ├── Y32.jpg
+│   │       ├── Y33.jpg
+│   │       ├── Y34.jpg
+│   │       ├── Y35.jpg
+│   │       ├── Y37.jpg
+│   │       ├── Y38.jpg
+│   │       ├── Y39.jpg
+│   │       ├── Y3.jpg
+│   │       ├── Y41.jpg
+│   │       ├── Y42.jpg
+│   │       ├── Y46.jpg
+│   │       ├── Y4.jpg
+│   │       ├── Y51.jpg
+│   │       ├── Y52.jpg
+│   │       ├── Y53.jpg
+│   │       ├── Y54.jpg
+│   │       ├── Y55.jpg
+│   │       ├── Y56.jpg
+│   │       ├── Y60.jpg
+│   │       ├── Y61.jpg
+│   │       ├── Y62.jpg
+│   │       ├── Y69.jpg
+│   │       ├── Y6.jpg
+│   │       ├── Y70.jpg
+│   │       ├── Y73.jpg
+│   │       ├── Y74.jpg
+│   │       ├── Y76.jpg
+│   │       ├── Y77.jpg
+│   │       ├── Y78.jpg
+│   │       ├── Y79.jpg
+│   │       ├── Y7.jpg
+│   │       ├── Y81.jpg
+│   │       ├── Y82.jpg
+│   │       ├── Y8.jpg
+│   │       ├── Y90.jpg
+│   │       ├── Y91.jpg
+│   │       ├── Y92.jpg
+│   │       ├── Y92.png
+│   │       ├── Y95.jpg
+│   │       ├── Y96.jpg
+│   │       └── Y9.jpg
+│   └── raw
+│       ├── no
+│       │   ├── 10 no.jpg
+│       │   ├── 11 no.jpg
+│       │   ├── 12 no.jpg
+│       │   ├── 13 no.jpg
+│       │   ├── 14 no.jpg
+│       │   ├── 15 no.jpg
+│       │   ├── 17 no.jpg
+│       │   ├── 18 no.jpg
+│       │   ├── 19 no.jpg
+│       │   ├── 1 no.jpeg
+│       │   ├── 20 no.jpg
+│       │   ├── 21 no.jpg
+│       │   ├── 22 no.jpg
+│       │   ├── 23 no.jpg
+│       │   ├── 24 no.jpg
+│       │   ├── 25 no.jpg
+│       │   ├── 26 no.jpg
+│       │   ├── 27 no.jpg
+│       │   ├── 28 no.jpg
+│       │   ├── 29 no.jpg
+│       │   ├── 2 no.jpeg
+│       │   ├── 30 no.jpg
+│       │   ├── 31 no.jpg
+│       │   ├── 32 no.jpg
+│       │   ├── 33 no.jpg
+│       │   ├── 34 no.jpg
+│       │   ├── 35 no.jpg
+│       │   ├── 36 no.jpg
+│       │   ├── 37 no.jpg
+│       │   ├── 38 no.jpg
+│       │   ├── 39 no.jpg
+│       │   ├── 3 no.jpg
+│       │   ├── 40 no.jpg
+│       │   ├── 41 no.jpg
+│       │   ├── 42 no.jpg
+│       │   ├── 43 no.jpg
+│       │   ├── 44no.jpg
+│       │   ├── 45 no.jpg
+│       │   ├── 46 no.jpg
+│       │   ├── 47 no.jpg
+│       │   ├── 48 no.jpeg
+│       │   ├── 49 no.jpg
+│       │   ├── 4 no.jpg
+│       │   ├── 50 no.jpg
+│       │   ├── 5 no.jpg
+│       │   ├── 6 no.jpg
+│       │   ├── 7 no.jpg
+│       │   ├── 8 no.jpg
+│       │   ├── 9 no.jpg
+│       │   ├── N11.jpg
+│       │   ├── N15.jpg
+│       │   ├── N16.jpg
+│       │   ├── N17.jpg
+│       │   ├── N19.JPG
+│       │   ├── N1.JPG
+│       │   ├── N20.JPG
+│       │   ├── N21.jpg
+│       │   ├── N22.JPG
+│       │   ├── N26.JPG
+│       │   ├── N2.JPG
+│       │   ├── N3.jpg
+│       │   ├── N5.jpg
+│       │   ├── N6.jpg
+│       │   ├── no 100.jpg
+│       │   ├── no 10.jpg
+│       │   ├── No11.jpg
+│       │   ├── No12.jpg
+│       │   ├── No13.jpg
+│       │   ├── No14.jpg
+│       │   ├── No15.jpg
+│       │   ├── No16.jpg
+│       │   ├── No17.jpg
+│       │   ├── No18.jpg
+│       │   ├── No19.jpg
+│       │   ├── no 1.jpg
+│       │   ├── No20.jpg
+│       │   ├── No21.jpg
+│       │   ├── No22.jpg
+│       │   ├── no 2.jpg
+│       │   ├── no 3.jpg
+│       │   ├── no 4.jpg
+│       │   ├── no 5.jpeg
+│       │   ├── no 6.jpg
+│       │   ├── no 7.jpeg
+│       │   ├── no 89.jpg
+│       │   ├── no 8.jpg
+│       │   ├── no 90.jpg
+│       │   ├── no 91.jpeg
+│       │   ├── no 923.jpg
+│       │   ├── no 92.jpg
+│       │   ├── no 94.jpg
+│       │   ├── no 95.jpg
+│       │   ├── no 96.jpg
+│       │   ├── no 97.jpg
+│       │   ├── no 98.jpg
+│       │   ├── no 99.jpg
+│       │   ├── no 9.png
+│       │   └── no.jpg
+│       └── yes
+│           ├── Y100.JPG
+│           ├── Y101.jpg
+│           ├── Y102.jpg
+│           ├── Y103.jpg
+│           ├── Y104.jpg
+│           ├── Y105.jpg
+│           ├── Y106.jpg
+│           ├── Y107.jpg
+│           ├── Y108.jpg
+│           ├── Y109.JPG
+│           ├── Y10.jpg
+│           ├── Y111.JPG
+│           ├── Y112.JPG
+│           ├── Y113.JPG
+│           ├── Y114.JPG
+│           ├── Y115.JPG
+│           ├── Y116.JPG
+│           ├── Y117.JPG
+│           ├── Y11.jpg
+│           ├── Y120.JPG
+│           ├── Y12.jpg
+│           ├── Y13.jpg
+│           ├── Y146.JPG
+│           ├── Y147.JPG
+│           ├── Y148.JPG
+│           ├── Y14.jpg
+│           ├── Y153.jpg
+│           ├── Y154.jpg
+│           ├── Y155.JPG
+│           ├── Y156.JPG
+│           ├── Y157.JPG
+│           ├── Y158.JPG
+│           ├── Y159.JPG
+│           ├── Y15.jpg
+│           ├── Y160.JPG
+│           ├── Y161.JPG
+│           ├── Y162.jpg
+│           ├── Y163.JPG
+│           ├── Y164.JPG
+│           ├── Y165.JPG
+│           ├── Y166.JPG
+│           ├── Y167.JPG
+│           ├── Y168.jpg
+│           ├── Y169.jpg
+│           ├── Y16.JPG
+│           ├── Y170.JPG
+│           ├── Y17.jpg
+│           ├── Y180.jpg
+│           ├── Y181.jpg
+│           ├── Y182.JPG
+│           ├── Y183.jpg
+│           ├── Y184.JPG
+│           ├── Y185.jpg
+│           ├── Y186.jpg
+│           ├── Y187.jpg
+│           ├── Y188.jpg
+│           ├── Y18.JPG
+│           ├── Y192.JPG
+│           ├── Y193.JPG
+│           ├── Y194.jpg
+│           ├── Y195.JPG
+│           ├── Y19.JPG
+│           ├── Y1.jpg
+│           ├── Y20.jpg
+│           ├── Y21.jpg
+│           ├── Y22.jpg
+│           ├── Y23.JPG
+│           ├── Y242.JPG
+│           ├── Y243.JPG
+│           ├── Y244.JPG
+│           ├── Y245.jpg
+│           ├── Y246.JPG
+│           ├── Y247.JPG
+│           ├── Y248.JPG
+│           ├── Y249.JPG
+│           ├── Y24.jpg
+│           ├── Y250.jpg
+│           ├── Y251.JPG
+│           ├── Y252.jpg
+│           ├── Y253.JPG
+│           ├── Y254.jpg
+│           ├── Y255.JPG
+│           ├── Y256.JPG
+│           ├── Y257.jpg
+│           ├── Y258.JPG
+│           ├── Y259.JPG
+│           ├── Y25.jpg
+│           ├── Y26.jpg
+│           ├── Y27.jpg
+│           ├── Y28.jpg
+│           ├── Y29.jpg
+│           ├── Y2.jpg
+│           ├── Y30.jpg
+│           ├── Y31.jpg
+│           ├── Y32.jpg
+│           ├── Y33.jpg
+│           ├── Y34.jpg
+│           ├── Y35.jpg
+│           ├── Y36.JPG
+│           ├── Y37.jpg
+│           ├── Y38.jpg
+│           ├── Y39.jpg
+│           ├── Y3.jpg
+│           ├── Y40.JPG
+│           ├── Y41.jpg
+│           ├── Y42.jpg
+│           ├── Y44.JPG
+│           ├── Y45.JPG
+│           ├── Y46.jpg
+│           ├── Y47.JPG
+│           ├── Y49.JPG
+│           ├── Y4.jpg
+│           ├── Y50.JPG
+│           ├── Y51.jpg
+│           ├── Y52.jpg
+│           ├── Y53.jpg
+│           ├── Y54.jpg
+│           ├── Y55.jpg
+│           ├── Y56.jpg
+│           ├── Y58.JPG
+│           ├── Y59.JPG
+│           ├── Y60.jpg
+│           ├── Y61.jpg
+│           ├── Y62.jpg
+│           ├── Y65.JPG
+│           ├── Y66.JPG
+│           ├── Y67.JPG
+│           ├── Y69.jpg
+│           ├── Y6.jpg
+│           ├── Y70.jpg
+│           ├── Y71.JPG
+│           ├── Y73.jpg
+│           ├── Y74.jpg
+│           ├── Y75.JPG
+│           ├── Y76.jpg
+│           ├── Y77.jpg
+│           ├── Y78.jpg
+│           ├── Y79.jpg
+│           ├── Y7.jpg
+│           ├── Y81.jpg
+│           ├── Y82.jpg
+│           ├── Y85.JPG
+│           ├── Y86.JPG
+│           ├── Y89.JPG
+│           ├── Y8.jpg
+│           ├── Y90.jpg
+│           ├── Y91.jpg
+│           ├── Y92.jpg
+│           ├── Y92.png
+│           ├── Y95.jpg
+│           ├── Y96.jpg
+│           ├── Y97.JPG
+│           ├── Y98.JPG
+│           ├── Y99.JPG
+│           └── Y9.jpg
+├── dockerfiles
+│   ├── api.dockerfile
+│   ├── train.dockerfile
+│   └── train_gpu.dockerfile
+├── docs
+│   ├── mkdocs.yaml
+│   ├── README.md
+│   └── source
+│       └── index.md
+├── LICENSE
+├── logs
+│   └── data_log.log
+├── models
+│   └── model.pth
+├── notebooks
+├── project_tree.txt
+├── pyproject.toml
+├── README.md
+├── reports
+│   ├── figures
+│   │   ├── bucket.png
+│   │   ├── build.png
+│   │   ├── overview.png
+│   │   ├── registry.png
+│   │   └── wandb.png
+│   ├── README.md
+│   └── report.py
+├── requirements_dev.txt
+├── requirements_gpu.txt
+├── requirements.txt
+├── src
+│   └── mlops_project_tcs
+│       ├── api.py
+│       ├── config
+│       │   ├── default_config.yaml
+│       │   ├── experiment
+│       │   │   ├── dataset
+│       │   │   │   └── mnist.yaml
+│       │   │   ├── exp1.yaml
+│       │   │   ├── exp2.yaml
+│       │   │   ├── hyperparameter
+│       │   │   │   └── hyper1.yaml
+│       │   │   └── model
+│       │   │       ├── vae_medium.yaml
+│       │   │       └── vae_small.yaml
+│       │   └── profiling
+│       │       ├── evaluation.yaml
+│       │       ├── full.yaml
+│       │       ├── no.yaml
+│       │       └── training.yaml
+│       ├── crop_img.py
+│       ├── data.py
+│       ├── evaluate.py
+│       ├── __init__.py
+│       ├── model.py
+│       ├── __pycache__
+│       │   ├── crop_img.cpython-39.pyc
+│       │   └── model.cpython-39.pyc
+│       ├── train.py
+│       ├── vae_evaluate.py
+│       ├── vae_model.py
+│       ├── vae_train.py
+│       └── visualize.py
+├── tasks.py
+└── tests
+    ├── __init__.py
+    ├── test_api.py
+    ├── test_data.py
+    └── test_model.py
+
+26 directories, 483 files
