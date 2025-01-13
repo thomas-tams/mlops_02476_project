@@ -1,4 +1,4 @@
-n_epochs: 2
+n_epochs: 40
 seed: 123
 optimizer:
   _target_: torch.optim.Adam
