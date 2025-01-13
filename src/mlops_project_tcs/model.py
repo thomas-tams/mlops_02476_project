@@ -7,6 +7,8 @@ from loguru import logger
 from omegaconf import OmegaConf, DictConfig
 import hydra
 
+from data import setup_dataloaders
+
 class VGG16Classifier(pl.LightningModule):
     def __init__(
             self,
@@ -18,6 +20,7 @@ class VGG16Classifier(pl.LightningModule):
 
         self.cfg = config
         self.criterion = hydra.utils.instantiate(self.cfg.experiment.model.loss_fn)
+        self.train_loader, self.val_loader = setup_dataloaders(data_dir="data/processed", batch_size=self.cfg.experiment.dataset["batch_size"])
         
         # Load the pretrained VGG16 model
         self.vgg16 = models.vgg16(pretrained=True)
@@ -43,13 +46,32 @@ class VGG16Classifier(pl.LightningModule):
     def training_step(self, batch):
         """Training step."""
         img, target = batch
-        y_pred = self(img)
-        return self.criterion(y_pred, target)
+        preds = self(img)
+        loss = self.criterion(preds, target)
+        acc = (target == preds.argmax(dim=-1)).float().mean()
+        self.log('train_loss', loss)
+        self.log('train_acc', acc)
+        return self.criterion(preds, target)
+    
+    def validation_step(self, batch) -> None:
+        """Validation step."""
+        img, target = batch
+        preds = self(img)
+        loss = self.criterion(preds, target)
+        acc = (target == preds.argmax(dim=-1)).float().mean()
+        self.log('val_loss', loss, on_epoch=True)
+        self.log('val_acc', acc, on_epoch=True)
     
     def configure_optimizers(self):
         """Configure optimizer."""
         self.optimizer = hydra.utils.instantiate(self.cfg.experiment.hyperparameter.optimizer, params=self.parameters())
         return self.optimizer
+    
+    def train_dataloader(self):
+        return self.train_loader
+    
+    def val_dataloader(self):
+        return self.val_loader
 
 # Example usage
 @hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
