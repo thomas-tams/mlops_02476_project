@@ -118,7 +118,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 1 fill here ---
+Group 84
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -129,7 +129,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 2 fill here ---
+s204558, s204281, 204540
 
 ### Question 3
 > **A requirement to the project is that you include a third-party package not covered in the course. What framework**
@@ -243,7 +243,8 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 9 fill here ---
+Our workflow made use of both branches and pull requests. We used branches to implement new features, without effecting the main codebase. This allowed us to work on multiple task at the same time, without running the risk of ruining our code. Each feature could thus be developed and tested in a vacuum, allowing us to run tests before merging with the main branch.
+By using pull requests all team members had the ability to review surgested changes and merge them into the main branch. Having this step in the process enabled us to more easily discuss potential changes, befor actually implementing them. This meant that it was easier to ensure that the code lived up to the projects standards.
 
 ### Question 10
 
