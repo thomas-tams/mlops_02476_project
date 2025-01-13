@@ -12,6 +12,7 @@ from crop_img import CropExtremePoints
 
 
 app = typer.Typer()
+logger.add("data_log.log", level="DEBUG")
 
 def get_kaggle_dataset(
         kaggle_handle: str,
