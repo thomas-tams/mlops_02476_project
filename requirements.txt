@@ -13,3 +13,4 @@ kagglehub==0.3.6
 torch_tb_profiler==0.4.3
 loguru==0.7.3
 pytorch-lightning==2.5.0.post0
+wandb==0.19.2
