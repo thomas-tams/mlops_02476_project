@@ -1,6 +1,9 @@
 # Do not include dataset
 data/
 
+# Do not include model.pth
+models/
+
 # Hydra outputs
 outputs/
 
