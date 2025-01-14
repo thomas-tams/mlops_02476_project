@@ -27,7 +27,7 @@ class VGG16Classifier(pl.LightningModule):
         self.train_loader, self.val_loader = setup_dataloaders(data_dir="data/processed", batch_size=self.cfg.experiment.dataset["batch_size"])
         
         # Load the pretrained VGG16 model
-        self.vgg16 = models.vgg16(weights=True)
+        self.vgg16 = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
 
         # Freeze the feature extractor layers to prevent updates during training
         for param in self.vgg16.features.parameters():
