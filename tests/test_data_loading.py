@@ -1,22 +1,24 @@
-import os
 import pytest
+from pathlib import Path
+
+from tests import _PATH_DATA
 
 # Define the paths to the raw and processed data
-RAW_DATA_PATH = "./data/raw"
-PROCESSED_DATA_PATH = "./data/processed"
+RAW_DATA_PATH = _PATH_DATA / "raw"
+PROCESSED_DATA_PATH = _PATH_DATA / "processed"
 
 @pytest.mark.parametrize("category", ["yes", "no"])
 def test_raw_data_loading(category):
     """Test that raw data is loaded correctly."""
-    category_path = os.path.join(RAW_DATA_PATH, category)
-    assert os.path.exists(category_path), f"Raw data path for {category} does not exist."
-    image_files = [f for f in os.listdir(category_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.JPG'))]
+    category_path = RAW_DATA_PATH / category
+    assert category_path.exists() and category_path.is_dir(), f"Raw data path for {category} does not exist."
+    image_files = [f for f in category_path.iterdir() if f.is_file() and f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.JPG'}]
     assert len(image_files) > 0, f"No images found in raw data for {category}."
 
 @pytest.mark.parametrize("category", ["yes", "no"])
 def test_processed_data_loading(category):
-    """Test that processed data is loaded correctly."""
-    category_path = os.path.join(PROCESSED_DATA_PATH, category)
-    assert os.path.exists(category_path), f"Processed data path for {category} does not exist."
-    image_files = [f for f in os.listdir(category_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.JPG'))]
-    assert len(image_files) > 0, f"No images found in processed data for {category}."
+    """Test that raw data is loaded correctly."""
+    category_path = PROCESSED_DATA_PATH / category
+    assert category_path.exists() and category_path.is_dir(), f"Raw data path for {category} does not exist."
+    image_files = [f for f in category_path.iterdir() if f.is_file() and f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.JPG'}]
+    assert len(image_files) > 0, f"No images found in raw data for {category}."

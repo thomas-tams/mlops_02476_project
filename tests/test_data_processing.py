@@ -1,4 +1,3 @@
-import os
 import pytest
 from PIL import Image
 
@@ -7,11 +6,11 @@ PROCESSED_DATA_PATH = "./data/processed"
 @pytest.mark.parametrize("category", ["yes", "no"])
 def test_processed_images_format(category):
     """Test that processed images are in the correct format and dimensions."""
-    category_path = os.path.join(PROCESSED_DATA_PATH, category)
-    image_files = [f for f in os.listdir(category_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.JPG'))]
+    category_path = PROCESSED_DATA_PATH / category
+    image_files = [f for f in category_path.iterdir() if f.is_file() and f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.JPG'}]
 
     for img_file in image_files:
-        img_path = os.path.join(category_path, img_file)
+        img_path = category_path / img_file
         try:
             with Image.open(img_path) as img:
                 img.verify()  # Verify the image is valid
