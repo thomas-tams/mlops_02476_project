@@ -1,0 +1,3 @@
+defaults:
+    - experiment: test_exp
+    - profiling: no_profiling

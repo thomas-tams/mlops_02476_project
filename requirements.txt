@@ -12,5 +12,7 @@ imutils==0.5.4
 kagglehub==0.3.6
 torch_tb_profiler==0.4.3
 loguru==0.7.3
+pytest==8.3.4
+coverage==7.6.10
 pytorch-lightning==2.5.0.post0
 wandb==0.19.2

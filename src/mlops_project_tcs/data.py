@@ -1,6 +1,7 @@
+import sys
+from pathlib import Path
 from loguru import logger
 from typing import Union, Annotated
-from pathlib import Path
 import os
 import shutil
 import typer
@@ -10,7 +11,10 @@ from PIL import Image
 from torchvision import transforms, datasets
 from torch.utils.data import Dataset, DataLoader, random_split
 
-from crop_img import CropExtremePoints
+# Add the project root directory to import from root
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(project_root))
+from src.mlops_project_tcs.crop_img import CropExtremePoints
 
 app = typer.Typer()
 logger.add("logs/data_log.log", level="DEBUG")
