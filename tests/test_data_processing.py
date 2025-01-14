@@ -2,10 +2,12 @@ import pytest
 from PIL import Image
 from pathlib import Path
 import shutil
+from tests import _PATH_DATA, _TEST_ROOT
 from src.mlops_project_tcs.data import preprocess, MyDataset
 
-RAW_DATA_PATH = Path("./data/raw")
-PROCESSED_DATA_PATH = Path("./data/processed")
+RAW_DATA_PATH = _PATH_DATA / "raw"
+PROCESSED_DATA_PATH = _PATH_DATA / "processed"
+TEST_IMAGE_PATH = _TEST_ROOT / "resources" / "dummy_image.jpg"
 
 @pytest.fixture
 def setup_dummy_data():
@@ -15,15 +17,17 @@ def setup_dummy_data():
         category_path.mkdir(parents=True, exist_ok=True)
         # Create dummy image files
         dummy_image_path = category_path / "dummy_image.jpg"
-        with Image.new('RGB', (100, 100)) as img:
-            img.save(dummy_image_path)
+        shutil.copy(TEST_IMAGE_PATH, dummy_image_path)
+    
     yield
     # Cleanup after tests
-    shutil.rmtree(RAW_DATA_PATH)
-    shutil.rmtree(PROCESSED_DATA_PATH)
+    for data_dir in [RAW_DATA_PATH, PROCESSED_DATA_PATH]:
+        for category in ["yes", "no"]:
+            category_path = data_dir / category
+            shutil.rmtree(category_path)
 
 @pytest.mark.parametrize("category", ["yes", "no"])
-def test_processed_data_loading(setup_dummy_data, category):
+def test_data_preprocessing(setup_dummy_data, category):
     """Test that raw data is loaded correctly."""
     dataset = MyDataset(RAW_DATA_PATH)
     dataset.preprocess(PROCESSED_DATA_PATH)
@@ -51,6 +55,6 @@ def test_processed_images_format(setup_dummy_data, category):
 
                 # Reopen the image to access its size (verify closes the file)
                 img = Image.open(img_path)
-                assert img.size == (224, 224), f"Image {img_file} has unexpected size {img.size}."
+                assert img.size == (224, 224), f"Image {img_file} has unexpected size {img.size}. Expected (224, 224)"
         except Exception as e:
             pytest.fail(f"Image {img_file} could not be opened or is invalid: {e}")
