@@ -5,26 +5,33 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 @pytest.fixture
-def mock_image_folder():
-    with patch('torchvision.datasets.ImageFolder') as mock_image_folder:
-        mock_image_folder_instance = MagicMock()
-        mock_image_folder_instance.classes = ['class1', 'class2']
-        mock_image_folder_instance.__len__.return_value = 100
-        mock_image_folder_instance.__getitem__.return_value = (torch.randn(3, 224, 224), 0)
-        mock_image_folder.return_value = mock_image_folder_instance
-        yield mock_image_folder_instance
+def mock_setup_dataloaders():
+    with patch('src.mlops_project_tcs.data.transforms.Compose') as mock_transforms_compose, \
+         patch('src.mlops_project_tcs.data.datasets.ImageFolder') as mock_image_folder, \
+         patch('src.mlops_project_tcs.data.random_split') as mock_random_split, \
+         patch('src.mlops_project_tcs.data.DataLoader') as mock_dataloader:
+        
+        # Mock the transformations
+        mock_transforms_compose.return_value = MagicMock()
 
-@pytest.fixture
-def mock_dataloaders(mock_image_folder):
-    with patch('src.mlops_project_tcs.data.setup_dataloaders') as mock_setup_dataloaders:
+        # Mock the ImageFolder dataset
+        mock_image_folder_instance = MagicMock()
+        mock_image_folder_instance.__len__.return_value = 100
+        mock_image_folder.return_value = mock_image_folder_instance
+
+        # Mock the random_split function
+        mock_train_dataset = MagicMock()
+        mock_val_dataset = MagicMock()
+        mock_random_split.return_value = (mock_train_dataset, mock_val_dataset)
+
+        # Mock the DataLoader
         mock_train_loader = MagicMock()
         mock_val_loader = MagicMock()
-        mock_train_loader.__iter__.return_value = iter([(torch.randn(3, 224, 224), 0)] * 10)
-        mock_val_loader.__iter__.return_value = iter([(torch.randn(3, 224, 224), 0)] * 10)
-        mock_setup_dataloaders.return_value = (mock_train_loader, mock_val_loader)
+        mock_dataloader.side_effect = [mock_train_loader, mock_val_loader]
+
         yield mock_train_loader, mock_val_loader
 
-def test_vgg16_classifier_output_shape(mock_dataloaders):
+def test_vgg16_classifier_output_shape(mock_setup_dataloaders):
     """Test that VGG16Classifier produces the correct output shape."""
     with initialize(config_path="../src/mlops_project_tcs/config", version_base="1.3"):
         config = compose(config_name="test_config.yaml")
