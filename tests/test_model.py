@@ -12,5 +12,5 @@ def test_vgg16_classifier_output_shape():
     # Pass the input through the model
     output = model(input_tensor)
 
-    # Check that the output shape is (1, num_classes)
+    # Check that the output shape is (4, num_classes)
     assert output.shape == (4, num_classes), f"Unexpected output shape: {output.shape}, expected: (4, {num_classes})"
