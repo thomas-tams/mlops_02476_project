@@ -1,7 +1,6 @@
 import pytest
-from pathlib import Path
 import shutil
-from src.mlops_project_tcs.data import download
+from mlops_project_tcs.data import download
 
 from tests import _PATH_DATA
 

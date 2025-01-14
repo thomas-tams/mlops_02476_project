@@ -3,8 +3,6 @@ import torch
 from PIL import Image
 import cv2
 import imutils
-from torchvision import transforms
-
 
 class CropExtremePoints:
     def __init__(self, add_pixels_value=0, target_size=(224, 224)):

@@ -1,16 +1,10 @@
 import logging
-import os
-import sys
 from pathlib import Path
-
-from typing import Annotated
 import typer
 import contextlib
 import hydra
 from omegaconf import OmegaConf, DictConfig
-
-from vae_model import Decoder, Encoder, Model
-
+from mlops_project_tcs.vae_model import Decoder, Encoder, Model
 import torch
 import torch.nn as nn
 import torchvision.transforms as transforms
@@ -140,7 +134,7 @@ def train_model(config) -> None:
 
                 if train_profiling:
                     if loaded_samples > 5000:
-                        log.info(f"Ending training early to not fill memory with huge amount of logging data")
+                        log.info("Ending training early to not fill memory with huge amount of logging data")
                         break
                     prof.step()
 

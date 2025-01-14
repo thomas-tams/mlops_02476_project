@@ -1,12 +1,9 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from pathlib import Path
-import sys
-import os
 
 from tests import _PROJECT_ROOT
-from src.mlops_project_tcs.data import download, preprocess
-from src.mlops_project_tcs.train import train_model
+from mlops_project_tcs.data import download, preprocess
+from mlops_project_tcs.train import train_model
 from hydra import initialize, compose
 
 _TEST_HYDRA_CONFIG = _PROJECT_ROOT / "src" / "mlops_project_tcs" / "config" / "test_config.yaml"

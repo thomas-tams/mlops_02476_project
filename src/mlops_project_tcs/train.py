@@ -1,19 +1,11 @@
 from loguru import logger
-from pathlib import Path
-import sys
-
 import hydra
 from omegaconf import OmegaConf
-
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
-
-# Add the project root directory to import from root
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(project_root))
-from src.mlops_project_tcs.model import VGG16Classifier
-
+from pathlib import Path
+from mlops_project_tcs.model import VGG16Classifier
 
 def get_accelerator():
     device = "cuda" if torch.cuda.is_available() else "cpu"

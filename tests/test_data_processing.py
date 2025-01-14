@@ -1,9 +1,8 @@
 import pytest
 from PIL import Image
-from pathlib import Path
 import shutil
 from tests import _PATH_DATA, _TEST_ROOT
-from src.mlops_project_tcs.data import preprocess, MyDataset
+from mlops_project_tcs.data import MyDataset
 
 RAW_DATA_PATH = _PATH_DATA / "raw"
 PROCESSED_DATA_PATH = _PATH_DATA / "processed"

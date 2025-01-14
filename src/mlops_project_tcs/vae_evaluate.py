@@ -1,17 +1,11 @@
 import logging
-import os
 from pathlib import Path
-
 from typing import Annotated
 import typer
-import hydra
 from omegaconf import OmegaConf, DictConfig
 import contextlib
-
-from vae_model import Decoder, Encoder, Model
-
+from mlops_project_tcs.vae_model import Decoder, Encoder, Model
 import torch
-import torch.nn as nn
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
@@ -102,7 +96,6 @@ def evaluate_model(model: Model, config: DictConfig, outdir: Path):
 
                 if evaluation_profiling is not None:
                     prof.step()
-
 
 # Typer CLI function
 @app.command()

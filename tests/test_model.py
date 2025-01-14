@@ -1,5 +1,5 @@
 import torch
-from src.mlops_project_tcs.model import VGG16Classifier
+from mlops_project_tcs.model import VGG16Classifier
 from hydra import initialize, compose
 from unittest.mock import patch, MagicMock
 import pytest
