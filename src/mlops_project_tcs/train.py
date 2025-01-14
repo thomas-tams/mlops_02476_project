@@ -4,6 +4,8 @@ import torch.optim as optim
 from torchvision import transforms, datasets
 from torch.utils.data import DataLoader, random_split
 import os
+import numpy as np
+from collections import Counter
 
 # Import the custom model
 from model import VGG16Classifier
@@ -22,10 +24,37 @@ transform = transforms.Compose([
 # Load dataset
 dataset = datasets.ImageFolder(data_dir, transform=transform)
 
+# Identify class distribution
+class_counts = Counter([label for _, label in dataset.samples])
+print(f"Class distribution: {class_counts}")
+
 # Define train/val split ratio
 train_size = int(0.8 * len(dataset))
 val_size = len(dataset) - train_size
 train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+
+# Balance the datasets by duplicating images from the underrepresented class
+def balance_dataset(dataset, original_dataset, target_class='no', duplication_factor=2):
+    # Get indices of the images for the 'no' and 'yes' classes from the original dataset
+    class_to_idx = original_dataset.class_to_idx
+    target_class_idx = class_to_idx[target_class]
+    
+    # Get indices for the underrepresented class
+    target_class_indices = [i for i, (_, label) in enumerate(original_dataset.samples) if label == target_class_idx]
+
+    # Duplicate images from the underrepresented class
+    additional_samples = target_class_indices * duplication_factor
+    balanced_samples = dataset.indices + additional_samples  # Use indices instead of samples directly
+
+    # Create a new Subset with the balanced indices
+    balanced_dataset = torch.utils.data.Subset(original_dataset, balanced_samples)
+    return balanced_dataset
+
+# Balance only the training dataset, not the validation dataset
+train_dataset = balance_dataset(train_dataset, dataset, target_class='no', duplication_factor=2)
+
+# Update dataset sizes after balancing
+dataset_sizes = {"train": len(train_dataset), "val": len(val_dataset)}
 
 # Create DataLoaders
 batch_size = 32
@@ -34,7 +63,6 @@ val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
 # Get class names
 class_names = dataset.classes
-dataset_sizes = {"train": len(train_dataset), "val": len(val_dataset)}
 
 # Check if CUDA is available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -45,16 +73,6 @@ print(f"Total dataset size: {len(dataset)}")
 print(f"Training set size: {len(train_dataset)}")
 print(f"Validation set size: {len(val_dataset)}")
 print(f"Using device: {device}")
-
-
-# Get an example from the data
-#img, label = train_dataset[0]  # Index into train_dataset
-#print(f"Image shape: {img.shape}")  # This will print (C, H, W) - Channels, Height, Width
-#print(f"Class label: {label} ({class_names[label]})")
-
-
-
-
 
 # Initialize the custom model
 model = VGG16Classifier(num_classes=len(class_names))

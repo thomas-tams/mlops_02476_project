@@ -55,7 +55,7 @@ class MyDataset(Dataset):
         for label, folder in enumerate(['no', 'yes']):
             folder_path = os.path.join(raw_data_path, folder)
             for fname in os.listdir(folder_path):
-                if fname.endswith(('.jpg', '.jpeg', '.png')):
+                if fname.endswith(('.jpg', '.jpeg', '.png', 'JPG')):
                     self.image_paths.append(os.path.join(folder_path, fname))
                     self.labels.append(label)
 

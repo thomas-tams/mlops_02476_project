@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/mlops_project_tcs"
+    ]
+}
