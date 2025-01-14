@@ -7,7 +7,11 @@ from loguru import logger
 from omegaconf import OmegaConf, DictConfig
 import hydra
 
-from data import setup_dataloaders
+import sys
+from pathlib import Path
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(project_root))
+from src.mlops_project_tcs.data import setup_dataloaders
 
 class VGG16Classifier(pl.LightningModule):
     def __init__(
@@ -23,7 +27,7 @@ class VGG16Classifier(pl.LightningModule):
         self.train_loader, self.val_loader = setup_dataloaders(data_dir="data/processed", batch_size=self.cfg.experiment.dataset["batch_size"])
         
         # Load the pretrained VGG16 model
-        self.vgg16 = models.vgg16(pretrained=True)
+        self.vgg16 = models.vgg16(weights=True)
 
         # Freeze the feature extractor layers to prevent updates during training
         for param in self.vgg16.features.parameters():

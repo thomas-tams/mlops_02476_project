@@ -24,7 +24,7 @@ def get_accelerator():
     return device
 
 @hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
-def train_model(config) -> None:
+def train_model(config) -> dict:
     """Train VAE on MNIST."""
     logger.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
     hydra_output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
@@ -62,6 +62,16 @@ def train_model(config) -> None:
     logger.info("Start training ...")
     trainer.fit(model)
     logger.info("Finish!!")
+
+    # Collect training results
+    results = {
+        "status": "success",
+        "final_epoch": trainer.current_epoch,
+        "best_val_loss": checkpoint_callback.best_model_score.item() if checkpoint_callback.best_model_score else None,
+        "total_epochs": config.experiment.hyperparameter["n_epochs"]
+    }
+
+    return results
 
 if __name__ == "__main__":
     """ Train VGG16 using hydra configurations """
