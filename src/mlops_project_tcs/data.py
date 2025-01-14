@@ -10,7 +10,7 @@ from PIL import Image
 from torchvision import transforms, datasets
 from torch.utils.data import Dataset, DataLoader, random_split
 
-from crop_img import CropExtremePoints
+from src.mlops_project_tcs.crop_img import CropExtremePoints
 
 app = typer.Typer()
 logger.add("logs/data_log.log", level="DEBUG")
