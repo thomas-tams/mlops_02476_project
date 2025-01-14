@@ -1,28 +1,20 @@
-import sys
 from pathlib import Path
 from loguru import logger
 from typing import Union, Annotated
 import os
 import shutil
 import typer
-
 import kagglehub
 from PIL import Image
 from torchvision import transforms, datasets
 from torch.utils.data import Dataset, DataLoader, random_split
-
-# Add the project root directory to import from root
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(project_root))
-from src.mlops_project_tcs.crop_img import CropExtremePoints
+from mlops_project_tcs.crop_img import CropExtremePoints
 
 app = typer.Typer()
 logger.add("logs/data_log.log", level="DEBUG")
 
-def get_kaggle_dataset(
-        kaggle_handle: str,
-        raw_data_dir: Union[Path, str]
-) -> None:
+
+def get_kaggle_dataset(kaggle_handle: str, raw_data_dir: Union[Path, str]) -> None:
     """Download dataset using kagglehub and place it in the specified raw data folder."""
     try:
         # Access data from kaggle
@@ -31,7 +23,7 @@ def get_kaggle_dataset(
     except Exception as e:
         logger.error(f"Failed to download dataset from Kaggle: {e}")
         return
-    
+
     # Removing double data (for some reason this kaggle dataset contains double up on the dataset)
     if kaggle_handle == "navoneel/brain-mri-images-for-brain-tumor-detection":
         downloaded_path = Path(downloaded_path)
@@ -49,6 +41,7 @@ def get_kaggle_dataset(
     shutil.copytree(downloaded_path, raw_data_dir, dirs_exist_ok=True)
     logger.info(f"Dataset successfully placed in: {raw_data_dir}")
 
+
 class MyDataset(Dataset):
     """Custom dataset for preprocessing brain MRI images."""
 
@@ -57,10 +50,10 @@ class MyDataset(Dataset):
         self.image_paths = []
         self.labels = []
 
-        for label, folder in enumerate(['no', 'yes']):
+        for label, folder in enumerate(["no", "yes"]):
             folder_path = os.path.join(raw_data_path, folder)
             for fname in os.listdir(folder_path):
-                if fname.endswith(('.jpg', '.jpeg', '.png')):
+                if fname.endswith((".jpg", ".jpeg", ".png")):
                     self.image_paths.append(os.path.join(folder_path, fname))
                     self.labels.append(label)
 
@@ -92,18 +85,18 @@ class MyDataset(Dataset):
             processed_image_pil.save(output_path)
             logger.info(f"Processed and saved: {output_path}")
 
-def setup_dataloaders(
-        data_dir: Union[Path, str],
-        batch_size : int
-) -> None:
-    """ Setting up train and test dataloaders for mnist dataset """
+
+def setup_dataloaders(data_dir: Union[Path, str], batch_size: int) -> None:
+    """Setting up train and test dataloaders for mnist dataset"""
     # Define transformations
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)),  # Resize to VGG-16 input size
-        transforms.RandomHorizontalFlip(),  # Data augmentation
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # VGG-16 normalization
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),  # Resize to VGG-16 input size
+            transforms.RandomHorizontalFlip(),  # Data augmentation
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),  # VGG-16 normalization
+        ]
+    )
 
     # Load dataset
     dataset = datasets.ImageFolder(data_dir, transform=transform)
@@ -119,10 +112,15 @@ def setup_dataloaders(
 
     return train_loader, val_loader
 
+
 @app.command()
 def download(
-    kaggle_handle: Annotated[str, typer.Option("--kaggle_handle", "-kh", help="Kaggle handle pointing to download location")] = "navoneel/brain-mri-images-for-brain-tumor-detection",
-    raw_data_dir: Annotated[str, typer.Option("--output_dir", "-o", help="Output directory of the downloaded Kaggle data")] = "data/raw",
+    kaggle_handle: Annotated[
+        str, typer.Option("--kaggle_handle", "-kh", help="Kaggle handle pointing to download location")
+    ] = "navoneel/brain-mri-images-for-brain-tumor-detection",
+    raw_data_dir: Annotated[
+        str, typer.Option("--output_dir", "-o", help="Output directory of the downloaded Kaggle data")
+    ] = "data/raw",
 ) -> None:
     logger.info("Downloading and preparing raw data...")
     get_kaggle_dataset(kaggle_handle, raw_data_dir)
@@ -131,7 +129,9 @@ def download(
 @app.command()
 def preprocess(
     raw_data_dir: Annotated[str, typer.Option("--indir", "-i", help="Input directory of raw data")] = "data/raw",
-    output_folder: Annotated[str, typer.Option("--outdir", "-o", help="Output directory of preprocessed files")] = "data/processed"
+    output_folder: Annotated[
+        str, typer.Option("--outdir", "-o", help="Output directory of preprocessed files")
+    ] = "data/processed",
 ) -> None:
     logger.info("Preprocessing data...")
     dataset = MyDataset(Path(raw_data_dir))

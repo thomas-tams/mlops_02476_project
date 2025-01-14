@@ -1,18 +1,12 @@
 from loguru import logger
-from pathlib import Path
-import sys
-
 import hydra
 from omegaconf import OmegaConf
-
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from pathlib import Path
+from mlops_project_tcs.model import VGG16Classifier
 
-# Add the project root directory to import from root
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(project_root))
-from src.mlops_project_tcs.model import VGG16Classifier
 
 def get_accelerator():
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -20,8 +14,9 @@ def get_accelerator():
         logger.info(f"Training on device type: {device} ({torch.cuda.get_device_name(device)})")
     else:
         logger.info(f"Training on device type: {device}")
-    
+
     return device
+
 
 @hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
 def train_model(config) -> dict:
@@ -30,9 +25,9 @@ def train_model(config) -> dict:
     hydra_output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
     logger.add(hydra_output_dir / "training.log", level="DEBUG")
     pl.seed_everything(config.experiment.hyperparameter["seed"], workers=True)
-    
+
     model = VGG16Classifier(config)
-    
+
     accelerator = get_accelerator()
 
     # Setup trainer
@@ -40,10 +35,8 @@ def train_model(config) -> dict:
         profiling = "simple"
     else:
         profiling = None
-    wand_logger=pl.loggers.WandbLogger(project="dtu_mlops")
-    checkpoint_callback = ModelCheckpoint(
-        dirpath="./models", monitor="val_loss", mode="min"
-    )
+    wand_logger = pl.loggers.WandbLogger(project="dtu_mlops")
+    checkpoint_callback = ModelCheckpoint(dirpath="./models", monitor="val_loss", mode="min")
     early_stopping_callback = EarlyStopping(
         monitor="val_loss", patience=config.experiment.hyperparameter["patience"], verbose=True, mode="min"
     )
@@ -55,7 +48,7 @@ def train_model(config) -> dict:
         max_epochs=config.experiment.hyperparameter["n_epochs"],
         profiler=profiling,
         logger=wand_logger,
-        callbacks=[checkpoint_callback, early_stopping_callback]
+        callbacks=[checkpoint_callback, early_stopping_callback],
     )
 
     # Train
@@ -68,10 +61,11 @@ def train_model(config) -> dict:
         "status": "success",
         "final_epoch": trainer.current_epoch,
         "best_val_loss": checkpoint_callback.best_model_score.item() if checkpoint_callback.best_model_score else None,
-        "total_epochs": config.experiment.hyperparameter["n_epochs"]
+        "total_epochs": config.experiment.hyperparameter["n_epochs"],
     }
 
     return results
+
 
 if __name__ == "__main__":
     """ Train VGG16 using hydra configurations """
