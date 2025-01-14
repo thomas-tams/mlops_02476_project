@@ -4,6 +4,7 @@ from PIL import Image
 import cv2
 import imutils
 
+
 class CropExtremePoints:
     def __init__(self, add_pixels_value=0, target_size=(224, 224)):
         """

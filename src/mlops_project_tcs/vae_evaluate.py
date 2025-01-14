@@ -97,6 +97,7 @@ def evaluate_model(model: Model, config: DictConfig, outdir: Path):
                 if evaluation_profiling is not None:
                     prof.step()
 
+
 # Typer CLI function
 @app.command()
 def evaluate(

@@ -7,6 +7,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pathlib import Path
 from mlops_project_tcs.model import VGG16Classifier
 
+
 def get_accelerator():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device == "cuda":
