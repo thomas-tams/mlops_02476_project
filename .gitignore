@@ -7,6 +7,10 @@ models/
 # Hydra outputs
 outputs/
 
+# WandB
+dtu_mlops/
+wandb/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
