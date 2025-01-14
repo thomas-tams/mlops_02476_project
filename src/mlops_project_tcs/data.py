@@ -3,13 +3,14 @@ from typing import Union, Annotated
 from pathlib import Path
 import os
 import shutil
-from PIL import Image
-from torch.utils.data import Dataset
-import kagglehub
 import typer
-from torchvision import transforms  # <-- Add this import
-from crop_img import CropExtremePoints
 
+import kagglehub
+from PIL import Image
+from torchvision import transforms, datasets
+from torch.utils.data import Dataset, DataLoader, random_split
+
+from crop_img import CropExtremePoints
 
 app = typer.Typer()
 logger.add("logs/data_log.log", level="DEBUG")
@@ -86,6 +87,33 @@ class MyDataset(Dataset):
             processed_image_pil = transforms.ToPILImage()(processed_image)  # Convert tensor to PIL Image
             processed_image_pil.save(output_path)
             logger.info(f"Processed and saved: {output_path}")
+
+def setup_dataloaders(
+        data_dir: Union[Path, str],
+        batch_size : int
+) -> None:
+    """ Setting up train and test dataloaders for mnist dataset """
+    # Define transformations
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),  # Resize to VGG-16 input size
+        transforms.RandomHorizontalFlip(),  # Data augmentation
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # VGG-16 normalization
+    ])
+
+    # Load dataset
+    dataset = datasets.ImageFolder(data_dir, transform=transform)
+
+    # Define train/val split ratio
+    train_size = int(0.8 * len(dataset))
+    val_size = len(dataset) - train_size
+    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+
+    # Create DataLoaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, val_loader
 
 @app.command()
 def download(

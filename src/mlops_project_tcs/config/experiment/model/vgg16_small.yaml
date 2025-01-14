@@ -1,0 +1,7 @@
+            
+model_name: 'small_vgg'
+input_size: 25088
+hidden_size: 4096
+dropout_p: 0.5
+loss_fn:
+  _target_: torch.nn.CrossEntropyLoss
