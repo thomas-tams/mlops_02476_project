@@ -2,7 +2,7 @@ import pytest
 from PIL import Image
 import shutil
 from tests import _PATH_DATA, _TEST_ROOT
-from mlops_project_tcs.data import MyDataset
+from mlops_project_tcs.data import BrainMRIDataset
 
 RAW_DATA_PATH = _PATH_DATA / "raw"
 PROCESSED_DATA_PATH = _PATH_DATA / "processed"
@@ -30,7 +30,7 @@ def setup_dummy_data():
 @pytest.mark.parametrize("category", ["yes", "no"])
 def test_data_preprocessing(setup_dummy_data, category):
     """Test that raw data is loaded correctly."""
-    dataset = MyDataset(RAW_DATA_PATH)
+    dataset = BrainMRIDataset(RAW_DATA_PATH)
     dataset.preprocess(PROCESSED_DATA_PATH)
     category_path = PROCESSED_DATA_PATH / category
     assert category_path.exists() and category_path.is_dir(), f"Processed data path for {category} does not exist."
@@ -43,7 +43,7 @@ def test_data_preprocessing(setup_dummy_data, category):
 @pytest.mark.parametrize("category", ["yes", "no"])
 def test_processed_images_format(setup_dummy_data, category):
     """Test that processed images are in the correct format and dimensions."""
-    dataset = MyDataset(RAW_DATA_PATH)
+    dataset = BrainMRIDataset(RAW_DATA_PATH)
     dataset.preprocess(PROCESSED_DATA_PATH)
     category_path = PROCESSED_DATA_PATH / category
     image_files = [
