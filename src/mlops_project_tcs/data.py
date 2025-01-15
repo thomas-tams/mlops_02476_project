@@ -6,8 +6,9 @@ import shutil
 import typer
 import kagglehub
 from PIL import Image
-from torchvision import transforms, datasets
+from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader, random_split
+import pytorch_lightning as pl
 from mlops_project_tcs.crop_img import CropExtremePoints
 
 app = typer.Typer()
@@ -42,18 +43,19 @@ def get_kaggle_dataset(kaggle_handle: str, raw_data_dir: Union[Path, str]) -> No
     logger.info(f"Dataset successfully placed in: {raw_data_dir}")
 
 
-class MyDataset(Dataset):
-    """Custom dataset for preprocessing brain MRI images."""
+class BrainMRIDataset(Dataset):
+    """Custom dataset for loading and preprocessing brain MRI images."""
 
-    def __init__(self, raw_data_path: Path) -> None:
-        self.data_path = raw_data_path
+    def __init__(self, data_dir: Path) -> None:
+        self.data_path = data_dir
         self.image_paths = []
         self.labels = []
+        self.transform = transforms.ToTensor()
 
         for label, folder in enumerate(["no", "yes"]):
-            folder_path = os.path.join(raw_data_path, folder)
+            folder_path = os.path.join(data_dir, folder)
             for fname in os.listdir(folder_path):
-                if fname.endswith((".jpg", ".jpeg", ".png")):
+                if fname.endswith((".jpg", ".JPG", ".jpeg", ".png")):
                     self.image_paths.append(os.path.join(folder_path, fname))
                     self.labels.append(label)
 
@@ -64,9 +66,9 @@ class MyDataset(Dataset):
     def __getitem__(self, index: int):
         """Return a given sample from the dataset."""
         img_path = self.image_paths[index]
-        label = self.labels[index]
-
         image = Image.open(img_path).convert("RGB")
+        image = self.transform(image)
+        label = self.labels[index]
         return image, label
 
     def preprocess(self, output_folder: Path) -> None:
@@ -86,31 +88,43 @@ class MyDataset(Dataset):
             logger.info(f"Processed and saved: {output_path}")
 
 
-def setup_dataloaders(data_dir: Union[Path, str], batch_size: int) -> None:
-    """Setting up train and test dataloaders for mnist dataset"""
-    # Define transformations
-    transform = transforms.Compose(
-        [
-            transforms.Resize((224, 224)),  # Resize to VGG-16 input size
-            transforms.RandomHorizontalFlip(),  # Data augmentation
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),  # VGG-16 normalization
-        ]
-    )
+class BrainMRIDataModule(pl.LightningDataModule):
+    def __init__(
+        self,
+        preprocessed_data_dir: Union[Path, str],
+        batch_size: int,
+        val_split: float = 0.2,
+        test_split: float = 0.1,
+        num_workers: int = 4,
+    ) -> None:
+        super().__init__()
+        self.preprocessed_data_dir = Path(preprocessed_data_dir)
+        self.batch_size = batch_size
+        self.val_split = val_split
+        self.test_split = test_split
+        self.num_workers = num_workers
 
-    # Load dataset
-    dataset = datasets.ImageFolder(data_dir, transform=transform)
+    def setup(self, stage: str = None):
+        # Create the dataset
+        dataset = BrainMRIDataset(self.preprocessed_data_dir)
 
-    # Define train/val split ratio
-    train_size = int(0.8 * len(dataset))
-    val_size = len(dataset) - train_size
-    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+        # Split the dataset into training and validation sets
+        test_size = int(len(dataset) * self.test_split)
+        val_size = int(len(dataset) * self.val_split)
+        train_size = len(dataset) - test_size - val_size
+        self.train_dataset, self.val_dataset, self.test_dataset = random_split(
+            dataset, [train_size, val_size, test_size]
+        )
 
-    # Create DataLoaders
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    def train_dataloader(self):
+        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
 
-    return train_loader, val_loader
+    def val_dataloader(self):
+        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
+
+    def test_dataloader(self):
+        # Assuming the test dataset is set up similarly
+        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
 
 @app.command()
@@ -134,7 +148,7 @@ def preprocess(
     ] = "data/processed",
 ) -> None:
     logger.info("Preprocessing data...")
-    dataset = MyDataset(Path(raw_data_dir))
+    dataset = BrainMRIDataset(Path(raw_data_dir))
     dataset.preprocess(Path(output_folder))
 
 
