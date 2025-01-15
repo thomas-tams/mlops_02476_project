@@ -11,6 +11,9 @@ outputs/
 dtu_mlops/
 wandb/
 
+# Data statistic plots
+reports/data_statistics/*.png
+
 # VSCode stuff
 .vscode/
 
