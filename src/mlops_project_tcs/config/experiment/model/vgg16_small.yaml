@@ -1,4 +1,4 @@
-            
+
 model_name: 'small_vgg'
 input_size: 25088
 hidden_size: 4096

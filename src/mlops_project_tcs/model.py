@@ -3,22 +3,20 @@ import torch.nn as nn
 import torchvision.models as models
 import pytorch_lightning as pl
 from loguru import logger
-from omegaconf import OmegaConf, DictConfig
+from omegaconf import OmegaConf
 import hydra
-from mlops_project_tcs.data import setup_dataloaders
 
 
 class VGG16Classifier(pl.LightningModule):
-    def __init__(self, config: DictConfig) -> None:
+    def __init__(
+        self, input_size: int, hidden_size: int, num_classes: int, dropout_p: float, criterion: nn.Module
+    ) -> None:
         super(VGG16Classifier, self).__init__()
-        self.criterion = None
-        self.optimizer = None
-
-        self.cfg = config
-        self.criterion = hydra.utils.instantiate(self.cfg.experiment.model.loss_fn)
-        self.train_loader, self.val_loader = setup_dataloaders(
-            data_dir="data/processed", batch_size=self.cfg.experiment.dataset["batch_size"]
-        )
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.num_classes = num_classes
+        self.dropout_p = dropout_p
+        self.criterion = criterion
 
         # Load the pretrained VGG16 model
         self.vgg16 = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
@@ -29,13 +27,13 @@ class VGG16Classifier(pl.LightningModule):
 
         # Setup dnn for interpretation of feature extractor output
         self.vgg16.classifier = nn.Sequential(
-            nn.Linear(self.cfg.experiment.model["input_size"], self.cfg.experiment.model["hidden_size"]),
+            nn.Linear(self.input_size, self.hidden_size),
             nn.ReLU(inplace=True),
-            nn.Dropout(self.cfg.experiment.model["dropout_p"]),
-            nn.Linear(self.cfg.experiment.model["hidden_size"], self.cfg.experiment.model["hidden_size"]),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(self.hidden_size, self.hidden_size),
             nn.ReLU(inplace=True),
-            nn.Dropout(self.cfg.experiment.model["dropout_p"]),
-            nn.Linear(self.cfg.experiment.model["hidden_size"], self.cfg.experiment.dataset.num_classes),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(self.hidden_size, self.num_classes),
         )
 
     def forward(self, x):
@@ -60,16 +58,11 @@ class VGG16Classifier(pl.LightningModule):
         self.log("val_loss", loss, on_epoch=True)
         self.log("val_acc", acc, on_epoch=True)
 
-    def configure_optimizers(self):
+    def configure_optimizers(self, optimizer: torch.optim.Optimizer = None):
         """Configure optimizer."""
-        self.optimizer = hydra.utils.instantiate(self.cfg.experiment.hyperparameter.optimizer, params=self.parameters())
+        if optimizer is not None:
+            self.optimizer = optimizer
         return self.optimizer
-
-    def train_dataloader(self):
-        return self.train_loader
-
-    def val_dataloader(self):
-        return self.val_loader
 
 
 # Example usage
@@ -78,7 +71,17 @@ def main(config):
     logger.add("logs/setup_model_example.log", level="DEBUG")
     logger.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
 
-    model = VGG16Classifier(config=config)
+    model = VGG16Classifier(
+        input_size=config.experiment.model["input_size"],
+        hidden_size=config.experiment.model["hidden_size"],
+        num_classes=config.experiment.dataset["num_classes"],
+        dropout_p=config.experiment.model["dropout_p"],
+        criterion=hydra.utils.instantiate(config.experiment.model.loss_fn),
+    )
+
+    model.configure_optimizers(
+        optimizer=hydra.utils.instantiate(config.experiment.hyperparameter.optimizer, params=model.parameters())
+    )
 
     # Test the model with dummy input
     input_tensor = torch.randn(4, 3, 224, 224)  # Batch size 4, 3 channels, 224x224 image

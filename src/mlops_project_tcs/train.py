@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pathlib import Path
 from mlops_project_tcs.model import VGG16Classifier
+from mlops_project_tcs.data import BrainMRIDataModule
 
 
 def get_accelerator():
@@ -26,7 +27,23 @@ def train_model(config) -> dict:
     logger.add(hydra_output_dir / "training.log", level="DEBUG")
     pl.seed_everything(config.experiment.hyperparameter["seed"], workers=True)
 
-    model = VGG16Classifier(config)
+    model = VGG16Classifier(
+        input_size=config.experiment.model["input_size"],
+        hidden_size=config.experiment.model["hidden_size"],
+        num_classes=config.experiment.dataset["num_classes"],
+        dropout_p=config.experiment.model["dropout_p"],
+        criterion=hydra.utils.instantiate(config.experiment.model.loss_fn),
+    )
+    model.configure_optimizers(
+        optimizer=hydra.utils.instantiate(config.experiment.hyperparameter.optimizer, params=model.parameters())
+    )
+    data_module = BrainMRIDataModule(
+        datadir=config.experiment.dataset["processed_dir"],
+        batch_size=config.experiment.dataset["batch_size"],
+        val_split=config.experiment.dataset["val_split"],
+        test_split=config.experiment.dataset["test_split"],
+        num_workers=1,
+    )
 
     accelerator = get_accelerator()
 
@@ -53,7 +70,7 @@ def train_model(config) -> dict:
 
     # Train
     logger.info("Start training ...")
-    trainer.fit(model)
+    trainer.fit(model, datamodule=data_module)
     logger.info("Finish!!")
 
     # Collect training results
