@@ -38,7 +38,7 @@ def train_model(config) -> dict:
         optimizer=hydra.utils.instantiate(config.experiment.hyperparameter.optimizer, params=model.parameters())
     )
     data_module = BrainMRIDataModule(
-        preprocessed_data_dir="data/processed",
+        datadir=config.experiment.dataset["processed_dir"],
         batch_size=config.experiment.dataset["batch_size"],
         val_split=config.experiment.dataset["val_split"],
         test_split=config.experiment.dataset["test_split"],

@@ -1,4 +1,5 @@
-dataset_path: '~/datasets'
+raw_dir: 'data/raw'
+processed_dir: 'data/processed'
 dataset_name: 'kaggle_brain'
 num_classes: 2
 batch_size: 10
