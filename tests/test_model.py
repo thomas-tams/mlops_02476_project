@@ -8,10 +8,10 @@ import pytest
 @pytest.fixture
 def mock_setup_dataloaders():
     with (
-        patch("src.mlops_project_tcs.data.transforms.Compose") as mock_transforms_compose,
-        patch("src.mlops_project_tcs.data.datasets.ImageFolder") as mock_image_folder,
-        patch("src.mlops_project_tcs.data.random_split") as mock_random_split,
-        patch("src.mlops_project_tcs.data.DataLoader") as mock_dataloader,
+        patch("mlops_project_tcs.data.transforms.Compose") as mock_transforms_compose,
+        patch("mlops_project_tcs.data.datasets.ImageFolder") as mock_image_folder,
+        patch("mlops_project_tcs.data.random_split") as mock_random_split,
+        patch("mlops_project_tcs.data.DataLoader") as mock_dataloader,
     ):
         # Mock the transformations
         mock_transforms_compose.return_value = MagicMock()

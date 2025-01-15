@@ -26,7 +26,7 @@ def mock_trainer():
 
 @pytest.fixture
 def mock_vgg16_classifier():
-    with patch("src.mlops_project_tcs.train.VGG16Classifier") as mock_model:
+    with patch("mlops_project_tcs.train.VGG16Classifier") as mock_model:
         mock_model_instance = MagicMock()
         mock_model.return_value = mock_model_instance
         yield mock_model_instance
@@ -43,9 +43,9 @@ def mock_wandb_logger():
 def test_train_model(mock_hydra_config, mock_trainer, mock_vgg16_classifier, mock_wandb_logger):
     """Test the train_model function."""
     # Adding mocks to avoid writing / sending / receiving unnessecary data
-    with patch("src.mlops_project_tcs.train.get_accelerator", return_value="cpu"):
-        with patch("src.mlops_project_tcs.train.pl.seed_everything"):
-            with patch("src.mlops_project_tcs.train.logger.add"):
+    with patch("mlops_project_tcs.train.get_accelerator", return_value="cpu"):
+        with patch("mlops_project_tcs.train.pl.seed_everything"):
+            with patch("mlops_project_tcs.train.logger.add"):
                 download()
                 preprocess()
 
