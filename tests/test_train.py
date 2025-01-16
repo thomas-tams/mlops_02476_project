@@ -1,12 +1,29 @@
 import pytest
 from unittest.mock import patch, MagicMock
+import shutil
 
-from tests import _PROJECT_ROOT
-from mlops_project_tcs.data import download, preprocess
+from tests import _PATH_DATA, _TEST_ROOT
+from mlops_project_tcs.data import balance, split, augment, preprocess
 from mlops_project_tcs.train import train_model
 from hydra import initialize, compose
 
-_TEST_HYDRA_CONFIG = _PROJECT_ROOT / "src" / "mlops_project_tcs" / "config" / "test_config.yaml"
+RAW_DATA_PATH = _PATH_DATA / "raw"
+PROCESSED_DATA_PATH = _PATH_DATA / "processed"
+DUMMY_IMAGES_PATH = _TEST_ROOT / "resources" / "dummy_images"
+
+
+@pytest.fixture
+def setup_dummy_data():
+    # Create raw data directories
+    for category in ["yes", "no"]:
+        category_path = RAW_DATA_PATH / category
+        category_path.mkdir(parents=True, exist_ok=True)
+        for item in (DUMMY_IMAGES_PATH / category).iterdir():
+            shutil.copy(item, category_path / item.name)
+
+    yield
+    # Cleanup after tests
+    shutil.rmtree(RAW_DATA_PATH)
 
 
 @pytest.fixture
@@ -32,13 +49,15 @@ def mock_wandb_logger():
         yield mock_logger_instance
 
 
-def test_train_model(mock_hydra_config, mock_trainer, mock_wandb_logger):
+def test_train_model(setup_dummy_data, mock_hydra_config, mock_trainer, mock_wandb_logger):
     """Test the train_model function."""
     # Adding mocks to avoid writing / sending / receiving unnessecary data
     with patch("mlops_project_tcs.train.get_accelerator", return_value="cpu"):
         with patch("mlops_project_tcs.train.pl.seed_everything"):
             with patch("mlops_project_tcs.train.logger.add"):
-                download()
+                balance(RAW_DATA_PATH)
+                split()
+                augment()
                 preprocess()
 
                 with initialize(config_path="../src/mlops_project_tcs/config", version_base="1.3"):

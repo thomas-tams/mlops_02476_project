@@ -2,9 +2,6 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 import pytorch_lightning as pl
-from loguru import logger
-from omegaconf import OmegaConf
-import hydra
 
 
 class VGG16Classifier(pl.LightningModule):
@@ -63,32 +60,3 @@ class VGG16Classifier(pl.LightningModule):
         if optimizer is not None:
             self.optimizer = optimizer
         return self.optimizer
-
-
-# Example usage
-@hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
-def main(config):
-    logger.add("logs/setup_model_example.log", level="DEBUG")
-    logger.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
-
-    model = VGG16Classifier(
-        input_size=config.experiment.model["input_size"],
-        hidden_size=config.experiment.model["hidden_size"],
-        num_classes=config.experiment.dataset["num_classes"],
-        dropout_p=config.experiment.model["dropout_p"],
-        criterion=hydra.utils.instantiate(config.experiment.model.loss_fn),
-    )
-
-    model.configure_optimizers(
-        optimizer=hydra.utils.instantiate(config.experiment.hyperparameter.optimizer, params=model.parameters())
-    )
-
-    # Test the model with dummy input
-    input_tensor = torch.randn(4, 3, 224, 224)  # Batch size 4, 3 channels, 224x224 image
-    output = model(input_tensor)
-
-    print("Model output shape:", output.shape)  # Should be (4, num_classes)
-
-
-if __name__ == "__main__":
-    main()
