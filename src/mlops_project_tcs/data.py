@@ -222,9 +222,11 @@ class BrainMRIDataModule(pl.LightningDataModule):
         self.val_split = val_split
         self.test_split = test_split
         self.num_workers = num_workers
-        self.setup()
 
-    def setup(self, stage: str = None):
+        if self.mode == "data_prep":
+            self.data_prept_split_dataset()
+
+    def data_prept_split_dataset(self):
         # Create the dataset
         dataset = BrainMRIDataset(self.datadir)
 
@@ -232,15 +234,21 @@ class BrainMRIDataModule(pl.LightningDataModule):
         test_size = int(len(dataset) * self.test_split)
         val_size = int(len(dataset) * self.val_split)
         train_size = len(dataset) - test_size - val_size
+        self.train_dataset, self.val_dataset, self.test_dataset = random_split(
+            dataset, [train_size, val_size, test_size]
+        )
 
-        if self.mode == "data_prep":
-            self.train_dataset, self.val_dataset, self.test_dataset = random_split(
-                dataset, [train_size, val_size, test_size]
+    def setup(self, stage: str = None):
+        if self.mode != "train":
+            logger.error(
+                f"Datamodule mode is set to {self.mode} during training attempt. The data module does not allow this mode during training run."
             )
-        elif self.mode == "train":
-            self.train_dataset = BrainMRIDataset(self.datadir / "train")
-            self.val_dataset = BrainMRIDataset(self.datadir / "val")
-            self.test_dataset = BrainMRIDataModule(self.datadir / "test")
+            sys.exit(1)
+
+        # Use processed datasets from split directory structure
+        self.train_dataset = BrainMRIDataset(self.datadir / "train")
+        self.val_dataset = BrainMRIDataset(self.datadir / "val")
+        self.test_dataset = BrainMRIDataModule(self.datadir / "test")
 
     def train_dataloader(self):
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
