@@ -118,7 +118,7 @@ class ImageAugmenter:
         :return: List of paths to images.
         """
         class_dir = self.datadir / cls
-        return [p for p in class_dir.iterdir() if p.is_file() and p.suffix.lower() in {".png", ".JPG", ".jpg", ".jpeg"}]
+        return [p for p in class_dir.iterdir() if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg"}]
 
     def _augment_image(self, image_path: Path):
         """
@@ -172,7 +172,7 @@ class BrainMRIDataset(Dataset):
         for label, folder in enumerate(["no", "yes"]):
             category_path = datadir / folder
             for fname in category_path.iterdir():
-                if fname.is_file() and fname.suffix.lower() in {".jpg", ".jpeg", ".png", ".JPG"}:
+                if fname.is_file() and fname.suffix.lower() in {".jpg", ".jpeg", ".png"}:
                     self.image_paths.append(fname)
                     self.labels.append(label)
 
@@ -362,8 +362,13 @@ def augment_data(
 @app.command()
 def preprocess(
     datadir: Annotated[
-        str, typer.Option("--indir", "-i", help="Input directory of raw data containing 'yes' and 'no' subdirectories")
-    ] = "data/raw",
+        str,
+        typer.Option(
+            "--indir",
+            "-i",
+            help="Input directory of data containing 'train', 'validation' and 'test' directories, with 'yes' and 'no' subdirectories",
+        ),
+    ] = "data/split",
     output_folder: Annotated[
         str, typer.Option("--outdir", "-o", help="Output directory of preprocessed files")
     ] = "data/processed",
@@ -375,8 +380,11 @@ def preprocess(
     logger.add("logs/data_preprocess.log", level="DEBUG")
     logger.info("Preprocessing data...")
     pl.seed_everything(seed)
-    dataset = BrainMRIDataset(Path(datadir))
-    dataset.preprocess(Path(output_folder))
+    datadir = Path(datadir)
+    output_folder = Path(output_folder)
+    for split in ["train", "val", "test"]:
+        dataset = BrainMRIDataset(datadir=datadir / split)
+        dataset.preprocess(output_folder=output_folder / split)
 
 
 @app.command()
