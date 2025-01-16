@@ -1,124 +1,89 @@
+from loguru import logger
+import hydra
+from omegaconf import OmegaConf
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torchvision import transforms, datasets
-from torch.utils.data import DataLoader, random_split
-import os
-import numpy as np
-from collections import Counter
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from pathlib import Path
+from mlops_project_tcs.model import VGG16Classifier
+from mlops_project_tcs.data import BrainMRIDataModule
 
-# Import the custom model
-from model import VGG16Classifier
 
-# Define paths
-data_dir = "data/processed"
+def get_accelerator():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    if device == "cuda":
+        logger.info(f"Training on device type: {device} ({torch.cuda.get_device_name(device)})")
+    else:
+        logger.info(f"Training on device type: {device}")
 
-# Define transformations
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),  # Resize to VGG-16 input size
-    transforms.RandomHorizontalFlip(),  # Data augmentation
-    transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # VGG-16 normalization
-])
+    return device
 
-# Load dataset
-dataset = datasets.ImageFolder(data_dir, transform=transform)
 
-# Identify class distribution
-class_counts = Counter([label for _, label in dataset.samples])
-print(f"Class distribution: {class_counts}")
+@hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
+def train_model(config) -> dict:
+    """Train VAE on MNIST."""
+    logger.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
+    hydra_output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
+    logger.add(hydra_output_dir / "training.log", level="DEBUG")
+    pl.seed_everything(config.experiment.hyperparameter["seed"], workers=True)
 
-# Define train/val split ratio
-train_size = int(0.8 * len(dataset))
-val_size = len(dataset) - train_size
-train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+    model = VGG16Classifier(
+        input_size=config.experiment.model["input_size"],
+        hidden_size=config.experiment.model["hidden_size"],
+        num_classes=config.experiment.dataset["num_classes"],
+        dropout_p=config.experiment.model["dropout_p"],
+        criterion=hydra.utils.instantiate(config.experiment.model.loss_fn),
+    )
+    model.configure_optimizers(
+        optimizer=hydra.utils.instantiate(config.experiment.hyperparameter.optimizer, params=model.parameters())
+    )
+    data_module = BrainMRIDataModule(
+        datadir=config.experiment.dataset["processed_dir"],
+        batch_size=config.experiment.dataset["batch_size"],
+        val_split=config.experiment.dataset["val_split"],
+        test_split=config.experiment.dataset["test_split"],
+        num_workers=1,
+    )
 
-# Balance the datasets by duplicating images from the underrepresented class
-def balance_dataset(dataset, original_dataset, target_class='no', duplication_factor=2):
-    # Get indices of the images for the 'no' and 'yes' classes from the original dataset
-    class_to_idx = original_dataset.class_to_idx
-    target_class_idx = class_to_idx[target_class]
-    
-    # Get indices for the underrepresented class
-    target_class_indices = [i for i, (_, label) in enumerate(original_dataset.samples) if label == target_class_idx]
+    accelerator = get_accelerator()
 
-    # Duplicate images from the underrepresented class
-    additional_samples = target_class_indices * duplication_factor
-    balanced_samples = dataset.indices + additional_samples  # Use indices instead of samples directly
+    # Setup trainer
+    if config.profiling["training_profiling"]:
+        profiling = "simple"
+    else:
+        profiling = None
+    wand_logger = pl.loggers.WandbLogger(project="dtu_mlops")
+    checkpoint_callback = ModelCheckpoint(dirpath="./models", monitor="val_loss", mode="min")
+    early_stopping_callback = EarlyStopping(
+        monitor="val_loss", patience=config.experiment.hyperparameter["patience"], verbose=True, mode="min"
+    )
 
-    # Create a new Subset with the balanced indices
-    balanced_dataset = torch.utils.data.Subset(original_dataset, balanced_samples)
-    return balanced_dataset
+    trainer = pl.Trainer(
+        default_root_dir=hydra_output_dir,
+        accelerator=accelerator,
+        log_every_n_steps=10,
+        max_epochs=config.experiment.hyperparameter["n_epochs"],
+        profiler=profiling,
+        logger=wand_logger,
+        callbacks=[checkpoint_callback, early_stopping_callback],
+    )
 
-# Balance only the training dataset, not the validation dataset
-train_dataset = balance_dataset(train_dataset, dataset, target_class='no', duplication_factor=2)
+    # Train
+    logger.info("Start training ...")
+    trainer.fit(model, datamodule=data_module)
+    logger.info("Finish!!")
 
-# Update dataset sizes after balancing
-dataset_sizes = {"train": len(train_dataset), "val": len(val_dataset)}
+    # Collect training results
+    results = {
+        "status": "success",
+        "final_epoch": trainer.current_epoch,
+        "best_val_loss": checkpoint_callback.best_model_score.item() if checkpoint_callback.best_model_score else None,
+        "total_epochs": config.experiment.hyperparameter["n_epochs"],
+    }
 
-# Create DataLoaders
-batch_size = 32
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    return results
 
-# Get class names
-class_names = dataset.classes
 
-# Check if CUDA is available
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-# Print info
-print(f"Classes: {class_names}")
-print(f"Total dataset size: {len(dataset)}")
-print(f"Training set size: {len(train_dataset)}")
-print(f"Validation set size: {len(val_dataset)}")
-print(f"Using device: {device}")
-
-# Initialize the custom model
-model = VGG16Classifier(num_classes=len(class_names))
-model = model.to(device)
-
-# Define loss function and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.vgg16.classifier.parameters(), lr=1e-4)  # Train only classifier layers
-
-# Training loop
-num_epochs = 10
-for epoch in range(num_epochs):
-    print(f"Epoch {epoch + 1}/{num_epochs}")
-    print("-" * 20)
-
-    for phase in ['train', 'val']:
-        if phase == 'train':
-            model.train()  # Set model to training mode
-            dataloader = train_loader
-        else:
-            model.eval()  # Set model to evaluation mode
-            dataloader = val_loader
-
-        running_loss = 0.0
-        correct_predictions = 0
-
-        for inputs, labels in dataloader:
-            inputs, labels = inputs.to(device), labels.to(device)
-
-            optimizer.zero_grad()
-            with torch.set_grad_enabled(phase == 'train'):
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-                _, preds = torch.max(outputs, 1)
-
-                if phase == 'train':
-                    loss.backward()
-                    optimizer.step()
-
-            running_loss += loss.item() * inputs.size(0)
-            correct_predictions += torch.sum(preds == labels.data)
-
-        epoch_loss = running_loss / dataset_sizes[phase]
-        epoch_acc = correct_predictions.double() / dataset_sizes[phase]
-        print(f"{phase.capitalize()} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}")
-
-# Save the trained model
-torch.save(model.state_dict(), "models/model.pth")
-print("Training complete. Model saved as 'models/model.pth'.")
+if __name__ == "__main__":
+    """ Train VGG16 using hydra configurations """
+    train_model()

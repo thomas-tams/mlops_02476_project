@@ -1,2 +1,2 @@
-training_profiling: True
+training_profiling: False
 evaluation_profiling: False

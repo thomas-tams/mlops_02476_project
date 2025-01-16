@@ -1,0 +1,7 @@
+raw_dir: 'data/raw'
+processed_dir: 'data/processed'
+dataset_name: 'kaggle_brain'
+num_classes: 2
+batch_size: 10
+val_split: 0.2
+test_split: 0.1

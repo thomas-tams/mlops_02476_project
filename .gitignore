@@ -7,6 +7,16 @@ models/
 # Hydra outputs
 outputs/
 
+# WandB
+dtu_mlops/
+wandb/
+
+# Data statistic plots
+reports/data_statistics/*.png
+
+# VSCode stuff
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -179,3 +189,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/data

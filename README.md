@@ -2,7 +2,7 @@
 
 Casper Harreby - s204558
 Thomas Tams - s204540
-Sven Finderup - 
+Sven Finderup -
 
 MLOps project from the DTU course *02476 - Machine Learning Operations*
 
