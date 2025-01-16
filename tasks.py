@@ -37,10 +37,10 @@ def dev_requirements(ctx: Context) -> None:
 def prepare_data(ctx: Context) -> None:
     """Prepare dataset from download to processed and ready to use for training."""
     ctx.run("dvc pull")
-    ctx.run("python src/mlops_project_tcs/data.py balance", echo=True, pty=not WINDOWS)
-    ctx.run("python src/mlops_project_tcs/data.py split", echo=True, pty=not WINDOWS)
-    ctx.run("python src/mlops_project_tcs/data.py augment", echo=True, pty=not WINDOWS)
-    ctx.run("python src/mlops_project_tcs/data.py preprocess", echo=True, pty=not WINDOWS)
+    ctx.run(f"python src/{PROJECT_NAME}/data.py balance", echo=True, pty=not WINDOWS)
+    ctx.run(f"python src/{PROJECT_NAME}/data.py split", echo=True, pty=not WINDOWS)
+    ctx.run(f"python src/{PROJECT_NAME}/data.py augment", echo=True, pty=not WINDOWS)
+    ctx.run(f"python src/{PROJECT_NAME}/data.py preprocess", echo=True, pty=not WINDOWS)
 
 
 @task
