@@ -368,7 +368,7 @@ def preprocess(
             "-i",
             help="Input directory of data containing 'train', 'validation' and 'test' directories, with 'yes' and 'no' subdirectories",
         ),
-    ] = "data/split",
+    ] = "data/split_augmented",
     output_folder: Annotated[
         str, typer.Option("--outdir", "-o", help="Output directory of preprocessed files")
     ] = "data/processed",
