@@ -55,6 +55,11 @@ class BinaryClassBalancer:
         counts = {cls: len(self.file_paths[cls]) for cls in self.classes}
         minority_class = min(counts, key=counts.get)
         majority_class = max(counts, key=counts.get)
+
+        # This if statement avoids a bug when equally sized classes, resulting in minority and majority being the same class
+        if minority_class == majority_class:
+            majority_class = [cls for cls in self.classes if cls != majority_class][0]
+
         return minority_class, majority_class
 
     def balance_and_write(self):
