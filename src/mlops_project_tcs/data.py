@@ -224,9 +224,9 @@ class BrainMRIDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
 
         if self.mode == "data_prep":
-            self.data_prept_split_dataset()
+            self.data_prep_split_dataset()
 
-    def data_prept_split_dataset(self):
+    def data_prep_split_dataset(self):
         # Create the dataset
         dataset = BrainMRIDataset(self.datadir)
 
