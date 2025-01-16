@@ -5,9 +5,6 @@ from tests import _PATH_DATA, _TEST_ROOT
 from mlops_project_tcs.data import balance, split, augment, preprocess
 
 RAW_DATA_PATH = _PATH_DATA / "raw"
-BALANCED_DATA_PATH = _PATH_DATA / "balanced"
-SPLIT_DATA_PATH = _PATH_DATA / "split"
-AUGMENT_DATA_PATH = _PATH_DATA / "split_augmented"
 PROCESSED_DATA_PATH = _PATH_DATA / "processed"
 DUMMY_IMAGES_PATH = _TEST_ROOT / "resources" / "dummy_images"
 
@@ -23,7 +20,7 @@ def setup_dummy_data():
 
     yield
     # Cleanup after tests
-    # shutil.rmtree(RAW_DATA_PATH)
+    shutil.rmtree(RAW_DATA_PATH)
 
 
 @pytest.mark.parametrize("category", ["yes", "no"])
