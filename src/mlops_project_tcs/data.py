@@ -279,7 +279,7 @@ class BrainMRIDataModule(pl.LightningDataModule):
 
 
 @app.command()
-def balance_data(
+def balance(
     datadir: Annotated[
         str, typer.Option("--indir", "-i", help="Input directory of data containing 'yes' and 'no' subdirectories")
     ] = "data/raw",
@@ -296,7 +296,7 @@ def balance_data(
 
 
 @app.command()
-def split_data(
+def split(
     datadir: Annotated[
         str, typer.Option("--indir", "-i", help="Input directory of data containing 'yes' and 'no' subdirectories")
     ] = "data/balanced",
@@ -316,7 +316,7 @@ def split_data(
 
 
 @app.command()
-def augment_data(
+def augment(
     datadir: Annotated[
         str,
         typer.Option(
@@ -376,7 +376,7 @@ def preprocess(
         int, typer.Option("--seed", "-s", help="Seed for reproducibility via pl.seed_everything(seed)")
     ] = 123,
 ) -> None:
-    """Preprocessing kaggle image data by cropping and resizing."""
+    """Preprocessing image data by cropping and resizing."""
     logger.add("logs/data_preprocess.log", level="DEBUG")
     logger.info("Preprocessing data...")
     pl.seed_everything(seed)
