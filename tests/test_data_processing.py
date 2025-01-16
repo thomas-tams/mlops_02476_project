@@ -20,7 +20,7 @@ def setup_dummy_data():
 
     yield
     # Cleanup after tests
-    shutil.rmtree(RAW_DATA_PATH)
+    shutil.rmtree(_PATH_DATA)
 
 
 @pytest.mark.parametrize("category", ["yes", "no"])
