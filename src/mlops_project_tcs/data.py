@@ -3,7 +3,6 @@ from loguru import logger
 from typing import Union, Annotated, Literal
 import shutil
 import typer
-import kagglehub
 from PIL import Image
 from torchvision import transforms
 import torch
@@ -17,34 +16,6 @@ import random
 import sys
 
 app = typer.Typer()
-
-
-def get_kaggle_dataset(kaggle_handle: str, raw_data_dir: Union[Path, str]) -> None:
-    """Download dataset using kagglehub and place it in the specified raw data folder."""
-    try:
-        # Access data from kaggle
-        downloaded_path = kagglehub.dataset_download(kaggle_handle)
-        logger.info(f"Initial path to downloaded kaggle data: {downloaded_path}")
-    except Exception as e:
-        logger.error(f"Failed to download dataset from Kaggle: {e}")
-        return
-
-    # Removing double data (for some reason this kaggle dataset contains double up on the dataset)
-    if kaggle_handle == "navoneel/brain-mri-images-for-brain-tumor-detection":
-        downloaded_path = Path(downloaded_path)
-        brain_tumor_dataset_path = downloaded_path / "brain_tumor_dataset"
-        if brain_tumor_dataset_path.exists() and brain_tumor_dataset_path.is_dir():
-            shutil.rmtree(brain_tumor_dataset_path)
-            logger.info(f"Removed directory: {brain_tumor_dataset_path}")
-
-    # Ensure the target folder exists
-    raw_data_dir = Path(raw_data_dir)
-    raw_data_dir.mkdir(parents=True, exist_ok=True)
-
-    # Copy files to raw directory
-    logger.info(f"Copying dataset contents from {downloaded_path} to {raw_data_dir}...")
-    shutil.copytree(downloaded_path, raw_data_dir, dirs_exist_ok=True)
-    logger.info(f"Dataset successfully placed in: {raw_data_dir}")
 
 
 class BinaryClassBalancer:
@@ -305,21 +276,6 @@ class BrainMRIDataModule(pl.LightningDataModule):
                 image_pil = transforms.ToPILImage()(image)
                 image_pil.save(output_path)
                 logger.info(f"Saved {split_name} image: {output_path}")
-
-
-@app.command()
-def download(
-    kaggle_handle: Annotated[
-        str, typer.Option("--kaggle_handle", "-kh", help="Kaggle handle pointing to download location")
-    ] = "navoneel/brain-mri-images-for-brain-tumor-detection",
-    raw_data_dir: Annotated[
-        str, typer.Option("--output_dir", "-o", help="Output directory of the downloaded Kaggle data")
-    ] = "data/raw",
-) -> None:
-    """Downloading kaggle data using kagglehub."""
-    logger.add("logs/data_download.log", level="DEBUG")
-    logger.info("Downloading and preparing raw data...")
-    get_kaggle_dataset(kaggle_handle, raw_data_dir)
 
 
 @app.command()
