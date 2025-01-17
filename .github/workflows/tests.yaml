@@ -56,4 +56,4 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
 
     - name: Submit build
-      run: gcloud beta builds submit --quiet --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="dtumlops_baseimage"
+      run: gcloud builds submit --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="dtumlops_baseimage"
