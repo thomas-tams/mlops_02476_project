@@ -59,8 +59,11 @@ def test(ctx: Context) -> None:
 @task
 def docker_build(ctx: Context) -> None:
     """Build docker images."""
-    ctx.run("docker build -t train:latest . -f dockerfiles/train.dockerfile", echo=True, pty=not WINDOWS)
-    ctx.run("docker build -t api:latest . -f dockerfiles/api.dockerfile", echo=True, pty=not WINDOWS)
+    ctx.run(
+        "docker build -t dtumlops_base:latest . -f dockerfiles/dtumlops_baseimage.dockerfile",
+        echo=True,
+        pty=not WINDOWS,
+    )
 
 
 @task(docker_build)
