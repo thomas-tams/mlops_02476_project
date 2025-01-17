@@ -6,12 +6,19 @@ RUN apt update && \
     apt clean && rm -rf /var/lib/apt/lists
 
 # Copy files from local to docker image
-COPY src/ src/
-COPY requirements.txt requirements.txt
-COPY requirements_dev.txt requirements_dev.txt
-COPY README.md README.md
-COPY pyproject.toml pyproject.toml
+WORKDIR /app
+COPY requirements.txt /app/
+COPY pyproject.toml /app/
+COPY .dvc /app/.dvc/
+COPY data.dvc /app/
+COPY .git /app/.git/
+
+COPY src /app/src/
+
+COPY README.md /app/README.md
+COPY tasks.py /app/tasks.py
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --no-cache-dir --verbose
 RUN pip install . --no-deps --no-cache-dir --verbose
+RUN invoke prepare-data

@@ -60,7 +60,7 @@ def test(ctx: Context) -> None:
 def docker_build(ctx: Context) -> None:
     """Build docker images."""
     ctx.run(
-        "docker build -t dtumlops_base:latest . -f dockerfiles/dtumlops_baseimage.dockerfile",
+        "docker build -t dtumlops_baseimage:latest . -f dockerfiles/dtumlops_baseimage.dockerfile",
         echo=True,
         pty=not WINDOWS,
     )
@@ -83,3 +83,15 @@ def build_docs(ctx: Context) -> None:
 def serve_docs(ctx: Context) -> None:
     """Serve documentation."""
     ctx.run("mkdocs serve --config-file docs/mkdocs.yaml", echo=True, pty=not WINDOWS)
+
+
+@task()
+def docker_remove(ctx: Context) -> None:
+    """Removes dtumlops_baseimage"""
+    ctx.run("docker rmi dtumlops_baseimage")
+
+
+@task()
+def docker_interactive(ctx: Context) -> None:
+    """Runs dtumlops_baseimage"""
+    ctx.run("docker run --rm -it dtumlops_baseimage")
