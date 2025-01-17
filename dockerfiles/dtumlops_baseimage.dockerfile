@@ -21,4 +21,5 @@ COPY tasks.py /app/tasks.py
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --no-cache-dir --verbose
 RUN pip install . --no-deps --no-cache-dir --verbose
-RUN invoke prepare-data
+
+CMD ["invoke", "prepare-data"]
