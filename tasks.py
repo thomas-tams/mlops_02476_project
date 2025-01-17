@@ -67,13 +67,15 @@ def docker_build(ctx: Context) -> None:
 
 
 @task()
-def docker_build_gpu(ctx: Context) -> None:
-    """Build docker images with gpu support"""
-    ctx.run(
-        "docker build -t dtumlops_cudaimage:latest . -f dockerfiles/dtumlops_cudaimage.dockerfile",
-        echo=True,
-        pty=not WINDOWS,
-    )
+def docker_remove(ctx: Context) -> None:
+    """Removes dtumlops_baseimage"""
+    ctx.run("docker rmi dtumlops_baseimage")
+
+
+@task()
+def docker_purge_all(ctx: Context) -> None:
+    """Purges all docker images, volumes and cache. Use with caution"""
+    ctx.run("docker system prune -a --volumes")
 
 
 # Documentation commands
@@ -87,21 +89,3 @@ def build_docs(ctx: Context) -> None:
 def serve_docs(ctx: Context) -> None:
     """Serve documentation."""
     ctx.run("mkdocs serve --config-file docs/mkdocs.yaml", echo=True, pty=not WINDOWS)
-
-
-@task()
-def docker_remove(ctx: Context) -> None:
-    """Removes dtumlops_baseimage"""
-    ctx.run("docker rmi dtumlops_baseimage")
-
-
-@task()
-def docker_interactive(ctx: Context) -> None:
-    """Runs dtumlops_baseimage"""
-    ctx.run("docker run --rm -it dtumlops_baseimage")
-
-
-@task()
-def docker_purge_all(ctx: Context) -> None:
-    """Purges all docker images, volumes and cache. Use with caution"""
-    ctx.run("docker system prune -a --volumes")
