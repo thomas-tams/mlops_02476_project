@@ -56,7 +56,7 @@ def test(ctx: Context) -> None:
     ctx.run("coverage report -m", echo=True, pty=not WINDOWS)
 
 
-@task
+@task(prepare_data)
 def docker_build(ctx: Context) -> None:
     """Build docker images."""
     ctx.run(

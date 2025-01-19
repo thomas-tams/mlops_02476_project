@@ -14,18 +14,13 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Copy files from local to docker image
 WORKDIR /app
+COPY README.md /app/
 COPY requirements.txt /app/
 COPY pyproject.toml /app/
-COPY .dvc /app/.dvc/
-COPY data.dvc /app/
-COPY .git /app/.git/
-
+COPY data /app/data/
 COPY src /app/src/
 
-COPY README.md /app/README.md
-COPY tasks.py /app/tasks.py
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --no-cache-dir --verbose
 RUN pip install . --no-deps --no-cache-dir --verbose
-RUN invoke prepare-data
