@@ -65,14 +65,13 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Authenticate DVC with Google Cloud
-      run: |
-        echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > /tmp/google_credentials.json
-        export GOOGLE_APPLICATION_CREDENTIALS="/tmp/google_credentials.json"
-
     - name: Pull data with DVC
       run: |
-        dvc pull
+        dvc pull -v
+
+    - name: Prepare data from raw
+      run: |
+        invoke prepare-data
 
     - name: Submit build
       run: gcloud builds submit --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="dtumlops_baseimage"
