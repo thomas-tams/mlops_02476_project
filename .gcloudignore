@@ -1,5 +1,4 @@
 # Ignore directories
-.dvc/cache/
 .ruff_cache/
 .pytest_cache/
 wandb/
