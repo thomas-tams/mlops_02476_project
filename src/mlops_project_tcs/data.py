@@ -207,7 +207,7 @@ class BrainMRIDataset(Dataset):
             output_dir = label_folder / Path(img_path).name
             processed_image_pil = transforms.ToPILImage()(processed_image)  # Convert tensor to PIL Image
             processed_image_pil.save(output_dir)
-            logger.info(f"Processed and saved: {output_dir}")
+            logger.debug(f"Processed and saved: {output_dir}")
 
 
 class BrainMRIDataModule(pl.LightningDataModule):
@@ -288,7 +288,7 @@ class BrainMRIDataModule(pl.LightningDataModule):
                 output_path = label_folder / f"{string_label}_{split_name}_{i}.png"
                 image_pil = transforms.ToPILImage()(image)
                 image_pil.save(output_path)
-                logger.info(f"Saved {split_name} image: {output_path}")
+                logger.debug(f"Saved {split_name} image: {output_path}")
 
 
 @app.command()
