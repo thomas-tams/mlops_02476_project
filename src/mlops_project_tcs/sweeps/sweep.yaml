@@ -1,0 +1,23 @@
+program: src/mlops_project_tcs/train.py  # The script that executes your training logic
+method: bayes  # Choose the optimization method ('grid', 'random', or 'bayes')
+metric:
+  name: val_loss  # Metric to optimize
+  goal: minimize  # 'minimize' or 'maximize'
+parameters:
+  experiment.hyperparameter.optimizer.lr:
+    min: 0.00001  # Minimum learning rate
+    max: 0.001  # Maximum learning rate
+  experiment.hyperparameter.n_epochs:
+    values: [20, 30]  # Number of epochs
+  experiment.hyperparameter.optimizer.weight_decay:
+    min: 0.0
+    max: 0.05
+  experiment.model.dropout_p:
+    min: 0.1
+    max: 0.5
+
+command:
+  - ${env}
+  - python
+  - ${program}
+  - ${args_no_hyphens}

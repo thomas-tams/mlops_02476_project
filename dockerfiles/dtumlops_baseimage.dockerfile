@@ -13,6 +13,9 @@ RUN python3 -m venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+ARG WANDB_API_KEY
+ENV WANDB_API_KEY=$WANDB_API_KEY
+
 # Copy files from local to docker image
 WORKDIR /app
 COPY requirements.txt /app/

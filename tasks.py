@@ -65,8 +65,9 @@ def test(ctx: Context) -> None:
 @task(prepare_data)
 def docker_build(ctx: Context) -> None:
     """Build docker images."""
+    res = ctx.run("cat wandb_api.txt", hide=True)
     ctx.run(
-        "docker build -t dtumlops_baseimage:latest . -f dockerfiles/dtumlops_baseimage.dockerfile",
+        f"docker build --build-arg WANDB_API_KEY={res.stdout.strip()} -t dtumlops_baseimage:latest . -f dockerfiles/dtumlops_baseimage.dockerfile",
         echo=True,
         pty=not WINDOWS,
     )

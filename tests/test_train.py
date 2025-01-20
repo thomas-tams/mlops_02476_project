@@ -49,7 +49,15 @@ def mock_wandb_logger():
         yield mock_logger_instance
 
 
-def test_train_model(setup_dummy_data, mock_hydra_config, mock_trainer, mock_wandb_logger):
+@pytest.fixture
+def mock_wandb_init():
+    with patch("wandb.init") as mock_init:
+        mock_init_instance = MagicMock()
+        mock_init.return_value = mock_init_instance
+        yield mock_init_instance
+
+
+def test_train_model(setup_dummy_data, mock_hydra_config, mock_trainer, mock_wandb_logger, mock_wandb_init):
     """Test the train_model function."""
     # Adding mocks to avoid writing / sending / receiving unnessecary data
     with patch("mlops_project_tcs.train.get_accelerator", return_value="cpu"):

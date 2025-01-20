@@ -1,3 +1,4 @@
 defaults:
     - experiment: exp3
     - profiling: no_profiling
+    - wandbconf: default_wandb
