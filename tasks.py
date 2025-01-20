@@ -34,6 +34,12 @@ def dev_requirements(ctx: Context) -> None:
 
 # Project commands
 @task
+def launch(ctx: Context) -> None:
+    """Launches a uvicorn api server accessible through 'http://localhost:8000/'"""
+    ctx.run("uvicorn --reload --port 8000 src.mlops_project_tcs.api:app")
+
+
+@task
 def prepare_data(ctx: Context) -> None:
     """Prepare dataset from download to processed and ready to use for training."""
     ctx.run("dvc pull")
