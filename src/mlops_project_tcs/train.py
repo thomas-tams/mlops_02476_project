@@ -7,6 +7,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from pathlib import Path
 from mlops_project_tcs.model import VGG16Classifier
 from mlops_project_tcs.data import BrainMRIDataModule
+import wandb
 
 
 def get_accelerator():
@@ -26,6 +27,11 @@ def train_model(config) -> dict:
     hydra_output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
     logger.add(hydra_output_dir / "training.log", level="DEBUG")
     pl.seed_everything(config.experiment.hyperparameter["seed"], workers=True)
+
+    wandb.config = OmegaConf.to_container(
+        config, resolve=True, throw_on_missing=True
+    )
+    wandb.init(project=config.wandbconf.project, )
 
     model = VGG16Classifier(
         input_size=config.experiment.model["input_size"],
