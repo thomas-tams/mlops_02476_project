@@ -29,7 +29,7 @@ def train_model(config) -> dict:
     pl.seed_everything(config.experiment.hyperparameter["seed"], workers=True)
 
     wandb.config = OmegaConf.to_container(config, resolve=True, throw_on_missing=True)
-    wandb.init(project=config.wandbconf.project)
+    wandb.init(project=config.wandbconf.project, name=hydra_output_dir.name)
 
     model = VGG16Classifier(
         input_size=config.experiment.model["input_size"],
@@ -76,6 +76,40 @@ def train_model(config) -> dict:
     logger.info("Start training ...")
     trainer.fit(model, datamodule=data_module)
     logger.info("Finish!!")
+
+    # Export the best checkpoint model to ONNX
+    best_model_path = checkpoint_callback.best_model_path
+    if best_model_path:
+        model = VGG16Classifier.load_from_checkpoint(
+            best_model_path,
+            input_size=config.experiment.model["input_size"],
+            hidden_size=config.experiment.model["hidden_size"],
+            num_classes=config.experiment.dataset["num_classes"],
+            dropout_p=config.experiment.model["dropout_p"],
+            criterion=hydra.utils.instantiate(config.experiment.model.loss_fn),
+        )
+
+        val_loss = checkpoint_callback.best_model_score.item() if checkpoint_callback.best_model_score else "unknown"
+        onnx_path = hydra_output_dir / f"best_model_val_loss_{val_loss:.4f}.onnx"
+        logger.info(f"Exporting the best model: {best_model_path} into ONNX: {onnx_path}")
+        dummy_input = torch.randn(1, 3, 224, 224)
+        model.to_onnx(
+            file_path=onnx_path,
+            input_sample=dummy_input,
+            input_names=["input"],
+            output_names=["output"],
+            dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}},
+        )
+
+    # Remove all models in the models/ directory
+    models_dir = Path("./models")
+    logger.info(f"Removing model checkpoints (*.ckpt) in {models_dir}/")
+    for model_file in models_dir.glob("*.ckpt"):
+        try:
+            model_file.unlink()
+            logger.debug(f"Removed model file: {model_file}")
+        except Exception as e:
+            logger.error(f"Error removing model file {model_file}: {e}")
 
     # Collect training results
     results = {
