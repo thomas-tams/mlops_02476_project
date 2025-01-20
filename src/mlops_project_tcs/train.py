@@ -28,10 +28,10 @@ def train_model(config) -> dict:
     logger.add(hydra_output_dir / "training.log", level="DEBUG")
     pl.seed_everything(config.experiment.hyperparameter["seed"], workers=True)
 
-    wandb.config = OmegaConf.to_container(
-        config, resolve=True, throw_on_missing=True
+    wandb.config = OmegaConf.to_container(config, resolve=True, throw_on_missing=True)
+    wandb.init(
+        project=config.wandbconf.project,
     )
-    wandb.init(project=config.wandbconf.project, )
 
     model = VGG16Classifier(
         input_size=config.experiment.model["input_size"],

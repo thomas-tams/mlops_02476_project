@@ -3,6 +3,7 @@ import torch
 from torch import nn
 from torchmetrics.classification import Accuracy
 
+
 class MyModel(pl.LightningModule):
     def __init__(self, hidden_dim: int = 128, learning_rate: float = 0.001):
         super().__init__()
@@ -22,8 +23,8 @@ class MyModel(pl.LightningModule):
         y_hat = self(x)
         loss = nn.CrossEntropyLoss()(y_hat, y)
         acc = self.accuracy(y_hat, y)
-        self.log('train_loss', loss)
-        self.log('train_acc', acc)
+        self.log("train_loss", loss)
+        self.log("train_acc", acc)
         return loss
 
     def configure_optimizers(self):
