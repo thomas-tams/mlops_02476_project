@@ -31,6 +31,7 @@ class VGG16Classifier(pl.LightningModule):
             nn.ReLU(inplace=True),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_size, self.num_classes),
+            nn.Softmax(dim=1),  # Add softmax layer
         )
 
     def forward(self, x):

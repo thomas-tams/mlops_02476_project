@@ -1,14 +1,55 @@
 from fastapi import FastAPI
 from http import HTTPStatus
-from enum import Enum
-from pydantic import BaseModel
-import re
+from typing import List
 import numpy as np
-from fastapi import UploadFile, File
-from fastapi.responses import FileResponse
+from fastapi import File, UploadFile
 import cv2
+from mlops_project_tcs.evaluate import ONNXEvaluate
+from contextlib import asynccontextmanager
+from google.cloud import storage
+import os
+from PIL import Image
+
 
 app = FastAPI()
+
+
+def download_model_from_gcs(bucket_name: str, gcs_path: str, local_path: str):
+    """
+    Downloads a model from GCS to the local machine.
+
+    Args:
+        bucket_name (str): Name of the GCS bucket.
+        gcs_path (str): Path to the model in the GCS bucket (e.g., 'models/best_model.onnx').
+        local_path (str): Local path to save the model (e.g., 'best_model.onnx').
+    """
+    client = storage.Client()
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(gcs_path)
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+    blob.download_to_filename(local_path)
+    print(f"Model successfully downloaded to {local_path}")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load and clean up model on startup and shutdown."""
+    global onnx_model
+    print("Loading model")
+
+    bucket_name = "mlops_dtu_model_onnx"
+    model_path = "models/best_model_val_loss_0.5177.onnx"
+    if not os.path.exists(model_path):
+        download_model_from_gcs(bucket_name=bucket_name, gcs_path=model_path, local_path=model_path)
+    onnx_model = ONNXEvaluate(onnx_model_path=model_path)
+
+    yield
+
+    print("Cleaning up")
+    del onnx_model
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
@@ -21,67 +62,43 @@ def root():
     return response
 
 
-class ItemEnum(Enum):
-    alexnet = "alexnet"
-    resnet = "resnet"
-    lenet = "lenet"
+@app.post("/predict/")
+async def predict(image_files: List[UploadFile] = File(...)):
+    """
+    Endpoint to handle multiple image uploads and return predictions for each.
 
+    Args:
+        image_files (List[UploadFile]): List of uploaded image files.
 
-@app.get("/restric_items/{item_id}")
-def read_item(item_id: ItemEnum):
-    return {"item_id": item_id}
+    Returns:
+        dict: Dictionary containing predictions for each uploaded file.
+    """
+    predictions = {}
 
+    for image_file in image_files:
+        try:
+            # Read and process each image file
+            image = await image_file.read()
+            nparr = np.frombuffer(image, np.uint8)
+            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
-class EmailItem(BaseModel):
-    email: str
-    domain_match: str
+            # Evaluate the image using the ONNX model
+            res = onnx_model.evaluate_image(image=image)
+            res = res.tolist()
 
+            # Store the result in the dictionary
+            predictions[image_file.filename] = {
+                "result": res,
+                "message": HTTPStatus.OK.phrase,
+                "status-code": HTTPStatus.OK,
+            }
+        except Exception as e:
+            # Handle errors for individual files
+            predictions[image_file.filename] = {
+                "result": None,
+                "message": str(e),
+                "status-code": HTTPStatus.INTERNAL_SERVER_ERROR,
+            }
 
-@app.get("/text_model/")
-def contains_email(data: EmailItem):
-    regex = r"@(hotmail|gmail)\b"
-    response = {
-        "input": data,
-        "message": HTTPStatus.OK.phrase,
-        "status-code": HTTPStatus.OK,
-        "is_acceptable_domain": re.fullmatch(regex, data.domain_match) is not None,
-    }
-    return response
-
-
-@app.post("/cv_model/")
-async def cv_model(image_file: UploadFile = File(...), resize_height: int = 28, resize_width: int = 28):
-    # Read the uploaded image file
-    contents = await image_file.read()
-    np_array = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-
-    if img is None:
-        return {"error": "Invalid image file"}
-
-    # Resize the image
-    resized_img = cv2.resize(img, (resize_width, resize_height))
-
-    # Save the resized image to disk
-    output_path = "image_resize.jpg"
-    cv2.imwrite(output_path, resized_img)
-
-    return FileResponse(
-        output_path, media_type="image/jpeg", headers={"Content-Disposition": f"attachment; filename={output_path}"}
-    )
-
-
-# POST method
-database = {"username": [], "password": []}
-
-
-@app.post("/login/")
-def login(username: str, password: str):
-    username_db = database["username"]
-    password_db = database["password"]
-    if username not in username_db and password not in password_db:
-        with open("database.csv", "a") as file:
-            file.write(f"{username},{password}\n")
-        username_db.append(username)
-        password_db.append(password)
-    return "login saved"
+    return predictions
