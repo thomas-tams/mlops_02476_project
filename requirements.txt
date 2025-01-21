@@ -21,3 +21,5 @@ invoke==2.2.0
 onnx==1.17.0
 onnxruntime==1.19.2
 onnxscript==0.1.0.dev20250120
+streamlit==1.41.1
+google-cloud-run>=0.10.5
