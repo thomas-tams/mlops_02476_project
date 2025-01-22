@@ -1,5 +1,9 @@
+# Secrets
 wandb_api.txt
 bucket_manager.json
+
+# Data statistics reports
+reports/data_statistics/
 
 # Do not include dataset
 data/
