@@ -4,6 +4,8 @@ from typing import Union, Annotated, Literal
 import shutil
 import typer
 from PIL import Image
+import numpy as np
+import cv2
 from torchvision import transforms
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
@@ -132,8 +134,11 @@ class ImageAugmenter:
         :return: Augmented PIL image.
         """
         image = Image.open(image_path)
+        image_np = np.array(image)
+        padded_image = cv2.copyMakeBorder(image_np, 50, 50, 50, 50, cv2.BORDER_CONSTANT, value=(0, 0, 0))
+        padded_image_pil = Image.fromarray(padded_image)
         angle = random.uniform(-30, 30)  # Random rotation angle between -30 and 30 degrees
-        return image.rotate(angle, resample=Image.BICUBIC, expand=True)
+        return padded_image_pil.rotate(angle, resample=Image.BICUBIC, expand=True)
 
     def _save_image(self, image: Image.Image, cls: str):
         """
@@ -141,9 +146,9 @@ class ImageAugmenter:
         :param image: Augmented PIL image.
         :param cls: Class name ('yes' or 'no').
         """
-        filename = f"aug_{random.randint(100000, 999999)}.png"
+        filename = f"aug_{random.randint(100000, 999999)}.jpg"
         while (self.output_dir / cls / filename).exists():
-            filename = f"aug_{random.randint(100000, 999999)}.png"
+            filename = f"aug_{random.randint(100000, 999999)}.jpg"
         save_path = self.output_dir / cls / filename
         image.save(save_path)
 
@@ -169,7 +174,12 @@ class BrainMRIDataset(Dataset):
         self.datadir = datadir
         self.image_paths = []
         self.labels = []
-        self.transform = transforms.ToTensor()
+        self.transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ],
+        )
         self.load_image_paths(self.datadir)
 
     def load_image_paths(self, datadir: Union[Path, str]):
@@ -285,7 +295,7 @@ class BrainMRIDataModule(pl.LightningDataModule):
                 string_label = "no" if label == 0 else "yes"
                 label_folder = split_dir / string_label
                 label_folder.mkdir(parents=True, exist_ok=True)
-                output_path = label_folder / f"{string_label}_{split_name}_{i}.png"
+                output_path = label_folder / f"{string_label}_{split_name}_{i}.jpg"
                 image_pil = transforms.ToPILImage()(image)
                 image_pil.save(output_path)
                 logger.debug(f"Saved {split_name} image: {output_path}")
