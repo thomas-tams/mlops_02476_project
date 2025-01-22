@@ -3,22 +3,26 @@ import torch
 from PIL import Image
 import cv2
 import imutils
+from typing import Union, Tuple
 
 
 class CropExtremePoints:
-    def __init__(self, add_pixels_value=0, target_size=(224, 224)):
+    def __init__(self, add_pixels_value: int = 0, target_size: Tuple[int, int] = (224, 224)) -> None:
         """
         Initialize the CropExtremePoints class.
 
+        Args:
             add_pixels_value (int): Number of pixels to expand the crop around the extreme points.
             target_size (tuple): Target size for the output image after cropping and resizing (default is 224x224).
         """
         self.add_pixels_value = add_pixels_value
         self.target_size = target_size
 
-    def __call__(self, img) -> torch.tensor:
+    def __call__(self, img: Union[Image.Image, np.ndarray, torch.Tensor]) -> torch.Tensor:
         """
         Perform the cropping and resizing operation.
+
+        Args:
             img (PIL Image, ndarray, or torch.Tensor): Input image.
 
         Returns:
@@ -34,7 +38,7 @@ class CropExtremePoints:
             img = img.permute(1, 2, 0).numpy()
 
         if isinstance(img, np.ndarray) and img.ndim == 3:
-            ## Ensures 3 color channels
+            # Ensures 3 color channels
             if img.shape[2] != 3:
                 raise ValueError("Image must have 3 channels (RGB).")
 

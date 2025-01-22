@@ -8,9 +8,16 @@ from pathlib import Path
 from mlops_project_tcs.model import VGG16Classifier
 from mlops_project_tcs.data import BrainMRIDataModule
 import wandb
+from typing import Dict, Any
 
 
-def get_accelerator():
+def get_accelerator() -> str:
+    """
+    Get the type of accelerator to use for training.
+
+    Returns:
+        str: Type of accelerator ('cuda' or 'cpu').
+    """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device == "cuda":
         logger.info(f"Training on device type: {device} ({torch.cuda.get_device_name(device)})")
@@ -21,8 +28,16 @@ def get_accelerator():
 
 
 @hydra.main(config_path="config", config_name="default_config.yaml", version_base="1.3")
-def train_model(config) -> dict:
-    """Train VAE on MNIST."""
+def train_model(config: Dict) -> Dict[str, Any]:
+    """
+    Train the VGG16 model using the provided configuration.
+
+    Args:
+        config (Dict): Configuration dictionary.
+
+    Returns:
+        Dict[str, Any]: Dictionary containing training results.
+    """
     logger.info(f"configuration: \n {OmegaConf.to_yaml(config)}")
     hydra_output_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
     logger.add(hydra_output_dir / "training.log", level="DEBUG")
