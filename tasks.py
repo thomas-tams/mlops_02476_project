@@ -50,6 +50,12 @@ def prepare_data(ctx: Context) -> None:
 
 
 @task
+def dataset_statistics(ctx: Context) -> None:
+    """Creates statistics for the prepared processed data"""
+    ctx.run("python src/mlops_project_tcs/data.py dataset-statistics -i data/processed/ -o reports/dataset_statistics/")
+
+
+@task
 def train(ctx: Context) -> None:
     """Train model."""
     ctx.run(f"python src/{PROJECT_NAME}/train.py", echo=True, pty=not WINDOWS)
