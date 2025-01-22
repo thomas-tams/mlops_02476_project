@@ -34,9 +34,15 @@ def dev_requirements(ctx: Context) -> None:
 
 # Project commands
 @task
-def launch(ctx: Context) -> None:
+def launch_api(ctx: Context) -> None:
     """Launches a uvicorn api server accessible through 'http://localhost:8000/'"""
     ctx.run("uvicorn --reload --port 8000 src.mlops_project_tcs.api:app")
+
+
+@task
+def launch_streamlit(ctx: Context) -> None:
+    """Launches a streamlit frontend app"""
+    ctx.run("streamlit run src/mlops_project_tcs/frontend.py --server.port 8050 --server.address 0.0.0.0")
 
 
 @task
