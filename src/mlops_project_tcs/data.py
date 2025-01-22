@@ -562,11 +562,14 @@ def dataset_statistics(
 
     plot_images = []
     plot_labels = []
-    for i in range(25):
-        image, label = data_module.test_dataset[i]
+    for _ in range(25):
+        index = random.randint(0, len(data_module.test_dataset.image_paths) - 1)
+        image = data_module.test_dataset.image_paths[index]
+        label = data_module.test_dataset.labels[index]
+
         plot_images.append(image)
         plot_labels.append(label)
-    plot_image_grid_with_labels(images=plot_images, rows=5, cols=5, labels=plot_labels)
+    plot_image_grid_with_labels(image_paths=plot_images, rows=5, cols=5, labels=plot_labels)
     plt.savefig(savedir / "kaggle_example_images.png")
     plt.close()
 
