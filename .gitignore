@@ -2,9 +2,6 @@
 wandb_api.txt
 bucket_manager.json
 
-# Data statistics reports
-reports/data_statistics/
-
 # Do not include dataset
 data/
 
@@ -19,7 +16,7 @@ dtu_mlops/
 wandb/
 
 # Data statistic plots
-reports/data_statistics/*.png
+reports/dataset_statistics/*.png
 
 # VSCode stuff
 .vscode/
