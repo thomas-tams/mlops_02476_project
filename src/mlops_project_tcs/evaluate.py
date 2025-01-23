@@ -88,4 +88,5 @@ class ONNXEvaluate:
         """
         image_data = self._preprocess_image(image)
         res = self.run_inference(image_data)
+        res = torch.nn.functional.softmax(res, dim=1)
         return res, image_data
