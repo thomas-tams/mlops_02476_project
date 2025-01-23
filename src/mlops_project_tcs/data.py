@@ -167,7 +167,7 @@ class ImageAugmenter:
         Returns:
             Image.Image: Augmented PIL image.
         """
-        image = Image.open(image_path)
+        image = Image.open(image_path).convert('RGB')
         angle = random.uniform(-30, 30)  # Random rotation angle between -30 and 30 degrees
         return image.rotate(angle, resample=Image.BICUBIC, expand=True)
 
@@ -396,6 +396,7 @@ class BrainMRIDataModule(pl.LightningDataModule):
 
         splits = {"train": self.train_dataset, "val": self.val_dataset, "test": self.test_dataset}
 
+        """
         for split_name, dataset in splits.items():
             split_dir = output_dir / split_name
             split_dir.mkdir(parents=True, exist_ok=True)
@@ -407,6 +408,19 @@ class BrainMRIDataModule(pl.LightningDataModule):
                 image_pil = transforms.ToPILImage()(image)
                 image_pil.save(output_path)
                 logger.info(f"Saved {split_name} image: {output_path}")
+        """
+        for split_name, datasubset in splits.items():
+            split_dir = output_dir / split_name
+            split_dir.mkdir(parents=True, exist_ok=True)
+            for index in datasubset.indices:
+                label = self.prep_dataset.labels[index]
+                image_path = self.prep_dataset.image_paths[index]
+                string_label = "no" if label == 0 else "yes"
+                label_folder = split_dir / string_label
+                label_folder.mkdir(parents=True, exist_ok=True)
+                output_path = label_folder / f"{string_label}_{split_name}_{index}.jpg"
+                shutil.copy(image_path, output_path)
+                logger.info(f"Saved {split_name} image: {image_path} --> {output_path}")
 
 
 @app.command()
