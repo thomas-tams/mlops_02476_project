@@ -74,21 +74,37 @@ def test(ctx: Context) -> None:
     ctx.run("coverage report -m", echo=True, pty=not WINDOWS)
 
 
-@task(prepare_data)
-def docker_build(ctx: Context) -> None:
-    """Build docker images."""
-    res = ctx.run("cat wandb_api.txt", hide=True)
+@task()
+def docker_build_train(ctx: Context) -> None:
+    """Build local image (used for training). Requires wandb_api.txt file in home of repository, containing WANDB api key"""    
+    if not os.path.exists("data/"):
+        ctx.run("invoke prepare-data")
+    
+    res = ctx.run("cat wandb_api.txt", hide=True, pty=not WINDOWS)
     ctx.run(
-        f"docker build --build-arg WANDB_API_KEY={res.stdout.strip()} -t dtumlops_baseimage:latest . -f dockerfiles/dtumlops_baseimage.dockerfile",
+        f"docker build --build-arg WANDB_API_KEY={res.stdout.strip()} -t mlopsdtu_local_train:latest . -f dockerfiles/mlopsdtu_local_train.dockerfile",
         echo=True,
         pty=not WINDOWS,
     )
 
+@task()
+def docker_train_interactive(ctx: Context) -> None:
+    """Runs an interactive session of the mlopsdtu_local_train with gpus and mounted models/ outputs/ directories."""
+    ctx.run(
+        "docker run --rm --gpus all -it -v $(pwd)/outputs:/app/outputs -v $(pwd)/models:/app/models mlopsdtu_local_train sh",
+        echo=True,
+        pty=not WINDOWS,
+    )
+
+@task()
+def test_task(ctx: Context) -> None:
+    """test"""
+    ctx.run("echo $(pwd)")
 
 @task()
 def docker_remove(ctx: Context) -> None:
-    """Removes dtumlops_baseimage"""
-    ctx.run("docker rmi dtumlops_baseimage")
+    """Removes mlopsdtu_local_train"""
+    ctx.run("docker rmi mlopsdtu_local_train")
 
 
 @task()
