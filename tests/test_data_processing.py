@@ -50,8 +50,9 @@ def test_data_preprocessing(setup_dummy_data, category):
 
                     # Reopen the image to access its size (verify closes the file)
                     img = Image.open(img_file)
-                    assert img.size == (224, 224), (
-                        f"Image {img_file} has unexpected size {img.size}. Expected (224, 224)"
-                    )
+                    assert img.size == (
+                        224,
+                        224,
+                    ), f"Image {img_file} has unexpected size {img.size}. Expected (224, 224)"
             except Exception as e:
                 pytest.fail(f"Image {img_file} could not be opened or is invalid: {e}")

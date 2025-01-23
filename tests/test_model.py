@@ -27,6 +27,7 @@ def test_vgg16_classifier_output_shape():
     output = model(input_tensor)
 
     # Check that the output shape is (4, num_classes)
-    assert output.shape == (4, config.experiment.dataset["num_classes"]), (
-        f"Unexpected output shape: {output.shape}, expected: (4, {config.experiment.dataset['num_classes']})"
-    )
+    assert output.shape == (
+        4,
+        config.experiment.dataset["num_classes"],
+    ), f"Unexpected output shape: {output.shape}, expected: (4, {config.experiment.dataset['num_classes']})"
