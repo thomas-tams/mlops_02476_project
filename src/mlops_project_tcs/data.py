@@ -1,6 +1,6 @@
 from pathlib import Path
 from loguru import logger
-from typing import Union, Annotated, Literal, Tuple
+from typing import Union, Annotated, Literal, Tuple, List
 import shutil
 import typer
 from PIL import Image
@@ -205,14 +205,31 @@ class ImageAugmenter:
 class BrainMRIDataset(Dataset):
     """Custom dataset for loading and preprocessing brain MRI images."""
 
-    def __init__(self, datadir: Path) -> None:
-        self.datadir = datadir
-        self.image_paths = []
-        self.labels = []
-        self.transform = transforms.ToTensor()
+    def __init__(self, datadir: Union[Path, str]) -> None:
+        """
+        Initialize the BrainMRIDataset class.
+
+        Args:
+            datadir (Union[Path, str]): Path to the dataset directory.
+        """
+        self.datadir = Path(datadir)
+        self.image_paths: List[Path] = []
+        self.labels: List[int] = []
+        self.transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ],
+        )
         self.load_image_paths(self.datadir)
 
-    def load_image_paths(self, datadir: Union[Path, str]):
+    def load_image_paths(self, datadir: Union[Path, str]) -> None:
+        """
+        Load image paths and labels from the dataset directory.
+
+        Args:
+            datadir (Union[Path, str]): Path to the dataset directory.
+        """
         datadir = Path(datadir)
         for label, folder in enumerate(["no", "yes"]):
             category_path = datadir / folder
@@ -222,32 +239,51 @@ class BrainMRIDataset(Dataset):
                     self.labels.append(label)
 
     def __len__(self) -> int:
-        """Return the length of the dataset."""
+        """
+        Return the length of the dataset.
+
+        Returns:
+            int: Number of images in the dataset.
+        """
         return len(self.image_paths)
 
-    def __getitem__(self, index: int):
-        """Return a given sample from the dataset."""
+    def __getitem__(self, index: int) -> Tuple[torch.Tensor, int]:
+        """
+        Return a given sample from the dataset.
+
+        Args:
+            index (int): Index of the sample to retrieve.
+
+        Returns:
+            Tuple[torch.Tensor, int]: Tuple containing the image tensor and its label.
+        """
         img_path = self.image_paths[index]
         image = Image.open(img_path).convert("RGB")
         image = self.transform(image)
         label = self.labels[index]
         return image, label
 
-    def preprocess(self, output_folder: Path) -> None:
-        """Preprocess the raw data by cropping and resizing. Saves preprocessed data to given directory by creating 'yes' and 'no' subdirectories."""
+    def preprocess(self, output_folder: Union[Path, str]) -> None:
+        """
+        Preprocess the raw data by cropping and resizing. Saves preprocessed data to given directory by creating 'yes' and 'no' subdirectories.
+
+        Args:
+            output_folder (Union[Path, str]): Path to the output directory.
+        """
         cropper = CropExtremePoints(add_pixels_value=10, target_size=(224, 224))
+        output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
 
         for img_path, label in zip(self.image_paths, self.labels):
             image = Image.open(img_path).convert("RGB")
-            processed_image = cropper(image)  # Use cropper as callable
+            processed_image = cropper(image)
             label_folder = output_folder / ("no" if label == 0 else "yes")
             label_folder.mkdir(parents=True, exist_ok=True)
 
-            output_dir = label_folder / Path(img_path).name
-            processed_image_pil = transforms.ToPILImage()(processed_image)  # Convert tensor to PIL Image
+            output_dir = label_folder / img_path.name
+            processed_image_pil = transforms.ToPILImage()(processed_image)
             processed_image_pil.save(output_dir)
-            logger.info(f"Processed and saved: {output_dir}")
+            logger.debug(f"Processed and saved: {output_dir}")
 
 
 class BrainMRIDataModule(pl.LightningDataModule):
