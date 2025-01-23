@@ -287,6 +287,8 @@ class BrainMRIDataset(Dataset):
 
 
 class BrainMRIDataModule(pl.LightningDataModule):
+    """Pytorch Lightning Data module for loading and preprocessing brain MRI images."""
+
     def __init__(
         self,
         datadir: Union[Path, str],
@@ -296,6 +298,17 @@ class BrainMRIDataModule(pl.LightningDataModule):
         test_split: float = 0.1,
         num_workers: int = 4,
     ) -> None:
+        """
+        Initialize the BrainMRIDataModule class.
+
+        Args:
+            datadir (Union[Path, str]): Path to the dataset directory. In 'train' mode this directory should point to the parent directory of directories with 'train', 'val', 'test'. For data_prep mode, this should point to the directory with 'yes' and 'no' subdirectories containing raw img files.
+            mode (Literal["train", "data_prep"]): Mode of operation, either 'train' or 'data_prep'.
+            batch_size (int): Batch size for data loading.
+            val_split (float): Fraction of data to use for validation.
+            test_split (float): Fraction of data to use for testing.
+            num_workers (int): Number of worker processes for data loading.
+        """
         super().__init__()
         self.datadir = Path(datadir)
         self.mode = mode
@@ -303,46 +316,75 @@ class BrainMRIDataModule(pl.LightningDataModule):
         self.val_split = val_split
         self.test_split = test_split
         self.num_workers = num_workers
+        self.prep_dataset = None
 
         if self.mode == "data_prep":
             self.data_prep_split_dataset()
 
-    def data_prep_split_dataset(self):
-        # Create the dataset
-        dataset = BrainMRIDataset(self.datadir)
+    def data_prep_split_dataset(self) -> None:
+        """
+        Split the dataset into training, validation, and test sets.
+        """
+        self.prep_dataset = BrainMRIDataset(self.datadir)
 
-        # Split the dataset into training and validation sets
-        test_size = int(len(dataset) * self.test_split)
-        val_size = int(len(dataset) * self.val_split)
-        train_size = len(dataset) - test_size - val_size
+        test_size = int(len(self.prep_dataset) * self.test_split)
+        val_size = int(len(self.prep_dataset) * self.val_split)
+        train_size = len(self.prep_dataset) - test_size - val_size
         self.train_dataset, self.val_dataset, self.test_dataset = random_split(
-            dataset, [train_size, val_size, test_size]
+            self.prep_dataset, [train_size, val_size, test_size]
         )
 
-    def setup(self, stage: str = None):
+    def setup(self, stage: str = None) -> None:
+        """
+        Set up the datasets for training, validation, and testing.
+
+        Args:
+            stage (str, optional): Stage of the setup process.
+        """
         if self.mode != "train":
             logger.error(
                 f"Datamodule mode is set to {self.mode} during training attempt. The data module does not allow this mode during training run."
             )
             sys.exit(1)
 
-        # Use processed datasets from split directory structure
         self.train_dataset = BrainMRIDataset(self.datadir / "train")
         self.val_dataset = BrainMRIDataset(self.datadir / "val")
-        self.test_dataset = BrainMRIDataModule(self.datadir / "test")
+        self.test_dataset = BrainMRIDataset(self.datadir / "test")
 
-    def train_dataloader(self):
+    def train_dataloader(self) -> DataLoader:
+        """
+        Return the training data loader.
+
+        Returns:
+            DataLoader: Training data loader.
+        """
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
 
-    def val_dataloader(self):
+    def val_dataloader(self) -> DataLoader:
+        """
+        Return the validation data loader.
+
+        Returns:
+            DataLoader: Validation data loader.
+        """
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
-    def test_dataloader(self):
-        # Assuming the test dataset is set up similarly
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
+    def test_dataloader(self) -> DataLoader:
+        """
+        Return the test data loader.
+
+        Returns:
+            DataLoader: Test data loader.
+        """
+        return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def save_splits(self, output_dir: Union[Path, str]):
-        """Save the train, val, and test splits into subdirectories in a new folder."""
+        """
+        Save the train, val, and test splits into subdirectories in a new folder.
+
+        Args:
+            output_dir (Union[Path, str]): Path to the output directory.
+        """
         if self.mode != "data_prep":
             logger.warning(
                 f"Trying to run save_splits() function with {self}, when in mode {self.mode}. This is not possible."
