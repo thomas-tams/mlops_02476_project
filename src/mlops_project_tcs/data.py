@@ -141,9 +141,9 @@ class ImageAugmenter:
         :param image: Augmented PIL image.
         :param cls: Class name ('yes' or 'no').
         """
-        filename = f"aug_{random.randint(100000, 999999)}.png"
+        filename = f"aug_{random.randint(100000, 999999)}.jpg"
         while (self.output_dir / cls / filename).exists():
-            filename = f"aug_{random.randint(100000, 999999)}.png"
+            filename = f"aug_{random.randint(100000, 999999)}.jpg"
         save_path = self.output_dir / cls / filename
         image.save(save_path)
 
@@ -285,7 +285,7 @@ class BrainMRIDataModule(pl.LightningDataModule):
                 string_label = "no" if label == 0 else "yes"
                 label_folder = split_dir / string_label
                 label_folder.mkdir(parents=True, exist_ok=True)
-                output_path = label_folder / f"{string_label}_{split_name}_{i}.png"
+                output_path = label_folder / f"{string_label}_{split_name}_{i}.jpg"
                 image_pil = transforms.ToPILImage()(image)
                 image_pil.save(output_path)
                 logger.info(f"Saved {split_name} image: {output_path}")
