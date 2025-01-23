@@ -96,10 +96,6 @@ def docker_train_interactive(ctx: Context) -> None:
         pty=not WINDOWS,
     )
 
-@task()
-def test_task(ctx: Context) -> None:
-    """test"""
-    ctx.run("echo $(pwd)")
 
 @task()
 def docker_remove(ctx: Context) -> None:
