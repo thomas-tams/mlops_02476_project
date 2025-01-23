@@ -2,21 +2,9 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 import pytorch_lightning as pl
-from typing import Any, Optional
 
 
 class VGG16Classifier(pl.LightningModule):
-    """
-    VGG16-based classifier using PyTorch Lightning.
-
-    Args:
-        input_size (int): Size of the input features.
-        hidden_size (int): Size of the hidden layer.
-        num_classes (int): Number of output classes.
-        dropout_p (float): Dropout probability.
-        criterion (nn.Module): Loss function.
-    """
-
     def __init__(
         self, input_size: int, hidden_size: int, num_classes: int, dropout_p: float, criterion: nn.Module
     ) -> None:
@@ -26,6 +14,7 @@ class VGG16Classifier(pl.LightningModule):
         self.num_classes = num_classes
         self.dropout_p = dropout_p
         self.criterion = criterion
+        self.save_hyperparameters()
 
         # Load the pretrained VGG16 model
         self.vgg16 = models.vgg16(weights=models.VGG16_Weights.DEFAULT)
@@ -43,48 +32,23 @@ class VGG16Classifier(pl.LightningModule):
             nn.ReLU(inplace=True),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_size, self.num_classes),
-            nn.Softmax(dim=1),  # Add softmax layer
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Forward pass through the network.
-
-        Args:
-            x (torch.Tensor): Input tensor.
-
-        Returns:
-            torch.Tensor: Output tensor.
-        """
+    def forward(self, x):
         return self.vgg16(x)
 
-    def training_step(self, batch: Any, batch_idx: int) -> torch.Tensor:
-        """
-        Training step.
-
-        Args:
-            batch (Any): Batch of data.
-            batch_idx (int): Batch index.
-
-        Returns:
-            torch.Tensor: Loss value.
-        """
+    def training_step(self, batch):
+        """Training step."""
         img, target = batch
         preds = self(img)
         loss = self.criterion(preds, target)
         acc = (target == preds.argmax(dim=-1)).float().mean()
         self.log("train_loss", loss)
         self.log("train_acc", acc)
-        return loss
+        return self.criterion(preds, target)
 
-    def validation_step(self, batch: Any, batch_idx: int) -> None:
-        """
-        Validation step.
-
-        Args:
-            batch (Any): Batch of data.
-            batch_idx (int): Batch index.
-        """
+    def validation_step(self, batch) -> None:
+        """Validation step."""
         img, target = batch
         preds = self(img)
         loss = self.criterion(preds, target)
@@ -92,16 +56,8 @@ class VGG16Classifier(pl.LightningModule):
         self.log("val_loss", loss, on_epoch=True)
         self.log("val_acc", acc, on_epoch=True)
 
-    def configure_optimizers(self, optimizer: Optional[torch.optim.Optimizer] = None) -> torch.optim.Optimizer:
-        """
-        Configure optimizer.
-
-        Args:
-            optimizer (Optional[torch.optim.Optimizer]): Optimizer to use.
-
-        Returns:
-            torch.optim.Optimizer: Configured optimizer.
-        """
+    def configure_optimizers(self, optimizer: torch.optim.Optimizer = None):
+        """Configure optimizer."""
         if optimizer is not None:
             self.optimizer = optimizer
         return self.optimizer
