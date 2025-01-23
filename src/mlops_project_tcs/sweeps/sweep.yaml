@@ -15,6 +15,8 @@ parameters:
   experiment.model.dropout_p:
     min: 0.1
     max: 0.5
+  experiment.dataset.batch_size:
+    values: [10, 30, 70, 100]
 
 command:
   - ${env}
