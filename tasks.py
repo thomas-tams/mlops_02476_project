@@ -40,7 +40,7 @@ def launch_api(ctx: Context) -> None:
 
 
 @task
-def launch_streamlit(ctx: Context) -> None:
+def launch_frontend(ctx: Context) -> None:
     """Launches a streamlit frontend app"""
     ctx.run("streamlit run src/mlops_project_tcs/frontend.py --server.port 8050 --server.address 0.0.0.0")
 
@@ -76,16 +76,17 @@ def test(ctx: Context) -> None:
 
 @task()
 def docker_build_train(ctx: Context) -> None:
-    """Build local image (used for training). Requires wandb_api.txt file in home of repository, containing WANDB api key"""    
+    """Build local image (used for training). Requires wandb_api.txt file in home of repository, containing WANDB api key"""
     if not os.path.exists("data/"):
         ctx.run("invoke prepare-data")
-    
+
     res = ctx.run("cat wandb_api.txt", hide=True, pty=not WINDOWS)
     ctx.run(
         f"docker build --build-arg WANDB_API_KEY={res.stdout.strip()} -t mlopsdtu_local_train:latest . -f dockerfiles/mlopsdtu_local_train.dockerfile",
         echo=True,
         pty=not WINDOWS,
     )
+
 
 @task()
 def docker_train_interactive(ctx: Context) -> None:
