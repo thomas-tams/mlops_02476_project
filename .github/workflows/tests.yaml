@@ -73,5 +73,11 @@ jobs:
       run: |
         invoke prepare-data
 
-    - name: Submit build
-      run: gcloud builds submit --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="dtumlops_baseimage"
+    - name: Submit local train build
+      run: gcloud builds submit --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="mlopsdtu_local_train"
+
+    - name: Submit gcloud api build
+      run: gcloud builds submit --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="gcloud_api"
+
+    - name: Submit gcloud frontend build
+      run: gcloud builds submit --config cloudbuild_containers.yaml --substitutions=_LOCATION='europe-west1',_REPOSITORY="dtumlopsartifacts",_IMAGE_NAME="gcloud_frontend"
