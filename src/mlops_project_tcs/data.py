@@ -1,11 +1,9 @@
 from pathlib import Path
 from loguru import logger
-from typing import Union, Annotated, Literal, Tuple, List
+from typing import Union, Annotated, Literal
 import shutil
 import typer
 from PIL import Image
-import numpy as np
-import cv2
 from torchvision import transforms
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
@@ -21,37 +19,20 @@ app = typer.Typer()
 
 
 class BinaryClassBalancer:
-    def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]) -> None:
-        """
-        Initialize the BinaryClassBalancer class.
-
-        Args:
-            datadir (Union[Path, str]): Path to the dataset directory containing 'yes' and 'no' subdirectories.
-            output_dir (Union[Path, str]): Path where balanced dataset will be saved.
-        """
+    def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]):
         self.datadir = Path(datadir)
         self.output_dir = Path(output_dir)
         self.classes = ["yes", "no"]
         self.file_paths = {cls: [] for cls in self.classes}
         self.file_hashes = set()
 
-    def _compute_file_hash(self, file_path: Path) -> str:
-        """
-        Compute a hash for the file content to identify duplicates.
-
-        Args:
-            file_path (Path): Path to the file.
-
-        Returns:
-            str: Hash of the file content.
-        """
+    def _compute_file_hash(self, file_path):
+        """Compute a hash for the file content to identify duplicates."""
         with open(file_path, "rb") as f:
             return md5(f.read()).hexdigest()
 
-    def load_files(self) -> None:
-        """
-        Load files from the 'yes' and 'no' subdirectories, filtering out duplicates.
-        """
+    def load_files(self):
+        """Load files from the 'yes' and 'no' subdirectories, filtering out duplicates."""
         for cls in self.classes:
             class_dir = self.datadir / cls
             if not class_dir.exists():
@@ -69,13 +50,8 @@ class BinaryClassBalancer:
                 else:
                     logger.info(f"File: {file_path} is a duplicate. Skipping this file")
 
-    def identify_minority_class(self) -> Tuple[str, str]:
-        """
-        Identify the minority class based on file counts.
-
-        Returns:
-            Tuple[str, str]: Minority and majority class names.
-        """
+    def identify_minority_class(self):
+        """Identify the minority class based on file counts."""
         counts = {cls: len(self.file_paths[cls]) for cls in self.classes}
         minority_class = min(counts, key=counts.get)
         majority_class = max(counts, key=counts.get)
@@ -86,10 +62,8 @@ class BinaryClassBalancer:
 
         return minority_class, majority_class
 
-    def balance_and_write(self) -> None:
-        """
-        Balance the dataset and write to the output directory.
-        """
+    def balance_and_write(self):
+        """Balance the dataset and write to the output directory."""
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         for cls in self.classes:
@@ -115,10 +89,8 @@ class BinaryClassBalancer:
         logger.info(f"Number of files in '{majority_class}': {len(balanced_majority_files)}")
         logger.info(f"Files saved to {self.output_dir}")
 
-    def execute(self) -> None:
-        """
-        Main method to load, balance, and write files.
-        """
+    def execute(self):
+        """Main method to load, balance, and write files."""
         logger.info("Loading files...")
         self.load_files()
 
@@ -127,13 +99,11 @@ class BinaryClassBalancer:
 
 
 class ImageAugmenter:
-    def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]) -> None:
+    def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]):
         """
-        Initialize the ImageAugmenter class.
-
-        Args:
-            datadir (Union[Path, str]): Path to the dataset directory containing 'yes' and 'no' subdirectories.
-            output_dir (Union[Path, str]): Path where augmented images will be saved.
+        Initializes the DatasetAugmenter.
+        :param datadir: Path to the dataset directory containing 'yes' and 'no' subdirectories.
+        :param output_dir: Path where augmented images will be saved.
         """
         self.datadir = Path(datadir)
         self.output_dir = Path(output_dir)
@@ -146,58 +116,41 @@ class ImageAugmenter:
         for cls in self.classes:
             (self.output_dir / cls).mkdir(parents=True, exist_ok=True)
 
-    def _load_image_paths(self, cls: str) -> List[Path]:
+    def _load_image_paths(self, cls: str):
         """
-        Load image paths for a given class.
-
-        Args:
-            cls (str): Class name ('yes' or 'no').
-
-        Returns:
-            List[Path]: List of paths to images.
+        Loads image paths for a given class.
+        :param cls: Class name ('yes' or 'no').
+        :return: List of paths to images.
         """
         class_dir = self.datadir / cls
         return [p for p in class_dir.iterdir() if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg"}]
 
-    def _augment_image(self, image_path: Path) -> Image.Image:
+    def _augment_image(self, image_path: Path):
         """
-        Augment an image by applying random rotation.
-
-        Args:
-            image_path (Path): Path to the image to augment.
-
-        Returns:
-            Image.Image: Augmented PIL image.
+        Augments an image by applying random rotation.
+        :param image_path: Path to the image to augment.
+        :return: Augmented PIL image.
         """
         image = Image.open(image_path)
-        if image.mode != "RGB":
-            image = image.convert("RGB")
-        image_np = np.array(image)
-        padded_image = cv2.copyMakeBorder(image_np, 50, 50, 50, 50, cv2.BORDER_CONSTANT, value=(0, 0, 0))
-        padded_image_pil = Image.fromarray(padded_image)
         angle = random.uniform(-30, 30)  # Random rotation angle between -30 and 30 degrees
-        return padded_image_pil.rotate(angle, resample=Image.BICUBIC, expand=True)
+        return image.rotate(angle, resample=Image.BICUBIC, expand=True)
 
-    def _save_image(self, image: Image.Image, cls: str) -> None:
+    def _save_image(self, image: Image.Image, cls: str):
         """
-        Save the augmented image to the output directory.
-
-        Args:
-            image (Image.Image): Augmented PIL image.
-            cls (str): Class name ('yes' or 'no').
+        Saves the augmented image to the output directory.
+        :param image: Augmented PIL image.
+        :param cls: Class name ('yes' or 'no').
         """
-        filename = f"aug_{random.randint(100000, 999999)}.jpg"
+        filename = f"aug_{random.randint(100000, 999999)}.png"
         while (self.output_dir / cls / filename).exists():
-            filename = f"aug_{random.randint(100000, 999999)}.jpg"
+            filename = f"aug_{random.randint(100000, 999999)}.png"
         save_path = self.output_dir / cls / filename
         image.save(save_path)
 
-    def augment(self, iterations: int = 10) -> None:
+    def augment(self, iterations: int = 10):
         """
-        Augment the dataset by adding new images to balance classes.
-
-        Args:
-            iterations (int): Number of augmentation iterations to perform augmentation for each class.
+        Augments the dataset by adding new images to balance classes.
+        :param iterations: Number of augmentation iterations to perform augmentation for each class.
         """
         for cls in self.classes:
             for _ in range(iterations):
@@ -212,31 +165,14 @@ class ImageAugmenter:
 class BrainMRIDataset(Dataset):
     """Custom dataset for loading and preprocessing brain MRI images."""
 
-    def __init__(self, datadir: Union[Path, str]) -> None:
-        """
-        Initialize the BrainMRIDataset class.
-
-        Args:
-            datadir (Union[Path, str]): Path to the dataset directory.
-        """
-        self.datadir = Path(datadir)
-        self.image_paths: List[Path] = []
-        self.labels: List[int] = []
-        self.transform = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            ],
-        )
+    def __init__(self, datadir: Path) -> None:
+        self.datadir = datadir
+        self.image_paths = []
+        self.labels = []
+        self.transform = transforms.ToTensor()
         self.load_image_paths(self.datadir)
 
-    def load_image_paths(self, datadir: Union[Path, str]) -> None:
-        """
-        Load image paths and labels from the dataset directory.
-
-        Args:
-            datadir (Union[Path, str]): Path to the dataset directory.
-        """
+    def load_image_paths(self, datadir: Union[Path, str]):
         datadir = Path(datadir)
         for label, folder in enumerate(["no", "yes"]):
             category_path = datadir / folder
@@ -246,56 +182,35 @@ class BrainMRIDataset(Dataset):
                     self.labels.append(label)
 
     def __len__(self) -> int:
-        """
-        Return the length of the dataset.
-
-        Returns:
-            int: Number of images in the dataset.
-        """
+        """Return the length of the dataset."""
         return len(self.image_paths)
 
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, int]:
-        """
-        Return a given sample from the dataset.
-
-        Args:
-            index (int): Index of the sample to retrieve.
-
-        Returns:
-            Tuple[torch.Tensor, int]: Tuple containing the image tensor and its label.
-        """
+    def __getitem__(self, index: int):
+        """Return a given sample from the dataset."""
         img_path = self.image_paths[index]
         image = Image.open(img_path).convert("RGB")
         image = self.transform(image)
         label = self.labels[index]
         return image, label
 
-    def preprocess(self, output_folder: Union[Path, str]) -> None:
-        """
-        Preprocess the raw data by cropping and resizing. Saves preprocessed data to given directory by creating 'yes' and 'no' subdirectories.
-
-        Args:
-            output_folder (Union[Path, str]): Path to the output directory.
-        """
+    def preprocess(self, output_folder: Path) -> None:
+        """Preprocess the raw data by cropping and resizing. Saves preprocessed data to given directory by creating 'yes' and 'no' subdirectories."""
         cropper = CropExtremePoints(add_pixels_value=10, target_size=(224, 224))
-        output_folder = Path(output_folder)
         output_folder.mkdir(parents=True, exist_ok=True)
 
         for img_path, label in zip(self.image_paths, self.labels):
             image = Image.open(img_path).convert("RGB")
-            processed_image = cropper(image)
+            processed_image = cropper(image)  # Use cropper as callable
             label_folder = output_folder / ("no" if label == 0 else "yes")
             label_folder.mkdir(parents=True, exist_ok=True)
 
-            output_dir = label_folder / img_path.name
-            processed_image_pil = transforms.ToPILImage()(processed_image)
+            output_dir = label_folder / Path(img_path).name
+            processed_image_pil = transforms.ToPILImage()(processed_image)  # Convert tensor to PIL Image
             processed_image_pil.save(output_dir)
-            logger.debug(f"Processed and saved: {output_dir}")
+            logger.info(f"Processed and saved: {output_dir}")
 
 
 class BrainMRIDataModule(pl.LightningDataModule):
-    """Pytorch Lightning Data module for loading and preprocessing brain MRI images."""
-
     def __init__(
         self,
         datadir: Union[Path, str],
@@ -305,17 +220,6 @@ class BrainMRIDataModule(pl.LightningDataModule):
         test_split: float = 0.1,
         num_workers: int = 4,
     ) -> None:
-        """
-        Initialize the BrainMRIDataModule class.
-
-        Args:
-            datadir (Union[Path, str]): Path to the dataset directory. In 'train' mode this directory should point to the parent directory of directories with 'train', 'val', 'test'. For data_prep mode, this should point to the directory with 'yes' and 'no' subdirectories containing raw img files.
-            mode (Literal["train", "data_prep"]): Mode of operation, either 'train' or 'data_prep'.
-            batch_size (int): Batch size for data loading.
-            val_split (float): Fraction of data to use for validation.
-            test_split (float): Fraction of data to use for testing.
-            num_workers (int): Number of worker processes for data loading.
-        """
         super().__init__()
         self.datadir = Path(datadir)
         self.mode = mode
@@ -323,75 +227,46 @@ class BrainMRIDataModule(pl.LightningDataModule):
         self.val_split = val_split
         self.test_split = test_split
         self.num_workers = num_workers
-        self.prep_dataset = None
 
         if self.mode == "data_prep":
             self.data_prep_split_dataset()
 
-    def data_prep_split_dataset(self) -> None:
-        """
-        Split the dataset into training, validation, and test sets.
-        """
-        self.prep_dataset = BrainMRIDataset(self.datadir)
+    def data_prep_split_dataset(self):
+        # Create the dataset
+        dataset = BrainMRIDataset(self.datadir)
 
-        test_size = int(len(self.prep_dataset) * self.test_split)
-        val_size = int(len(self.prep_dataset) * self.val_split)
-        train_size = len(self.prep_dataset) - test_size - val_size
+        # Split the dataset into training and validation sets
+        test_size = int(len(dataset) * self.test_split)
+        val_size = int(len(dataset) * self.val_split)
+        train_size = len(dataset) - test_size - val_size
         self.train_dataset, self.val_dataset, self.test_dataset = random_split(
-            self.prep_dataset, [train_size, val_size, test_size]
+            dataset, [train_size, val_size, test_size]
         )
 
-    def setup(self, stage: str = None) -> None:
-        """
-        Set up the datasets for training, validation, and testing.
-
-        Args:
-            stage (str, optional): Stage of the setup process.
-        """
+    def setup(self, stage: str = None):
         if self.mode != "train":
             logger.error(
                 f"Datamodule mode is set to {self.mode} during training attempt. The data module does not allow this mode during training run."
             )
             sys.exit(1)
 
+        # Use processed datasets from split directory structure
         self.train_dataset = BrainMRIDataset(self.datadir / "train")
         self.val_dataset = BrainMRIDataset(self.datadir / "val")
-        self.test_dataset = BrainMRIDataset(self.datadir / "test")
+        self.test_dataset = BrainMRIDataModule(self.datadir / "test")
 
-    def train_dataloader(self) -> DataLoader:
-        """
-        Return the training data loader.
-
-        Returns:
-            DataLoader: Training data loader.
-        """
+    def train_dataloader(self):
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
 
-    def val_dataloader(self) -> DataLoader:
-        """
-        Return the validation data loader.
-
-        Returns:
-            DataLoader: Validation data loader.
-        """
+    def val_dataloader(self):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
-    def test_dataloader(self) -> DataLoader:
-        """
-        Return the test data loader.
+    def test_dataloader(self):
+        # Assuming the test dataset is set up similarly
+        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
-        Returns:
-            DataLoader: Test data loader.
-        """
-        return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
-
-    def save_splits(self, output_dir: Union[Path, str]) -> None:
-        """
-        Save the train, val, and test splits into subdirectories in a new folder.
-
-        Args:
-            output_dir (Union[Path, str]): Path to the output directory.
-        """
+    def save_splits(self, output_dir: Union[Path, str]):
+        """Save the train, val, and test splits into subdirectories in a new folder."""
         if self.mode != "data_prep":
             logger.warning(
                 f"Trying to run save_splits() function with {self}, when in mode {self.mode}. This is not possible."
@@ -403,19 +278,17 @@ class BrainMRIDataModule(pl.LightningDataModule):
 
         splits = {"train": self.train_dataset, "val": self.val_dataset, "test": self.test_dataset}
 
-        for split_name, datasubset in splits.items():
+        for split_name, dataset in splits.items():
             split_dir = output_dir / split_name
-
-            for index in datasubset.indices:
-                label = self.prep_dataset.labels[index]
-                image_path = self.prep_dataset.image_paths[index]
-
+            split_dir.mkdir(parents=True, exist_ok=True)
+            for i, (image, label) in enumerate(dataset):
                 string_label = "no" if label == 0 else "yes"
                 label_folder = split_dir / string_label
                 label_folder.mkdir(parents=True, exist_ok=True)
-                output_path = label_folder / f"{string_label}_{split_name}_{index}.jpg"
-                shutil.copy(image_path, output_path)
-                logger.debug(f"Saved {split_name} image: {output_path}")
+                output_path = label_folder / f"{string_label}_{split_name}_{i}.png"
+                image_pil = transforms.ToPILImage()(image)
+                image_pil.save(output_path)
+                logger.info(f"Saved {split_name} image: {output_path}")
 
 
 @app.command()
@@ -547,7 +420,6 @@ def dataset_statistics(
     savedir.mkdir(parents=True, exist_ok=True)
     pl.seed_everything(seed)
     data_module = BrainMRIDataModule(datadir=datadir)
-    data_module.setup()
     print("Train dataset")
     print(f"Number of images: {len(data_module.train_dataset)}")
     print(f"Image shape: {data_module.train_dataset[0][0].shape}")
@@ -562,14 +434,11 @@ def dataset_statistics(
 
     plot_images = []
     plot_labels = []
-    for _ in range(25):
-        index = random.randint(0, len(data_module.test_dataset.image_paths) - 1)
-        image = data_module.test_dataset.image_paths[index]
-        label = data_module.test_dataset.labels[index]
-
+    for i in range(25):
+        image, label = data_module.test_dataset[i]
         plot_images.append(image)
         plot_labels.append(label)
-    plot_image_grid_with_labels(image_paths=plot_images, rows=5, cols=5, labels=plot_labels)
+    plot_image_grid_with_labels(images=plot_images, rows=5, cols=5, labels=plot_labels)
     plt.savefig(savedir / "kaggle_example_images.png")
     plt.close()
 
