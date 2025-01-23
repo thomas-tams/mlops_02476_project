@@ -1,6 +1,6 @@
 from pathlib import Path
 from loguru import logger
-from typing import Union, Annotated, Literal
+from typing import Union, Annotated, Literal, Tuple
 import shutil
 import typer
 from PIL import Image
@@ -19,20 +19,37 @@ app = typer.Typer()
 
 
 class BinaryClassBalancer:
-    def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]):
+    def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]) -> None:
+        """
+        Initialize the BinaryClassBalancer class.
+
+        Args:
+            datadir (Union[Path, str]): Path to the dataset directory containing 'yes' and 'no' subdirectories.
+            output_dir (Union[Path, str]): Path where balanced dataset will be saved.
+        """
         self.datadir = Path(datadir)
         self.output_dir = Path(output_dir)
         self.classes = ["yes", "no"]
         self.file_paths = {cls: [] for cls in self.classes}
         self.file_hashes = set()
 
-    def _compute_file_hash(self, file_path):
-        """Compute a hash for the file content to identify duplicates."""
+    def _compute_file_hash(self, file_path: Path) -> str:
+        """
+        Compute a hash for the file content to identify duplicates.
+
+        Args:
+            file_path (Path): Path to the file.
+
+        Returns:
+            str: Hash of the file content.
+        """
         with open(file_path, "rb") as f:
             return md5(f.read()).hexdigest()
 
-    def load_files(self):
-        """Load files from the 'yes' and 'no' subdirectories, filtering out duplicates."""
+    def load_files(self) -> None:
+        """
+        Load files from the 'yes' and 'no' subdirectories, filtering out duplicates.
+        """
         for cls in self.classes:
             class_dir = self.datadir / cls
             if not class_dir.exists():
@@ -50,8 +67,13 @@ class BinaryClassBalancer:
                 else:
                     logger.info(f"File: {file_path} is a duplicate. Skipping this file")
 
-    def identify_minority_class(self):
-        """Identify the minority class based on file counts."""
+    def identify_minority_class(self) -> Tuple[str, str]:
+        """
+        Identify the minority class based on file counts.
+
+        Returns:
+            Tuple[str, str]: Minority and majority class names.
+        """
         counts = {cls: len(self.file_paths[cls]) for cls in self.classes}
         minority_class = min(counts, key=counts.get)
         majority_class = max(counts, key=counts.get)
@@ -62,8 +84,10 @@ class BinaryClassBalancer:
 
         return minority_class, majority_class
 
-    def balance_and_write(self):
-        """Balance the dataset and write to the output directory."""
+    def balance_and_write(self) -> None:
+        """
+        Balance the dataset and write to the output directory.
+        """
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         for cls in self.classes:
@@ -89,8 +113,10 @@ class BinaryClassBalancer:
         logger.info(f"Number of files in '{majority_class}': {len(balanced_majority_files)}")
         logger.info(f"Files saved to {self.output_dir}")
 
-    def execute(self):
-        """Main method to load, balance, and write files."""
+    def execute(self) -> None:
+        """
+        Main method to load, balance, and write files.
+        """
         logger.info("Loading files...")
         self.load_files()
 
