@@ -48,48 +48,48 @@ will check the repositories and the code to verify your answers.
 
 ### Week 1
 
-* [ ] Create a git repository (M5)
-* [ ] Make sure that all team members have write access to the GitHub repository (M5)
-* [ ] Create a dedicated environment for you project to keep track of your packages (M2)
-* [ ] Create the initial file structure using cookiecutter with an appropriate template (M6)
-* [ ] Fill out the `data.py` file such that it downloads whatever data you need and preprocesses it (if necessary) (M6)
-* [ ] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
-* [ ] Remember to fill out the `requirements.txt` and `requirements_dev.txt` file with whatever dependencies that you
+* [x] Create a git repository (M5)
+* [x] Make sure that all team members have write access to the GitHub repository (M5)
+* [x] Create a dedicated environment for you project to keep track of your packages (M2)
+* [x] Create the initial file structure using cookiecutter with an appropriate template (M6)
+* [x] Fill out the `data.py` file such that it downloads whatever data you need and preprocesses it (if necessary) (M6)
+* [x] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
+* [x] Remember to fill out the `requirements.txt` and `requirements_dev.txt` file with whatever dependencies that you
     are using (M2+M6)
-* [ ] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
-* [ ] Do a bit of code typing and remember to document essential parts of your code (M7)
-* [ ] Setup version control for your data or part of your data (M8)
-* [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
-* [ ] Construct one or multiple docker files for your code (M10)
-* [ ] Build the docker files locally and make sure they work as intended (M10)
-* [ ] Write one or multiple configurations files for your experiments (M11)
-* [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
-* [ ] Use logging to log important events in your code (M14)
-* [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
-* [ ] Consider running a hyperparameter optimization sweep (M14)
-* [ ] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
+* [x] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
+* [x] Do a bit of code typing and remember to document essential parts of your code (M7)
+* [x] Setup version control for your data or part of your data (M8)
+* [x] Add command line interfaces and project commands to your code where it makes sense (M9)
+* [x] Construct one or multiple docker files for your code (M10)
+* [x] Build the docker files locally and make sure they work as intended (M10)
+* [x] Write one or multiple configurations files for your experiments (M11)
+* [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
+* [x] Use profiling to optimize your code (M12)
+* [x] Use logging to log important events in your code (M14)
+* [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
+* [x] Consider running a hyperparameter optimization sweep (M14)
+* [x] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
 ### Week 2
 
-* [ ] Write unit tests related to the data part of your code (M16)
-* [ ] Write unit tests related to model construction and or model training (M16)
-* [ ] Calculate the code coverage (M16)
-* [ ] Get some continuous integration running on the GitHub repository (M17)
-* [ ] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
-* [ ] Add a linting step to your continuous integration (M17)
-* [ ] Add pre-commit hooks to your version control setup (M18)
+* [x] Write unit tests related to the data part of your code (M16)
+* [x] Write unit tests related to model construction and or model training (M16)
+* [x] Calculate the code coverage (M16)
+* [x] Get some continuous integration running on the GitHub repository (M17)
+* [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
+* [x] Add a linting step to your continuous integration (M17)
+* [x] Add pre-commit hooks to your version control setup (M18)
 * [ ] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
-* [ ] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
-* [ ] Create a trigger workflow for automatically building your docker images (M21)
+* [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
+* [x] Create a trigger workflow for automatically building your docker images (M21)
 * [ ] Get your model training in GCP using either the Engine or Vertex AI (M21)
-* [ ] Create a FastAPI application that can do inference using your model (M22)
-* [ ] Deploy your model in GCP using either Functions or Run as the backend (M23)
+* [x] Create a FastAPI application that can do inference using your model (M22)
+* [x] Deploy your model in GCP using either Functions or Run as the backend (M23)
 * [ ] Write API tests for your application and setup continues integration for these (M24)
 * [ ] Load test your application (M24)
-* [ ] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)
-* [ ] Create a frontend for your API (M26)
+* [x] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)
+* [x] Create a frontend for your API (M26)
 
 ### Week 3
 
@@ -116,9 +116,9 @@ will check the repositories and the code to verify your answers.
 ### Question 1
 > **Enter the group number you signed up on <learn.inside.dtu.dk>**
 >
-> Answer:
+> Answer: 
 
-Group 84
+--- Group 84 ---
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -129,7 +129,7 @@ Group 84
 >
 > Answer:
 
-s204558, s204281, 204540
+--- s204558, s204281, s204540 ---
 
 ### Question 3
 > **A requirement to the project is that you include a third-party package not covered in the course. What framework**
@@ -143,7 +143,11 @@ s204558, s204281, 204540
 >
 > Answer:
 
---- question 3 fill here ---
+--- In our project, we have implemented a sweep configuration file for hyperparameter optimization using the third-party framework Weights and Biases. We used functionality such as sweep configuration and hyperparameter tuning from the package to define and run a sweep efficiently in our project.
+
+The sweep setup uses the Bayesian optimization method, with predefined metrics such as validation loss and a goal to minimize it. The YAML configuration file includes a list of hyperparameters and their respective ranges or values, such as the number of epochs and various batch sizes, which will be explored during the training process.
+
+When the training starts, the sweep launches instances locally and runs training with different combinations of hyperparameters. These runs communicate with the Weights and Biases server, which adjusts the hyperparameters between runs based on the optimization method. Finally, the sweep produces graphical representations of the training configurations alongside the corresponding validation accuracy, allowing us to analyze the performance of the models under different setups. ---
 
 ## Coding environment
 
@@ -163,7 +167,23 @@ s204558, s204281, 204540
 >
 > Answer:
 
---- question 4 fill here ---
+--- We used a requirements.txt file to manage our dependencies. The list of dependencies has been continually updated during development. To get a complete copy of our development environment, one would have to run the following commands: <br>`git clone https://github.com/thomas-tams/mlops_02476_project.git`
+<br>`cd mlops_02476_project`
+<br>`conda create -n py39_mlops python=3.9`
+<br>`conda activate py39_mlops`
+<br>`pip install -e .["dev"]` 
+<br>`pre-commit install`
+
+Another smart way to get a copy of the development environment is by using *invoke*. With *conda* and *invoke* a new team member may set up a development environment through these commands invoke in the base conda environment:
+<br>`git clone https://github.com/thomas-tams/mlops_02476_project.git`
+<br>`cd mlops_02476_tcs`
+<br>`invoke create-environment`
+<br>`conda activate mlops_project_tcs`
+<br>`pip install invoke # Again in the new conda env`
+<br>`invoke dev-requirements`
+<br>`pre-commit install`
+
+If the new developer needs to work with docker and Google Cloud, then you would have to install *gcloud* for the operating system and write your project's wandb_api.txt as well as getting a Google Cloud service API key with bucket admin permissions which you have to write to a file called bucket_manager.json. ---
 
 ### Question 5
 
@@ -179,7 +199,20 @@ s204558, s204281, 204540
 >
 > Answer:
 
---- question 5 fill here ---
+--- From the cookiecutter template we have filled out the *.github*, *configs*, *data*, *dockerfiles*, *docs*, *models*, *reports*, *src*, *tests* folders:
+- The *.github* folder keeps the workflow .yaml files.
+- In the *data* folder, we have created a subfolder structure containing different processed and augmented data folders such as *balanced*, *processed*, *raw*, *split*, *split_augmented*.
+- In *configs* is a .json file with class labels.
+- *dockerfiles* has our base .dockerfile together with gcloud .dockerfiles for API and FastAPI frontend.
+- In the *docs* folder, we have app documentation and the mkdocs.yaml to create the README.md file.
+- In *models* we keep the best performing model.ckpt checkpoint from the most recent training run.
+- *reports* contains our project hand-in report and script for creating .html rendition.
+- In the *src* folder we have the project source code in *mlops_project_tcs* (tcs = Thomas, Casper, Sven). This contains .py scripts such as *data.py*, *train.py* and others for driving the project.
+- *test* contains unit tests.
+
+We have removed the *notebooks* folder as we did note use any jupyter notebooks.
+
+We have added *.dvc* to accomodate data version control containing the necessary configurations. ---
 
 ### Question 6
 
@@ -194,7 +227,7 @@ s204558, s204281, 204540
 >
 > Answer:
 
---- question 6 fill here ---
+--- In order to ensure code quality and format, we have made use of the *Ruff* Python linter. In our source code functions, we have improved the quality of our code by applying *typing* to make it easier to directly read the types of input variables and returns. Additionally, docstrings and comments have been added to the code to enable more readily understandable logic. For a project like ours where more developers are envolved, this is essential. For example, the docstrings gives a quick overview of parameters, arguments and returns. Furthermore, with *Ruff* integrated into our GitHub workflows, we make sure to continually check and format the source code as it is updated and developed. ---
 
 ## Version control
 
@@ -213,7 +246,10 @@ s204558, s204281, 204540
 >
 > Answer:
 
---- question 7 fill here ---
+--- In total, we have implemented three test .py scripts:
+- *test_data_processing.py* tests the data preprocessing pipeline and whether the data is available and has the correct format.
+- *test_model.py* tests that the model produces the correct output format (number of output classes).
+- *test_train.py* creates a dummy dataset and test whether the trainer, hydra config files, wanb logger and initialization works correctly to run a training of the model. ---
 
 ### Question 8
 
@@ -228,7 +264,7 @@ s204558, s204281, 204540
 >
 > Answer:
 
---- question 8 fill here ---
+--- In our project, the total code coverage of the tests is 51%, encompassing most of our source code. We acknowledge that this figure is significantly below 100%. However, as emphasized in the course, achieving 100% code coverage does not guarantee that the code is error-free. This is because the unit tests themselves might not adequately test the underlying functionality or edge cases. Consequently, high code coverage can create a false sense of confidence in the correctness of the code. While code coverage provides an estimate of how much of the code is being tested, it does not measure the quality or completeness of the tests. Therefore, developing robust and meaningful unit tests is equally important and should complement code coverage metrics. ---
 
 ### Question 9
 
@@ -259,7 +295,7 @@ By using pull requests all team members had the ability to review surgested chan
 >
 > Answer:
 
---- question 10 fill here ---
+--- The data used in our project consists of MRI brain scan images, which we refer to as "raw data." We have utilized DVC (Data Version Control) exclusively for managing our raw data. This has been implemented by using a publicly accessible bucket in Google Cloud. While this approach hasn't been strictly necessary for our project—since the data originates from a Kaggle challenge with a fixed dataset—we anticipated that it could be a valuable feature if the project's scope were to expand. In such a case, a more comprehensive dataset might become available, and DVC would enable us to track and manage different versions of the brain scan dataset effectively. ---
 
 ### Question 11
 
@@ -276,7 +312,11 @@ By using pull requests all team members had the ability to review surgested chan
 >
 > Answer:
 
---- question 11 fill here ---
+--- 
+We have implemented continuous integration for various parts of our project. Using pre-commit hooks, we ensure that workflows perform specific checks both locally during commits and in GitHub Actions. As mentioned earlier, we also run unit tests on our code in GitHub Actions to ensure that any flaws in updated code, which may not be detected locally during development, are identified and addressed. Additionally, we use Ruff as a pre-commit tool for linting.
+
+As an example of our continuous integration setup, we invite you to review one of our GitHub Actions workflows. This workflow ensures that when branches are merged into the main branch or commits are pushed to the main branch, dependencies are installed, and pytest is executed. In the post-build stage (which runs only if the matrix build completes successfully), an updated Dockerfile for the project is sent to Google Cloud, where an updated image is built. This approach ensures that changes made to the project on GitHub are reflected in the Docker image, which users rely on when running the project code: https://github.com/thomas-tams/mlops_02476_project/blob/main/.github/workflows/tests.yaml
+ ---
 
 ## Running code and tracking experiments
 
