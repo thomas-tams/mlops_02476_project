@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     print("Loading model")
 
     model_mount_path = Path(os.environ.get("MODEL_MOUNT_PATH", "/mnt/models"))
-    model_path = model_mount_path / "models/best_model_val_loss_0.5177.onnx"
+    model_path = model_mount_path / "models/best_model_val_loss_0.5906.onnx"
 
     if model_path.exists():
         onnx_model = ONNXEvaluate(onnx_model_path=model_path)
