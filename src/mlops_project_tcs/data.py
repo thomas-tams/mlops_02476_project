@@ -167,7 +167,7 @@ class ImageAugmenter:
         Returns:
             Image.Image: Augmented PIL image.
         """
-        image = Image.open(image_path).convert('RGB')
+        image = Image.open(image_path).convert("RGB")
         angle = random.uniform(-30, 30)  # Random rotation angle between -30 and 30 degrees
         return image.rotate(angle, resample=Image.BICUBIC, expand=True)
 
