@@ -586,7 +586,12 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- question 29 fill here ---
+--- The overall architecture of our project is seen illustrated in the figure:
+![Overall architecture figure](figures/overview.png)
+
+The starting point of our pipeline is the local machine, where all the development has taken place. Before the code is pushed to github, pre-commit checks of the code a run to ensure correct formatting and continous integration. Once pushed to github, github actions are activated, running the same checks as pre-commit, incase pre.commit wasnt installed. A few extra code tests are also triggered, ensuring correct function, before pushing the newly constructed dockerfile to google registry where the docker image is constructed to.
+
+When training the models on the local machine, the models are logged to weights and biases sweep for tracking the models and for instructing hydra to adjust hyperparameters in order to construct the optimal model. ---
 
 ### Question 30
 
