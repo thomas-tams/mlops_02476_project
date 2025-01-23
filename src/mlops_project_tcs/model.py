@@ -42,7 +42,7 @@ class VGG16Classifier(pl.LightningModule):
             nn.Linear(self.hidden_size, self.hidden_size),
             nn.ReLU(inplace=True),
             nn.Dropout(self.dropout_p),
-            nn.Linear(self.hidden_size, self.num_classes)
+            nn.Linear(self.hidden_size, self.num_classes),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
