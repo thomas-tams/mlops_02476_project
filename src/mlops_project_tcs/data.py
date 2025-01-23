@@ -127,9 +127,11 @@ class BinaryClassBalancer:
 class ImageAugmenter:
     def __init__(self, datadir: Union[Path, str], output_dir: Union[Path, str]):
         """
-        Initializes the DatasetAugmenter.
-        :param datadir: Path to the dataset directory containing 'yes' and 'no' subdirectories.
-        :param output_dir: Path where augmented images will be saved.
+        Initialize the ImageAugmenter class.
+
+        Args:
+            datadir (Union[Path, str]): Path to the dataset directory containing 'yes' and 'no' subdirectories.
+            output_dir (Union[Path, str]): Path where augmented images will be saved.
         """
         self.datadir = Path(datadir)
         self.output_dir = Path(output_dir)
@@ -144,18 +146,26 @@ class ImageAugmenter:
 
     def _load_image_paths(self, cls: str):
         """
-        Loads image paths for a given class.
-        :param cls: Class name ('yes' or 'no').
-        :return: List of paths to images.
+        Load image paths for a given class.
+
+        Args:
+            cls (str): Class name ('yes' or 'no').
+
+        Returns:
+            List[Path]: List of paths to images.
         """
         class_dir = self.datadir / cls
         return [p for p in class_dir.iterdir() if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg"}]
 
     def _augment_image(self, image_path: Path):
         """
-        Augments an image by applying random rotation.
-        :param image_path: Path to the image to augment.
-        :return: Augmented PIL image.
+        Augment an image by applying random rotation.
+
+        Args:
+            image_path (Path): Path to the image to augment.
+
+        Returns:
+            Image.Image: Augmented PIL image.
         """
         image = Image.open(image_path)
         angle = random.uniform(-30, 30)  # Random rotation angle between -30 and 30 degrees
@@ -163,9 +173,11 @@ class ImageAugmenter:
 
     def _save_image(self, image: Image.Image, cls: str):
         """
-        Saves the augmented image to the output directory.
-        :param image: Augmented PIL image.
-        :param cls: Class name ('yes' or 'no').
+        Save the augmented image to the output directory.
+
+        Args:
+            image (Image.Image): Augmented PIL image.
+            cls (str): Class name ('yes' or 'no').
         """
         filename = f"aug_{random.randint(100000, 999999)}.jpg"
         while (self.output_dir / cls / filename).exists():
@@ -175,8 +187,10 @@ class ImageAugmenter:
 
     def augment(self, iterations: int = 10):
         """
-        Augments the dataset by adding new images to balance classes.
-        :param iterations: Number of augmentation iterations to perform augmentation for each class.
+        Augment the dataset by adding new images to balance classes.
+
+        Args:
+            iterations (int): Number of augmentation iterations to perform augmentation for each class.
         """
         for cls in self.classes:
             for _ in range(iterations):
