@@ -12,12 +12,13 @@ import torch
 from pathlib import Path
 import sys
 import io
+from typing import AsyncGenerator, Dict, Tuple, Union
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Load and clean up model on startup and shutdown."""
-    global onnx_model, cropper, transform, classes
+    global onnx_model, classes
     print("Loading model")
 
     model_mount_path = Path(os.environ.get("MODEL_MOUNT_PATH", "/mnt/models"))
@@ -43,7 +44,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
-def root():
+def root() -> Dict[str, str]:
     """Health check."""
     response = {
         "message": HTTPStatus.OK.phrase,
@@ -52,7 +53,7 @@ def root():
     return response
 
 
-def predict_image(image_path: str) -> str:
+def predict_image(image_path: str) -> Tuple[torch.Tensor, str]:
     """Predict image class (or classes) given image path and return the result."""
     img = Image.open(image_path).convert("RGB")
     with torch.no_grad():
@@ -61,21 +62,19 @@ def predict_image(image_path: str) -> str:
     return output, classes[str(predicted_idx.item())]
 
 
-# FastAPI endpoint for image classification
 @app.post("/predict/")
-async def classify_image(file: UploadFile = File(...)):
+async def classify_image(file: UploadFile = File(...)) -> Dict[str, Union[str, float, list]]:
     """Classify image endpoint."""
     file_path = Path("data") / file.filename
     contents = await file.read()
     async with await anyio.open_file(file_path, "wb") as f:
         await f.write(contents)
     probabilities, prediction = predict_image(file_path)
-    return {"file_path": file_path, "prediction": prediction, "probabilities": probabilities.tolist()}
+    return {"file_path": str(file_path), "prediction": prediction, "probabilities": probabilities.tolist()}
 
 
-# FastAPI endpoint for image classification
 @app.post("/preprocess/")
-async def preprocess_image(file: UploadFile = File(...)):
+async def preprocess_image(file: UploadFile = File(...)) -> StreamingResponse:
     """Preprocess image and return the image."""
     try:
         # Open the uploaded image

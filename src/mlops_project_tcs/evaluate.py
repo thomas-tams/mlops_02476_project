@@ -55,7 +55,7 @@ class ONNXEvaluate:
         Runs inference on the given image using the loaded ONNX model.
 
         Args:
-            image (torch.tensor): The input image as a numpy array.
+            image (torch.Tensor): The input image as a numpy array.
 
         Returns:
             torch.Tensor: Output of model inference.

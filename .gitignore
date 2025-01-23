@@ -1,3 +1,4 @@
+# Secrets
 wandb_api.txt
 bucket_manager.json
 
@@ -15,7 +16,7 @@ dtu_mlops/
 wandb/
 
 # Data statistic plots
-reports/data_statistics/*.png
+reports/dataset_statistics/*.png
 
 # VSCode stuff
 .vscode/

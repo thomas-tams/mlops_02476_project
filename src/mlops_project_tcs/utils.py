@@ -2,35 +2,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from torch.utils.data import Subset
+from PIL import Image
+from typing import List, Tuple, Optional, Union
+from pathlib import Path
 
 
-def plot_image_grid_with_labels(images, rows, cols, labels=None, figsize=(10, 10), titles=None, show=False):
+def plot_image_grid_with_labels(
+    image_paths: List[Union[str, Path]],
+    rows: int,
+    cols: int,
+    labels: Optional[List[str]] = None,
+    figsize: Tuple[int, int] = (10, 10),
+    titles: Optional[List[str]] = None,
+    show: bool = False,
+) -> None:
     """
     Plots a grid of images with optional titles and labels.
 
     Args:
-        images (list or np.ndarray): List or array of images with shape (3, 244, 244).
+        image_paths (list of str or Path): List of image file paths.
         rows (int): Number of rows in the grid.
         cols (int): Number of columns in the grid.
         labels (list, optional): Labels for each image. Should have the same length as images.
         figsize (tuple): Size of the entire figure (default is (10, 10)).
         titles (list, optional): Titles for each image. Should have the same length as images.
-        show (bool): Will run plt.show() if true
+        show (bool): Will run plt.show() if true.
     """
-    if len(images) < rows * cols:
+    if len(image_paths) < rows * cols:
         raise ValueError("Not enough images to fill the grid.")
 
     fig, axes = plt.subplots(rows, cols, figsize=figsize)
     axes = axes.flatten()  # Flatten in case of a 2D array of axes
 
     for i, ax in enumerate(axes):
-        # Extract the image
-        img = images[i]
+        # Load the image
+        img = Image.open(image_paths[i]).convert("RGB")
+        img = np.array(img)
 
-        # Check image shape and normalize if necessary
-        if img.shape[0] == 3:
-            img = np.transpose(img, (1, 2, 0))  # Convert (C, H, W) to (H, W, C)
-
+        # Normalize if necessary
         if img.max() > 1:
             img = img / 255.0  # Normalize to [0, 1] range if in [0, 255]
 

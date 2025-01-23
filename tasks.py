@@ -34,9 +34,15 @@ def dev_requirements(ctx: Context) -> None:
 
 # Project commands
 @task
-def launch(ctx: Context) -> None:
+def launch_api(ctx: Context) -> None:
     """Launches a uvicorn api server accessible through 'http://localhost:8000/'"""
     ctx.run("uvicorn --reload --port 8000 src.mlops_project_tcs.api:app")
+
+
+@task
+def launch_streamlit(ctx: Context) -> None:
+    """Launches a streamlit frontend app"""
+    ctx.run("streamlit run src/mlops_project_tcs/frontend.py --server.port 8050 --server.address 0.0.0.0")
 
 
 @task
@@ -47,6 +53,12 @@ def prepare_data(ctx: Context) -> None:
     ctx.run(f"python src/{PROJECT_NAME}/data.py split", echo=True, pty=not WINDOWS)
     ctx.run(f"python src/{PROJECT_NAME}/data.py augment", echo=True, pty=not WINDOWS)
     ctx.run(f"python src/{PROJECT_NAME}/data.py preprocess", echo=True, pty=not WINDOWS)
+
+
+@task
+def dataset_statistics(ctx: Context) -> None:
+    """Creates statistics for the prepared processed data"""
+    ctx.run("python src/mlops_project_tcs/data.py dataset-statistics -i data/processed/ -o reports/dataset_statistics/")
 
 
 @task

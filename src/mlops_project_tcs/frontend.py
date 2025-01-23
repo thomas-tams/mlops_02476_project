@@ -1,20 +1,24 @@
 import os
-
 import pandas as pd
 import requests
 import streamlit as st
 from google.cloud import run_v2
 from PIL import Image
 import io
+from typing import Optional, Dict, Any
 
 
 @st.cache_resource
-def get_backend_url():
-    """Get the URL of the backend service."""
+def get_backend_url() -> Optional[str]:
+    """
+    Get the URL of the backend service.
+
+    Returns:
+        Optional[str]: URL of the backend service or None if not found.
+    """
     parent = "projects/our-brand-447716-f1/locations/europe-west1"
     client = run_v2.ServicesClient()
     services = client.list_services(parent=parent)
-    print(services)
     for service in services:
         if service.name.split("/")[-1] == "mlops-api":
             return service.uri
@@ -22,20 +26,37 @@ def get_backend_url():
     return name
 
 
-def classify_image(files, backend):
-    """Send the image to the backend for classification."""
+def classify_image(files: Dict[str, Any], backend: str) -> Optional[Dict[str, Any]]:
+    """
+    Send the image to the backend for classification.
+
+    Args:
+        files (Dict[str, Any]): Dictionary containing the image file.
+        backend (str): URL of the backend service.
+
+    Returns:
+        Optional[Dict[str, Any]]: JSON response from the backend or None if the request failed.
+    """
     predict_url = f"{backend}/predict/"
     response = requests.post(predict_url, files=files, timeout=60)
-    print(response)
     if response.status_code == 200:
         return response.json()
     return None
 
 
-def preprocess_image(files, backend):
+def preprocess_image(files: Dict[str, Any], backend: str) -> Optional[Image.Image]:
+    """
+    Send the image to the backend for preprocessing.
+
+    Args:
+        files (Dict[str, Any]): Dictionary containing the image file.
+        backend (str): URL of the backend service.
+
+    Returns:
+        Optional[Image.Image]: Preprocessed image or None if the request failed.
+    """
     predict_url = f"{backend}/preprocess/"
     response = requests.post(predict_url, files=files, timeout=10)
-    print(response)
     if response.status_code == 200:
         preprocessed_image = Image.open(io.BytesIO(response.content))
         return preprocessed_image
@@ -44,9 +65,10 @@ def preprocess_image(files, backend):
 
 
 def main() -> None:
-    """Main function of the Streamlit frontend."""
+    """
+    Main function of the Streamlit frontend.
+    """
     backend = get_backend_url()
-    backend = "http://127.0.0.1:8000"
     if backend is None:
         msg = "Backend service not found"
         raise ValueError(msg)
@@ -81,7 +103,7 @@ def main() -> None:
             if preprocessed_image is not None:
                 st.image(preprocessed_image, caption="Preprocessed image (input for the model)")
 
-            # Creat a bar chart of prediction probabilities
+            # Create a bar chart of prediction probabilities
             data = {"Class": ["No cancer", "Cancer"], "Probability": probabilities[0]}
             print(data)
             df = pd.DataFrame(data)
