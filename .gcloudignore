@@ -4,6 +4,7 @@
 wandb/
 logs/
 models/
+outputs/
 
 
 # Ignore models
