@@ -87,7 +87,7 @@ will check the repositories and the code to verify your answers.
 * [x] Create a FastAPI application that can do inference using your model (M22)
 * [x] Deploy your model in GCP using either Functions or Run as the backend (M23)
 * [ ] Write API tests for your application and setup continues integration for these (M24)
-* [ ] Load test your application (M24)
+* [x] Load test your application (M24)
 * [x] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)
 * [x] Create a frontend for your API (M26)
 
@@ -106,10 +106,10 @@ will check the repositories and the code to verify your answers.
 
 * [ ] Write some documentation for your application (M32)
 * [ ] Publish the documentation to GitHub Pages (M32)
-* [ ] Revisit your initial project description. Did the project turn out as you wanted?
-* [ ] Create an architectural diagram over your MLOps pipeline
-* [ ] Make sure all group members have an understanding about all parts of the project
-* [ ] Uploaded all your code to GitHub
+* [x] Revisit your initial project description. Did the project turn out as you wanted?
+* [x] Create an architectural diagram over your MLOps pipeline
+* [x] Make sure all group members have an understanding about all parts of the project
+* [x] Uploaded all your code to GitHub
 
 ## Group information
 
@@ -314,9 +314,11 @@ By using pull requests all team members had the ability to review surgested chan
 > Answer:
 
 --- 
-We have implemented continuous integration for various parts of our project. Using pre-commit hooks, we ensure that workflows perform specific checks both locally during commits and in GitHub Actions. As mentioned earlier, we also run unit tests on our code in GitHub Actions to ensure that any flaws in updated code, which may not be detected locally during development, are identified and addressed. Additionally, we use Ruff as a pre-commit tool for linting.
+We have implemented continuous integration (CI) for various parts of our project to maintain code quality and streamline our development workflow. Using pre-commit hooks, we ensure that workflows perform specific checks both locally during commits and in GitHub Actions. These hooks catch common issues. As mentioned earlier, we also run unit tests on our code in GitHub Actions to ensure that any flaws in updated code, which may not be detected locally during development, are identified and addressed. This ensures that every update integrates without introducing regressions. Additionally, we utilize Ruff as a pre-commit tool for linting, which helps us maintain a clean and consistent codebase by enforcing style guidelines and catching potential bugs early in the development process.
 
-As an example of our continuous integration setup, we invite you to review one of our GitHub Actions workflows. This workflow ensures that when branches are merged into the main branch or commits are pushed to the main branch, dependencies are installed, and pytest is executed. In the post-build stage (which runs only if the matrix build completes successfully), an updated Dockerfile for the project is sent to Google Cloud, where an updated image is built. This approach ensures that changes made to the project on GitHub are reflected in the Docker image, which users rely on when running the project code: https://github.com/thomas-tams/mlops_02476_project/blob/main/.github/workflows/tests.yaml
+As an example of our continuous integration setup, we invite you to review one of our GitHub Actions workflows. This workflow ensures that when branches are merged into the main branch or commits are pushed to the main branch, a series of automated processes are triggered. These processes include installing dependencies and executing pytest to validate the integrity of our code. In the post-build stage (which runs only if the matrix build completes successfully), an updated Dockerfile for the project is sent to Google Cloud, where an updated Docker image is built. This ensures that any changes made to the project on GitHub are reflected in the Docker image, which users rely on when running the project code.
+
+By integrating these practices into our workflow, we maintain high standards for code quality, ensure reliability across updates, and minimize manual intervention in deployment processes. This setup enhances the project's reproducibility and ensures a seamless transition from development to production environments. You can view the workflow file here: https://github.com/thomas-tams/mlops_02476_project/blob/main/.github/workflows/tests.yaml
  ---
 
 ## Running code and tracking experiments
@@ -406,21 +408,21 @@ By logging these metrics and hyperparameters, we gained insights into model opti
 
 --- 
 
-Constructed an interactive container sessions from the mlopsdtu_local_train, where we used GPU support, as well as mounted the outputs/ and models/ directories.
+We have used Docker in different ways in our project. During development, we have constructed an interactive container sessions from the mlopsdtu_local_train, where we used GPU support, as well as mounted the outputs/ and models/ directories:
 
 `docker run --rm --gpus all -it -v $(pwd)/outputs:/app/outputs -v $(pwd)/models:/app/models mlopsdtu_local_train sh`
 
-In this session we setup a wandb sweep
-wandb sweep src/mlops_project_tcs/sweeps/sweep.yaml
+In this session we setup a wandb sweep:
 
-And ran the training agent for training
+`wandb sweep src/mlops_project_tcs/sweeps/sweep.yaml`
 
+And ran the training agent for training.
 
 The Google Cloud based models are pushed to Google Cloud Container Registry and runs on Google Cloud Run services and are available at FastAPI backend: https://mlops-api-707742802258.europe-west1.run.app and Streamlit frontend: https://mlops-frontend-707742802258.europe-west1.run.app
 mlops-api-707742802258.europe-west1.run.app
 
 
-To access our dockerfiles, use the following link:
+To access our project dockerfiles, use the following link:
 https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
  
  ---
@@ -716,4 +718,8 @@ This structure ensures smooth integration of development, deployment, and user i
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
---- question 31 fill here ---
+--- Overall, all students contributed equally to the completion in this project.
+
+On a more granilar level, some where more involved some some processes that others. s204540 did a lot of the actual coding and commits to the GitHub repo while s204281 and s204558 where more involved with ideation and conceptually designing the project.
+Additionally, as an integrated part of our 
+ ---
