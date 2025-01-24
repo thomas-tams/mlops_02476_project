@@ -584,7 +584,13 @@ curl -X 'POST' \
 >
 > Answer:
 
---- question 25 fill here ---
+--- 
+We tried implementing unittesting for the FastAPI backend, however we never succeeded due to errors regarding mocking of global variables assigned in the @asynccontextmanager in the api.py script.
+
+We would have implemented the unittest using pytest and added these to the github action tests for push/pull request to main branch.
+
+We did not do load testing of the API
+ ---
 
 ### Question 26
 
