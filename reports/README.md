@@ -201,14 +201,15 @@ If the new developer needs to work with docker and Google Cloud, then you would 
 
 --- From the cookiecutter template we have filled out the *.github*, *configs*, *data*, *dockerfiles*, *docs*, *models*, *reports*, *src*, *tests* folders:
 - The *.github* folder keeps the workflow .yaml files.
-- In the *data* folder, we have created a subfolder structure containing different processed and augmented data folders such as *balanced*, *processed*, *raw*, *split*, *split_augmented*.
+- In the *data* folder, we have created a subfolder structure containing raw, intermediary and processed data.
 - In *configs* is a .json file with class labels.
 - *dockerfiles* has our base .dockerfile together with gcloud .dockerfiles for API and FastAPI frontend.
 - In the *docs* folder, we have app documentation and the mkdocs.yaml to create the README.md file.
-- In *models* we keep the best performing model.ckpt checkpoint from the most recent training run.
 - *reports* contains our project hand-in report and script for creating .html rendition.
-- In the *src* folder we have the project source code in *mlops_project_tcs* (tcs = Thomas, Casper, Sven). This contains .py scripts such as *data.py*, *train.py* and others for driving the project.
+- In the *src* folder we have the project source code in *mlops_project_tcs*.
 - *test* contains unit tests.
+- We deviate from the *models* subfolder structure, since we save the 1 best model from a training run as onnx in the hydra *outputs* folder.
+- We also use the hydra *outputs* folder for storing all our relavant training run data, such as experiment configuration and best performing models.
 
 We have removed the *notebooks* folder as we did note use any jupyter notebooks.
 
@@ -414,7 +415,17 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- question 17 fill here ---
+--- 
+We used following services on Google Cloud:
+Engine: For testing docker images run capabilities in a cloud environment (during development).
+Bucket: For storing DVC data publicly as well as onnx models for evaluation/ prediction. For version control, backup and public availability.
+Artifact Registry: For storing and accessing docker images in the cloud.
+Cloud Build: For building cloud docker images via github action calls in CI.
+Cloud Run: For hosting FastAPI backend and Streamlit frontend in the cloud for publicly available predictions.
+We played around with Vertex AI, however we never got it to work properly.
+
+
+---
 
 ### Question 18
 
@@ -429,7 +440,13 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- question 18 fill here ---
+--- 
+We also tried to setup few different virtual machines instances during our try to get training running in the cloud. 
+We tried to setup a simple CPU General purpose E2 instance (e2-medium (2 vCPU, 1 core, 4GB memory)) with 10 GB storage using a custom container image with our project installed. 
+We also create a GPU N1 instance using NVIDIA T4 GPU instance (n1-standard-2 (1 vCPU, 7.5 GB memory)) with 100 GB storage using one of google PyTorch container images (pytorch-latest-gpu-v20241224: Google, Deep Learning VM for PyTorch 2.4 with CUDA 12.4, M127, Debian 11, Python 3.10, with PyTorch 2.4 and fast.ai preinstalled)
+
+We planned to use VMs for training, however in between getting the VMs setup, getting permissions for DVC, WandB working in the cloud and service accounts setup in Google Cloud within within a limited time frame for the project, we opted to train on our local computers instead. This was possible seeing as the training runs were still rather quick and did have large requirements for hardware, since our model and dataset were somewhat small, atleast compared to models such as LLMs or other Deep Learning architectures.
+---
 
 ### Question 19
 
@@ -447,7 +464,10 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- question 20 fill here ---
+--- 
+![artifact_registry1](our_figures/artifact_registry1.png)
+![artifact_registry2](our_figures/artifact_registry2.png)
+---
 
 ### Question 21
 
