@@ -542,6 +542,17 @@ We also added a Streamlit frontend, which functions as a user interface, talking
 
 ---
 First we got the FastAPI and Streamlit frontend working locally, by serving the onnx model build from training runs. After this we build up docker images to accomodate the FastAPI and Streamlit frontend respectively locally. These images were then changed to accomodate Google Cloud Run platform, using environment variables to serve the port (via $PORT) and using Google Cloud Secrets for supplying the service account credentials. We also mounted a bucket to the FastAPI service, containing .onnx model which we used for evaluation/prediction of user inputs.
+
+Here is an example of how to call the Google Cloud API
+```
+curl -X 'POST' \
+  'https://mlops-api-707742802258.europe-west1.run.app/predict/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@<image_path>.jpg;type=image/jpeg'
+```
+
+
 ---
 
 ### Question 25
