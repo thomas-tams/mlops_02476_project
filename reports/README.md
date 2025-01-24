@@ -639,7 +639,9 @@ In this project, we did not have time to implement the monitoring functionality 
 > Answer:
 
 --- 
-We ended up spending a total of 1.55 credits. We used very few credits because we did the model training on out local machine insead of doing so in the cloud. The most expensive 
+We ended up spending a total of 1.55 credits. We used very few credits because we performed the model training on our local machine instead of in the cloud. The dataset used for this project is very small, which also ended up contributing to the small amount of credits used. The service that cost the most was Artifact Registry, which accounted for $0.77. This service is used to store and manage Docker images for our application. The second most expensive service was Cloud Run, which cost a total of 0.31 credits. Other services, such as Compute Engine and Cloud Storage, also incurred minor costs.
+
+Overall, working in the cloud was a valuable experience, though it was challenging and occasionally frustrating. However, the possibilities it offers for deployment are significant, especially once you become familiar with the tools and workflows.
  ---
 
 ### Question 28
