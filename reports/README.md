@@ -497,7 +497,9 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 21 fill here ---
+---
+![artifact_registry1](our_figures/cloud_build1.png)
+---
 
 ### Question 22
 
@@ -512,7 +514,12 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 22 fill here ---
+---
+We managed with the engine, but opted to run training locally, since we kept iterating and changing the source code quiet often during development and did not figure out how integrate the the newest updated version of the source code automatically with to the VMs. We did not manage to get training running with Vertex AI. Here we struggled with GPU quotas for Vertex AI, service accounts premissions and injecting Weights and Bias api keys into the Vertex AI build/runtime.
+
+I would have been nice and powerful to get these services up and running, since we would be able to scale training as well as run continously in the the cloud without downtime or running locally "locking" our computer. However, as mentioned earlier the model and datasets were somewhat light-weight and training locally was doable, due to low system requirements and GPU acceleration locally with an NVIDIA GeForce RTX 4060 Laptop GPU.
+
+---
 
 ## Deployment
 
@@ -529,7 +536,11 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 23 fill here ---
+---
+We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output predictions probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing. 
+We also added a Streamlit frontend, which functions as a user interface, talking to the FastAPI backend, for easily uploading pictures and getting the prediction response and the visualization of the preprocessed input.
+---
+
 
 ### Question 24
 
@@ -545,7 +556,9 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 24 fill here ---
+---
+First we got the FastAPI and Streamlit frontend working locally, by serving the onnx model build from training runs. After this we build up docker images to accomodate the FastAPI and Streamlit frontend respectively locally. These images were then changed to accomodate Google Cloud Run platform, using environment variables to serve the port (via $PORT) and using Google Cloud Secrets for supplying the service account credentials. We also mounted a bucket to the FastAPI service, containing .onnx model which we used for evaluation/prediction of user inputs.
+---
 
 ### Question 25
 
