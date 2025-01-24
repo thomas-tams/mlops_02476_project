@@ -118,7 +118,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
- Group 84 
+ Group 84
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -129,7 +129,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
- s204558, s204281, s204540 
+ s204558, s204281, s204540
 
 ### Question 3
 > **A requirement to the project is that you include a third-party package not covered in the course. What framework**
@@ -147,7 +147,7 @@ will check the repositories and the code to verify your answers.
 
 The sweep setup uses the Bayesian optimization method, with predefined metrics such as validation loss and a goal to minimize it. The YAML configuration file includes a list of hyperparameters and their respective ranges or values, such as the number of epochs and various batch sizes, which will be explored during the training process.
 
-When the training starts, the sweep launches instances locally and runs training with different combinations of hyperparameters. These runs communicate with the Weights and Biases server, which adjusts the hyperparameters between runs based on the optimization method. Finally, the sweep produces graphical representations of the training configurations alongside the corresponding validation accuracy, allowing us to analyze the performance of the models under different setups. 
+When the training starts, the sweep launches instances locally and runs training with different combinations of hyperparameters. These runs communicate with the Weights and Biases server, which adjusts the hyperparameters between runs based on the optimization method. Finally, the sweep produces graphical representations of the training configurations alongside the corresponding validation accuracy, allowing us to analyze the performance of the models under different setups.
 
 ## Coding environment
 
@@ -183,7 +183,7 @@ Another smart way to get a copy of the development environment is by using *invo
 <br>`invoke dev-requirements`
 <br>`pre-commit install`
 
-If the new developer needs to work with docker and Google Cloud, then you would have to install *gcloud* for the operating system and write your project's wandb_api.txt as well as getting a Google Cloud service API key with bucket admin permissions which you have to write to a file called bucket_manager.json. 
+If the new developer needs to work with docker and Google Cloud, then you would have to install *gcloud* for the operating system and write your project's wandb_api.txt as well as getting a Google Cloud service API key with bucket admin permissions which you have to write to a file called bucket_manager.json.
 
 ### Question 5
 
@@ -213,7 +213,7 @@ If the new developer needs to work with docker and Google Cloud, then you would 
 
 We have removed the *notebooks* folder as we did note use any jupyter notebooks.
 
-We have added *.dvc* to accomodate data version control containing the necessary configurations. 
+We have added *.dvc* to accomodate data version control containing the necessary configurations.
 
 ### Question 6
 
@@ -228,7 +228,7 @@ We have added *.dvc* to accomodate data version control containing the necessary
 >
 > Answer:
 
- In order to ensure code quality and format, we have made use of the *Ruff* Python linter. In our source code functions, we have improved the quality of our code by applying *typing* to make it easier to directly read the types of input variables and returns. Additionally, docstrings and comments have been added to the code to enable more readily understandable logic. For a project like ours where more developers are envolved, this is essential. For example, the docstrings give a quick overview of parameters, arguments and returns. Furthermore, with *Ruff* integrated into our GitHub workflows, we make sure to continually check and format the source code as it is updated and developed. 
+ In order to ensure code quality and format, we have made use of the *Ruff* Python linter. In our source code functions, we have improved the quality of our code by applying *typing* to make it easier to directly read the types of input variables and returns. Additionally, docstrings and comments have been added to the code to enable more readily understandable logic. For a project like ours where more developers are envolved, this is essential. For example, the docstrings give a quick overview of parameters, arguments and returns. Furthermore, with *Ruff* integrated into our GitHub workflows, we make sure to continually check and format the source code as it is updated and developed.
 
 ## Version control
 
@@ -250,7 +250,7 @@ We have added *.dvc* to accomodate data version control containing the necessary
  In total, we have implemented three test .py scripts:
 - *test_data_processing.py* tests the data preprocessing pipeline and whether the data is available and has the correct format.
 - *test_model.py* tests that the model produces the correct output format (number of output classes).
-- *test_train.py* creates a dummy dataset and test whether the trainer, hydra config files, wanb logger and initialization works correctly to run a training of the model. 
+- *test_train.py* creates a dummy dataset and test whether the trainer, hydra config files, wanb logger and initialization works correctly to run a training of the model.
 
 ### Question 8
 
@@ -265,7 +265,7 @@ We have added *.dvc* to accomodate data version control containing the necessary
 >
 > Answer:
 
- In our project, the total code coverage of the tests is 49%, encompassing the most important half of our source code. We acknowledge that this figure is significantly below 100%. However, as emphasized in the course, achieving 100% code coverage does not guarantee that the code is error-free. This is because the unit tests themselves might not adequately test the underlying functionality or edge cases. Consequently, high code coverage can create a false sense of confidence in the correctness of the code. While code coverage provides an estimate of how much of the code is being tested, it does not measure the quality or completeness of the tests. Therefore, developing robust and meaningful unit tests is equally important and should complement code coverage metrics. 
+ In our project, the total code coverage of the tests is 49%, encompassing the most important half of our source code. We acknowledge that this figure is significantly below 100%. However, as emphasized in the course, achieving 100% code coverage does not guarantee that the code is error-free. This is because the unit tests themselves might not adequately test the underlying functionality or edge cases. Consequently, high code coverage can create a false sense of confidence in the correctness of the code. While code coverage provides an estimate of how much of the code is being tested, it does not measure the quality or completeness of the tests. Therefore, developing robust and meaningful unit tests is equally important and should complement code coverage metrics.
 
 ### Question 9
 
@@ -296,7 +296,7 @@ By using pull requests all team members had the ability to review suggested chan
 >
 > Answer:
 
- The data used in our project consists of MRI brain scan images, which we refer to as "raw data." We have utilized DVC (Data Version Control) exclusively for managing our raw data. This has been implemented by using a publicly accessible bucket in Google Cloud. While this approach hasn't been strictly necessary for our project—since the data originates from a Kaggle challenge with a fixed dataset—we anticipated that it could be a valuable feature if the project's scope was to expand. In such a case, a more comprehensive dataset might become available, and DVC would enable us to track and manage different versions of the brain scan dataset effectively. 
+ The data used in our project consists of MRI brain scan images, which we refer to as "raw data." We have utilized DVC (Data Version Control) exclusively for managing our raw data. This has been implemented by using a publicly accessible bucket in Google Cloud. While this approach hasn't been strictly necessary for our project—since the data originates from a Kaggle challenge with a fixed dataset—we anticipated that it could be a valuable feature if the project's scope was to expand. In such a case, a more comprehensive dataset might become available, and DVC would enable us to track and manage different versions of the brain scan dataset effectively.
 
 ### Question 11
 
@@ -343,7 +343,7 @@ By integrating these practices into our workflow, we maintain high standards for
 <br>`python src/mlops_project_tcs/train.py experiment.hyperparameter.n_epochs=1 experiment.hyperparameter.optimizer.weight_decay=0.0001`
 
 During training, we use Weights and Biases to sweep over different configurations.
- 
+
 
 ### Question 13
 
@@ -359,7 +359,7 @@ During training, we use Weights and Biases to sweep over different configuration
 > Answer:
 
  As already eluded to above, we made use of config files to set up experiments with predefined hyperparameters. With the functionalities in Hydra, we ensure that relevant information about the specific experiment is logged in an *outputs* folder. As mentioned earlier in Q5, we also save the .onnx model file for a specific run in the same folder. During development, if one wishes to run an identical experiment as one from the past, it can be done by accessing the config.yaml file that is saved in the aforementioned *outputs* folder in the following manner:
-<br>`python src/mlops_project_tcs/train.py --config-dir outputs/<date>/<time>/.hydra --config-name config`  
+<br>`python src/mlops_project_tcs/train.py --config-dir outputs/<date>/<time>/.hydra --config-name config`
 
 ### Question 14
 
@@ -392,7 +392,7 @@ In the second image, we conducted a hyperparameter sweep to analyze the impact o
 
 By logging these metrics and hyperparameters, we gained insights into model optimization and avoided manual trial-and-error processes. This tracking process was essential for ensuring reproducibility and improving the model's robustness.
 
- 
+
 
 ### Question 15
 
@@ -425,7 +425,7 @@ The Google Cloud based models are pushed to Google Cloud Artifact Registry and r
 To access our project dockerfiles, use the following link:
 https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
 
- 
+
 
 ### Question 16
 
@@ -440,7 +440,7 @@ https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
 >
 > Answer:
 
- When running experiments, we naturally encountered a lot of bugs and errors. We have tried to implement try/raise statements to detect errors. Many of our source code scripts are built on *typer* which has convenient error-messages. Besides, we have relied heavily on the VS Code built-in debugger. A major source of support has come from ChatGPT and GitHub copilot. Although there are many learnings in getting to know error and traceback messages properly, we also realized during the development that it can be a time-consuming task to debug and therefore utilized the AI tools availabe. Finally, we have run some profiling runs a few times via the PyTorch Lightning module. 
+ When running experiments, we naturally encountered a lot of bugs and errors. We have tried to implement try/raise statements to detect errors. Many of our source code scripts are built on *typer* which has convenient error-messages. Besides, we have relied heavily on the VS Code built-in debugger. A major source of support has come from ChatGPT and GitHub copilot. Although there are many learnings in getting to know error and traceback messages properly, we also realized during the development that it can be a time-consuming task to debug and therefore utilized the AI tools availabe. Finally, we have run some profiling runs a few times via the PyTorch Lightning module.
 
 ## Working in the cloud
 
@@ -494,7 +494,7 @@ We also created a GPU N1 instance using NVIDIA T4 GPU instance (n1-standard-2 (1
 
 We planned to use VMs for training, however inbetween getting the VMs set up, getting permissions for DVC, getting WandB working in the cloud, and service accounts set up in Google Cloud within a limited timeframe for the project, we opted to train on our local computers instead. This was possible seeing as the training runs were still rather quick and did have large requirements for hardware, since our model and dataset were somewhat small, atleast compared to models such as LLMs or other Deep Learning architectures.
 
- 
+
 
 ### Question 19
 
@@ -505,7 +505,7 @@ We planned to use VMs for training, however inbetween getting the VMs set up, ge
 
 
 ![GCP bucket](our_figures/project-bucket.png)
- 
+
 
 ### Question 20
 
@@ -517,7 +517,7 @@ We planned to use VMs for training, however inbetween getting the VMs set up, ge
 
 ![artifact_registry1](our_figures/artifact_registry1.png)
 ![artifact_registry2](our_figures/artifact_registry2.png)
- 
+
 
 ### Question 21
 
@@ -528,7 +528,7 @@ We planned to use VMs for training, however inbetween getting the VMs set up, ge
 
 
 ![artifact_registry1](our_figures/cloud_build1.png)
- 
+
 
 ### Question 22
 
@@ -597,7 +597,7 @@ curl -X 'POST' \
   -H 'Content-Type: multipart/form-data' \
   -F 'file=@<image_path>.jpg;type=image/jpeg'
 ```
- 
+
 
 ### Question 25
 
@@ -631,7 +631,7 @@ Results of the runs were as follows
 - Local API Test: API stopped responding after around 2500 concurrent users.
 - Google Cloud API Test: using a ramp of 50 and 5000 concurrent users we got to around 2000 users doing 211.4 RPS with 52% Failure before stopping the tests.
 
- 
+
 
 ### Question 26
 
@@ -647,7 +647,7 @@ Results of the runs were as follows
 > Answer:
 
 
-In this project, we did not have time to implement the monitoring functionality from S8. However, monitoring would potentially have been a very important part of a project like this, where we work with detection of MRI brain scans of cancer patients. Assuming that the application was deployed and able to run, MRI imaging is also a scientific field under development. Hence, the data might change format as time goes by, and this new data might drift away from the data distribution that the model was trained on. Monitoring could help identify such data drift early, ensuring the model's predictions remain accurate. Furthermore, overall system monitoring of the application would also have greatly benefitted the project, allowing us to follow the user requests and system logs. It could also help in tracking model performance metrics over time, identifying cases where the model begins to underperform or where errors might occur. Lastly, monitoring would enable better troubleshooting and improve reliability by flagging issues in real-time, which is critical in a sensitive application like cancer detection. 
+In this project, we did not have time to implement the monitoring functionality from S8. However, monitoring would potentially have been a very important part of a project like this, where we work with detection of MRI brain scans of cancer patients. Assuming that the application was deployed and able to run, MRI imaging is also a scientific field under development. Hence, the data might change format as time goes by, and this new data might drift away from the data distribution that the model was trained on. Monitoring could help identify such data drift early, ensuring the model's predictions remain accurate. Furthermore, overall system monitoring of the application would also have greatly benefitted the project, allowing us to follow the user requests and system logs. It could also help in tracking model performance metrics over time, identifying cases where the model begins to underperform or where errors might occur. Lastly, monitoring would enable better troubleshooting and improve reliability by flagging issues in real-time, which is critical in a sensitive application like cancer detection.
 
 ## Overall discussion of project
 
@@ -671,7 +671,7 @@ We ended up spending a total of 1.55 credits. We used very few credits because w
 
 Overall, working in the cloud was a valuable experience, though it was challenging and occasionally frustrating. However, the possibilities it offers for deployment are significant, especially once you become familiar with the tools and workflows.
 
- 
+
 
 ### Question 28
 
@@ -687,7 +687,7 @@ Overall, working in the cloud was a valuable experience, though it was challengi
 >
 > Answer:
 
- We invite you to look at the answer in question 23 where we talk about our frontend implementation. 
+ We invite you to look at the answer in question 23 where we talk about our frontend implementation.
 
 ### Question 29
 
@@ -713,7 +713,7 @@ When training models on the local machine, the models are logged to Weights and 
 
 The Docker image is then deployed to Google Cloud Run, which hosts the backend application using FastAPI. The frontend is built using Streamlit, where users can upload images. These images are sent to the backend for processing and predictions. The results are then returned to the Streamlit interface for the user to view.
 
-This structure ensures smooth integration of development, deployment, and user interaction, while maintaining reproducibility, experiment tracking, and model optimization. 
+This structure ensures smooth integration of development, deployment, and user interaction, while maintaining reproducibility, experiment tracking, and model optimization.
 
 ### Question 30
 
@@ -738,7 +738,7 @@ Training in the cloud; We tried using both Compute Engine VMs and Vertex AI for 
 
 Getting proper model predictions; All the models we trained did not converge in a good way. Always either guessing/predicting one a 100% on one class or 100% on the other class. This we could not manage to overcome, however we believe that this could be a due to the limited size of the dataset, simply not containing enough information for the model to understand the problem.
 
- 
+
 
 ### Question 31
 
@@ -760,5 +760,3 @@ Getting proper model predictions; All the models we trained did not converge in 
 
 On a more granular level, some where more involved with some processes that others. s204540 did a lot of the actual coding and commits to the GitHub repo while s204281 and s204558 where more involved with ideation and conceptually designing the project and undestanding implementation of the project to the cloud which was a heavy task.
 Additionally, as part of our project development we have used generative AI for code development, conceptual understanding and some text generation.
-
- 
