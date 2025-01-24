@@ -618,6 +618,9 @@ locust -f src/mlops_project_tcs/locust_load.py --host https://localhost:8080
 locust -f src/mlops_project_tcs/locust_load.py --host https://mlops-api-707742802258.europe-west1.run.app
 ```
 
+Results of the runs were as follows
+- Local API Test: API stopped responding after around 2500 concurrent users.
+- Google Cloud API Test: using a ramp of 50 and 5000 concurrent users we got to around 2000 users doing 211.4 RPS with 52% Failure before stopping the tests.
 
  ---
 
