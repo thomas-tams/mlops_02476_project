@@ -373,7 +373,23 @@ During training, we use Weights and Biases to sweep over different configuration
 >
 > Answer:
 
---- question 14 fill here ---
+--- 
+![artifact_registry1](our_figures/wandb_graphs1.png)
+![artifact_registry1](our_figures/wandb_graphs2.png)
+
+In our experiments, we used Weights & Biases (W&B) to track key metrics and hyperparameters to evaluate and improve our model's performance systematically.
+
+As seen in the first image, we tracked metrics such as train_loss, val_loss, train_acc, and val_acc over the training steps. These metrics are crucial for understanding the model's learning dynamics:
+
+Training Loss and Validation Loss: These measure the model's performance on the training and validation datasets, respectively. A decreasing training loss indicates that the model is learning from the data, while a stable or decreasing validation loss suggests good generalization.
+
+Training Accuracy and Validation Accuracy: These track how well the model predicts on training and validation sets. A divergence between these accuracies can highlight overfitting or underfitting issues.
+
+In the second image, we conducted a hyperparameter sweep to analyze the impact of parameters such as dropout_p, learning rate, weight decay, batch size, and the number of epochs on the validation loss. The parameter importance chart indicates the significance of each parameter in influencing validation loss. For instance, dropout rate (dropout_p) and learning rate were identified as the most impactful parameters, which guided us in fine-tuning the model. The parallel coordinates plot visualizes how different combinations of hyperparameters correspond to validation loss, helping us select the best-performing configuration.
+
+By logging these metrics and hyperparameters, we gained insights into model optimization and avoided manual trial-and-error processes. This tracking process was essential for ensuring reproducibility and improving the model's robustness.
+
+ ---
 
 ### Question 15
 
@@ -403,7 +419,7 @@ During training, we use Weights and Biases to sweep over different configuration
 >
 > Answer:
 
---- question 16 fill here ---
+--- When running experiments, we naturally encountered a lot of bugs and errors. We have tried to implement try/raise statements to detect errors. Many of our source code scripts are build from *typer* which has convenient error-messages. Besides, we have relied heavily on the VS Code built-in debugger. A major source of support has come from ChatGPT and GitHub copilot. Although there are many learnings in getting to know error and traceback messages properly, we also realized during the development that it can be a time-consuming task to debug and therefore utilized the AI tools availabe. Finally, we have run some profiling runs a few times with the PyTorch Lightning model. ---
 
 ## Working in the cloud
 
