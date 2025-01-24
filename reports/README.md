@@ -143,7 +143,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- In our project, we have implemented a sweep configuration file for hyperparameter optimization using the third-party framework Weights and Biases. We used functionality such as sweep configuration and hyperparameter tuning from the package to define and run a sweep efficiently in our project.
+--- In our project, we have implemented a sweep configuration file for hyperparameter optimization using the third-party framework Weights and Biases. We used functionalities such as sweep configuration and hyperparameter tuning from the package to define and run a sweep efficiently in our project.
 
 The sweep setup uses the Bayesian optimization method, with predefined metrics such as validation loss and a goal to minimize it. The YAML configuration file includes a list of hyperparameters and their respective ranges or values, such as the number of epochs and various batch sizes, which will be explored during the training process.
 
@@ -169,12 +169,12 @@ When the training starts, the sweep launches instances locally and runs training
 
 --- We used a requirements.txt file to manage our dependencies. The list of dependencies has been continually updated during development. To get a complete copy of our development environment, one would have to run the following commands: <br>`git clone https://github.com/thomas-tams/mlops_02476_project.git`
 <br>`cd mlops_02476_project`
-<br>`conda create -n py39_mlops python=3.9`
-<br>`conda activate py39_mlops`
+<br>`conda create -n mlops_project_tcs python=3.9`
+<br>`conda activate mlops_project_tcs`
 <br>`pip install -e .["dev"]`
 <br>`pre-commit install`
 
-Another smart way to get a copy of the development environment is by using *invoke*. With *conda* and *invoke* a new team member may set up a development environment through these commands invoke in the base conda environment:
+Another smart way to get a copy of the development environment is by using *invoke*. With *conda* and *invoke* a new team member may set up a development environment through these commands using invoke in the base conda environment:
 <br>`git clone https://github.com/thomas-tams/mlops_02476_project.git`
 <br>`cd mlops_02476_project`
 <br>`invoke create-environment`
@@ -199,17 +199,17 @@ If the new developer needs to work with docker and Google Cloud, then you would 
 >
 > Answer:
 
---- From the cookiecutter template we have filled out the *.github*, *configs*, *data*, *dockerfiles*, *docs*, *models*, *reports*, *src*, *tests* folders:
+--- From the cookiecutter template we have filled *.github*, *configs*, *data*, *dockerfiles*, *docs*, *reports*, *src*, and *tests* folders:
 - The *.github* folder keeps the workflow .yaml files.
 - In the *data* folder, we have created a subfolder structure containing raw, intermediary and processed data.
 - In *configs* is a .json file with class labels.
 - *dockerfiles* has our base .dockerfile together with gcloud .dockerfiles for API and FastAPI frontend.
-- In the *docs* folder, we have app documentation and the mkdocs.yaml to create the README.md file.
+- In the *docs* folder, we have app documentation and the mkdocs.yaml to create documentation (which we did not get to).
 - *reports* contains our project hand-in report and script for creating .html rendition.
 - In the *src* folder we have the project source code in *mlops_project_tcs*.
 - *test* contains unit tests.
 - We deviate from the *models* subfolder structure, since we save the 1 best model from a training run as onnx in the hydra *outputs* folder.
-- We also use the hydra *outputs* folder for storing all our relavant training run data, such as experiment configuration and best performing models.
+- We also use the hydra *outputs* folder for storing all our relavant training run data, such as logs, experiment configuration and best performing models.
 
 We have removed the *notebooks* folder as we did note use any jupyter notebooks.
 
@@ -228,7 +228,7 @@ We have added *.dvc* to accomodate data version control containing the necessary
 >
 > Answer:
 
---- In order to ensure code quality and format, we have made use of the *Ruff* Python linter. In our source code functions, we have improved the quality of our code by applying *typing* to make it easier to directly read the types of input variables and returns. Additionally, docstrings and comments have been added to the code to enable more readily understandable logic. For a project like ours where more developers are envolved, this is essential. For example, the docstrings gives a quick overview of parameters, arguments and returns. Furthermore, with *Ruff* integrated into our GitHub workflows, we make sure to continually check and format the source code as it is updated and developed. ---
+--- In order to ensure code quality and format, we have made use of the *Ruff* Python linter. In our source code functions, we have improved the quality of our code by applying *typing* to make it easier to directly read the types of input variables and returns. Additionally, docstrings and comments have been added to the code to enable more readily understandable logic. For a project like ours where more developers are envolved, this is essential. For example, the docstrings give a quick overview of parameters, arguments and returns. Furthermore, with *Ruff* integrated into our GitHub workflows, we make sure to continually check and format the source code as it is updated and developed. ---
 
 ## Version control
 
@@ -265,7 +265,7 @@ We have added *.dvc* to accomodate data version control containing the necessary
 >
 > Answer:
 
---- In our project, the total code coverage of the tests is 51%, encompassing most of our source code. We acknowledge that this figure is significantly below 100%. However, as emphasized in the course, achieving 100% code coverage does not guarantee that the code is error-free. This is because the unit tests themselves might not adequately test the underlying functionality or edge cases. Consequently, high code coverage can create a false sense of confidence in the correctness of the code. While code coverage provides an estimate of how much of the code is being tested, it does not measure the quality or completeness of the tests. Therefore, developing robust and meaningful unit tests is equally important and should complement code coverage metrics. ---
+--- In our project, the total code coverage of the tests is 49%, encompassing the most important half of our source code. We acknowledge that this figure is significantly below 100%. However, as emphasized in the course, achieving 100% code coverage does not guarantee that the code is error-free. This is because the unit tests themselves might not adequately test the underlying functionality or edge cases. Consequently, high code coverage can create a false sense of confidence in the correctness of the code. While code coverage provides an estimate of how much of the code is being tested, it does not measure the quality or completeness of the tests. Therefore, developing robust and meaningful unit tests is equally important and should complement code coverage metrics. ---
 
 ### Question 9
 
@@ -281,7 +281,7 @@ We have added *.dvc* to accomodate data version control containing the necessary
 > Answer:
 
 Our workflow made use of both branches and pull requests. We used branches to implement new features, without effecting the main codebase. This allowed us to work on multiple task at the same time, without running the risk of ruining our code. Each feature could thus be developed and tested in a vacuum, allowing us to run tests before merging with the main branch.
-By using pull requests all team members had the ability to review surgested changes and merge them into the main branch. Having this step in the process enabled us to more easily discuss potential changes, befor actually implementing them. This meant that it was easier to ensure that the code lived up to the projects standards.
+By using pull requests all team members had the ability to review suggested changes and merge them into the main branch. Having this step in the process enabled us to more easily discuss potential changes, before actually implementing them. This meant that it was easier to ensure that the code lived up to the projects standards.
 
 ### Question 10
 
@@ -296,7 +296,7 @@ By using pull requests all team members had the ability to review surgested chan
 >
 > Answer:
 
---- The data used in our project consists of MRI brain scan images, which we refer to as "raw data." We have utilized DVC (Data Version Control) exclusively for managing our raw data. This has been implemented by using a publicly accessible bucket in Google Cloud. While this approach hasn't been strictly necessary for our project—since the data originates from a Kaggle challenge with a fixed dataset—we anticipated that it could be a valuable feature if the project's scope were to expand. In such a case, a more comprehensive dataset might become available, and DVC would enable us to track and manage different versions of the brain scan dataset effectively. ---
+--- The data used in our project consists of MRI brain scan images, which we refer to as "raw data." We have utilized DVC (Data Version Control) exclusively for managing our raw data. This has been implemented by using a publicly accessible bucket in Google Cloud. While this approach hasn't been strictly necessary for our project—since the data originates from a Kaggle challenge with a fixed dataset—we anticipated that it could be a valuable feature if the project's scope was to expand. In such a case, a more comprehensive dataset might become available, and DVC would enable us to track and manage different versions of the brain scan dataset effectively. ---
 
 ### Question 11
 
@@ -316,10 +316,11 @@ By using pull requests all team members had the ability to review surgested chan
 ---
 We have implemented continuous integration (CI) for various parts of our project to maintain code quality and streamline our development workflow. Using pre-commit hooks, we ensure that workflows perform specific checks both locally during commits and in GitHub Actions. These hooks catch common issues. As mentioned earlier, we also run unit tests on our code in GitHub Actions to ensure that any flaws in updated code, which may not be detected locally during development, are identified and addressed. This ensures that every update integrates without introducing regressions. Additionally, we utilize Ruff as a pre-commit tool for linting, which helps us maintain a clean and consistent codebase by enforcing style guidelines and catching potential bugs early in the development process.
 
-As an example of our continuous integration setup, we invite you to review one of our GitHub Actions workflows. This workflow ensures that when branches are merged into the main branch or commits are pushed to the main branch, a series of automated processes are triggered. These processes include installing dependencies and executing pytest to validate the integrity of our code. In the post-build stage (which runs only if the matrix build completes successfully), an updated Dockerfile for the project is sent to Google Cloud, where an updated Docker image is built. This ensures that any changes made to the project on GitHub are reflected in the Docker image, which users rely on when running the project code.
+As an example of our continuous integration setup, we invite you to review one of our GitHub Actions workflows. This workflow ensures that when branches are merged into the main branch or commits are pushed to the main branch, a series of automated processes are triggered. These processes include installing dependencies and executing pytest to validate the integrity of our code. In the post-build stage (which runs only if the matrix build completes successfully), an updated Dockerfile for the project is sent to Google Cloud, where an updated Docker image is built. This ensures that any changes made to the project on GitHub are reflected in the Docker image.
 
 By integrating these practices into our workflow, we maintain high standards for code quality, ensure reliability across updates, and minimize manual intervention in deployment processes. This setup enhances the project's reproducibility and ensures a seamless transition from development to production environments. You can view the workflow file here: https://github.com/thomas-tams/mlops_02476_project/blob/main/.github/workflows/tests.yaml
- ---
+
+---
 
 ## Running code and tracking experiments
 
@@ -338,8 +339,8 @@ By integrating these practices into our workflow, we maintain high standards for
 >
 > Answer:
 
---- To configure our experiments, we used an Hydra setup with config files together with an argparser. A code example of how we would use this could be shown when running the training of the model:
-<br>`python train.py experiment.hyperparameter.n_epochs=1 experiment.hyperparameter.optimizer.weight_decay=0.0001`
+--- To configure our experiments, we used a *Hydra* setup with config files using the argparsing capabilities in *Hydra*. A code example of how we would use this could be shown when running the training of the model:
+<br>`python src/mlops_project_tcs/train.py experiment.hyperparameter.n_epochs=1 experiment.hyperparameter.optimizer.weight_decay=0.0001`
 
 During training, we use Weights and Biases to sweep over different configurations.
  ---
@@ -357,7 +358,7 @@ During training, we use Weights and Biases to sweep over different configuration
 >
 > Answer:
 
---- As already eluded to above, we made use of config files to set up experiments with predefined hyperparameters. With the functionalities in Hydra, we ensure that relevant information about the specific experiment is logged in an *outputs* folder. As mentioned earlier in Q5, we also save the .onnx model file for a specific run in the same folder. During development, if one wishes to run an identical experiment as one from that past, it can be done by accessing the config.yaml file that is saved in the aforementioned *outputs* folder in the following manner:
+--- As already eluded to above, we made use of config files to set up experiments with predefined hyperparameters. With the functionalities in Hydra, we ensure that relevant information about the specific experiment is logged in an *outputs* folder. As mentioned earlier in Q5, we also save the .onnx model file for a specific run in the same folder. During development, if one wishes to run an identical experiment as one from the past, it can be done by accessing the config.yaml file that is saved in the aforementioned *outputs* folder in the following manner:
 <br>`python src/mlops_project_tcs/train.py --config-dir outputs/<date>/<time>/.hydra --config-name config`  ---
 
 ### Question 14
@@ -408,7 +409,7 @@ By logging these metrics and hyperparameters, we gained insights into model opti
 
 ---
 
-We have used Docker in different ways in our project. During development, we have constructed an interactive container sessions from the mlopsdtu_local_train, where we used GPU support, as well as mounted the outputs/ and models/ directories:
+We have used Docker in different ways in our project. During development, we have constructed interactive container sessions from the mlopsdtu_local_train, where we used GPU support, as well as mounted the outputs/ and models/ directories:
 
 `docker run --rm --gpus all -it -v $(pwd)/outputs:/app/outputs -v $(pwd)/models:/app/models mlopsdtu_local_train sh`
 
@@ -418,8 +419,7 @@ In this session we setup a wandb sweep:
 
 And ran the training agent for training.
 
-The Google Cloud based models are pushed to Google Cloud Container Registry and runs on Google Cloud Run services and are available at FastAPI backend: https://mlops-api-707742802258.europe-west1.run.app and Streamlit frontend: https://mlops-frontend-707742802258.europe-west1.run.app
-mlops-api-707742802258.europe-west1.run.app
+The Google Cloud based models are pushed to Google Cloud Artifact Registry and runs on Google Cloud Run services and are available at [FastAPI backend](https://mlops-api-707742802258.europe-west1.run.app/docs) and [Streamlit frontend](https://mlops-frontend-707742802258.europe-west1.run.app)
 
 
 To access our project dockerfiles, use the following link:
@@ -440,7 +440,7 @@ https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
 >
 > Answer:
 
---- When running experiments, we naturally encountered a lot of bugs and errors. We have tried to implement try/raise statements to detect errors. Many of our source code scripts are build from *typer* which has convenient error-messages. Besides, we have relied heavily on the VS Code built-in debugger. A major source of support has come from ChatGPT and GitHub copilot. Although there are many learnings in getting to know error and traceback messages properly, we also realized during the development that it can be a time-consuming task to debug and therefore utilized the AI tools availabe. Finally, we have run some profiling runs a few times with the PyTorch Lightning model. ---
+--- When running experiments, we naturally encountered a lot of bugs and errors. We have tried to implement try/raise statements to detect errors. Many of our source code scripts are built on *typer* which has convenient error-messages. Besides, we have relied heavily on the VS Code built-in debugger. A major source of support has come from ChatGPT and GitHub copilot. Although there are many learnings in getting to know error and traceback messages properly, we also realized during the development that it can be a time-consuming task to debug and therefore utilized the AI tools availabe. Finally, we have run some profiling runs a few times via the PyTorch Lightning module. ---
 
 ## Working in the cloud
 
@@ -458,14 +458,19 @@ https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
 > Answer:
 
 ---
-We used following services on Google Cloud:
-Engine: For testing docker images run capabilities in a cloud environment (during development).
-Bucket: For storing DVC data publicly as well as onnx models for evaluation/ prediction. For version control, backup and public availability.
-Artifact Registry: For storing and accessing docker images in the cloud.
-Cloud Build: For building cloud docker images via github action calls in CI.
-Cloud Run: For hosting FastAPI backend and Streamlit frontend in the cloud for publicly available predictions.
-We played around with Vertex AI, however we never got it to work properly.
+We used the following services on Google Cloud:
 
+Engine: For testing docker images and run capabilities in a cloud environment (during development).
+
+Bucket: For storing DVC data publicly as well as onnx models for evaluation/prediction, for version control, backup and public availability.
+
+Artifact Registry: For storing and accessing docker images in the cloud.
+
+Cloud Build: For building cloud docker images via GitHub actions calls in CI.
+
+Cloud Run: For hosting FastAPI backend and Streamlit frontend in the cloud for publicly available predictions.
+
+We played around with Vertex AI, however we never got it to work properly.
 
 ---
 
@@ -483,11 +488,12 @@ We played around with Vertex AI, however we never got it to work properly.
 > Answer:
 
 ---
-We also tried to setup few different virtual machines instances during our try to get training running in the cloud.
+We also tried to setup a few different virtual machine instances during our attempt to get training running in the cloud.
 We tried to setup a simple CPU General purpose E2 instance (e2-medium (2 vCPU, 1 core, 4GB memory)) with 10 GB storage using a custom container image with our project installed.
-We also create a GPU N1 instance using NVIDIA T4 GPU instance (n1-standard-2 (1 vCPU, 7.5 GB memory)) with 100 GB storage using one of google PyTorch container images (pytorch-latest-gpu-v20241224: Google, Deep Learning VM for PyTorch 2.4 with CUDA 12.4, M127, Debian 11, Python 3.10, with PyTorch 2.4 and fast.ai preinstalled)
+We also created a GPU N1 instance using NVIDIA T4 GPU instance (n1-standard-2 (1 vCPU, 7.5 GB memory)) with 100 GB storage using one of google PyTorch container images (pytorch-latest-gpu-v20241224: Google, Deep Learning VM for PyTorch 2.4 with CUDA 12.4, M127, Debian 11, Python 3.10, with PyTorch 2.4 and fast.ai preinstalled)
 
-We planned to use VMs for training, however in between getting the VMs setup, getting permissions for DVC, WandB working in the cloud and service accounts setup in Google Cloud within within a limited time frame for the project, we opted to train on our local computers instead. This was possible seeing as the training runs were still rather quick and did have large requirements for hardware, since our model and dataset were somewhat small, atleast compared to models such as LLMs or other Deep Learning architectures.
+We planned to use VMs for training, however inbetween getting the VMs set up, getting permissions for DVC, getting WandB working in the cloud, and service accounts set up in Google Cloud within a limited timeframe for the project, we opted to train on our local computers instead. This was possible seeing as the training runs were still rather quick and did have large requirements for hardware, since our model and dataset were somewhat small, atleast compared to models such as LLMs or other Deep Learning architectures.
+
  ---
 
 ### Question 19
@@ -538,9 +544,9 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 > Answer:
 
 ---
-We managed with the engine, but opted to run training locally, since we kept iterating and changing the source code quiet often during development and did not figure out how integrate the the newest updated version of the source code automatically with to the VMs. We did not manage to get training running with Vertex AI. Here we struggled with GPU quotas for Vertex AI, service accounts premissions and injecting Weights and Bias api keys into the Vertex AI build/runtime.
+We managed with the engine, but opted to run training locally, since we kept iterating and changing the source code quite often during development and did not figure out how to integrate the the newest updated version of the source code automatically into the VMs. We did not manage to get training running with Vertex AI. Here we struggled with GPU quotas for Vertex AI, service accounts premissions and injecting Weights and Bias api keys into the Vertex AI build/runtime.
 
-I would have been nice and powerful to get these services up and running, since we would be able to scale training as well as run continously in the the cloud without downtime or running locally "locking" our computer. However, as mentioned earlier the model and datasets were somewhat light-weight and training locally was doable, due to low system requirements and GPU acceleration locally with an NVIDIA GeForce RTX 4060 Laptop GPU.
+It would have been nice and powerful to get these services up and running, since we would be able to scale training as well as run continously in the the cloud without downtime or running locally "locking" our computer. However, as mentioned earlier the model and datasets were somewhat light-weight and training locally was doable, due to low system requirements and GPU acceleration locally with an NVIDIA GeForce RTX 4060 Laptop GPU.
 
 ---
 
@@ -560,9 +566,10 @@ I would have been nice and powerful to get these services up and running, since 
 > Answer:
 
 ---
-We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output predictions probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing.
+We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output prediction probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing.
 We also added a Streamlit frontend, which functions as a user interface, talking to the FastAPI backend, for easily uploading pictures and getting the prediction response and the visualization of the preprocessed input.
- ---
+
+---
 
 
 ### Question 24
@@ -663,6 +670,7 @@ In this project, we did not have time to implement the monitoring functionality 
 We ended up spending a total of 1.55 credits. We used very few credits because we performed the model training on our local machine instead of in the cloud. The dataset used for this project is very small, which also ended up contributing to the small amount of credits used. The service that cost the most was Artifact Registry, which accounted for $0.77. This service is used to store and manage Docker images for our application. The second most expensive service was Cloud Run, which cost a total of 0.31 credits. Other services, such as Compute Engine and Cloud Storage, also incurred minor costs.
 
 Overall, working in the cloud was a valuable experience, though it was challenging and occasionally frustrating. However, the possibilities it offers for deployment are significant, especially once you become familiar with the tools and workflows.
+
  ---
 
 ### Question 28
@@ -722,7 +730,7 @@ This structure ensures smooth integration of development, deployment, and user i
 ---
 We mostly struggle with 4 things during the project.
 
-The cloud and Google Cloud; We struggled alot with the cloud. From understanding the Console interface to the gcloud CLI. Understanding the service accounts and premissions, as well as understanding glcoud CLI and all the command and possibilities through this. We did however manage to get an overview of both tools in some regard and we are utilizing a handful of Google Cloud tools in our project!
+The cloud and Google Cloud; We struggled alot with the cloud. From understanding the Console interface to the gcloud CLI. Understanding the service accounts and persmissions, as well as understanding glcoud CLI and all the command and possibilities through this. We did however manage to get an overview of both tools in some regard and we are utilizing a handful of Google Cloud tools in our project!
 
 Docker and Secrets; Setting up docker images with premissions for WandB, Google Cloud Services and DVC. Initially the biggest struggle was understanding the process of setting these up locally with environment variables and later we struggle with implementing these variables through secrets in GitHub and Google Cloud. However, we managed to use the secrets from in GitHub and Google Cloud respectively in order to both update models through GitHub into the Google Cloud Artifact Registry, as well as give access the Google Cloud Run Containers running FastAPI and Streamlit.
 
@@ -750,6 +758,7 @@ Getting proper model predictions; All the models we trained did not converge in 
 
 --- Overall, all students contributed equally to the completion in this project.
 
-On a more granilar level, some where more involved some some processes that others. s204540 did a lot of the actual coding and commits to the GitHub repo while s204281 and s204558 where more involved with ideation and conceptually designing the project.
-Additionally, as an integrated part of our
+On a more granular level, some where more involved with some processes that others. s204540 did a lot of the actual coding and commits to the GitHub repo while s204281 and s204558 where more involved with ideation and conceptually designing the project and undestanding implementation of the project to the cloud which was a heavy task.
+Additionally, as part of our project development we have used generative AI for code development, conceptual understanding and some text generation.
+
  ---
