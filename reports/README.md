@@ -404,7 +404,26 @@ By logging these metrics and hyperparameters, we gained insights into model opti
 >
 > Answer:
 
---- question 15 fill here ---
+--- 
+
+Constructed an interactive container sessions from the mlopsdtu_local_train, where we used GPU support, as well as mounted the outputs/ and models/ directories.
+
+`docker run --rm --gpus all -it -v $(pwd)/outputs:/app/outputs -v $(pwd)/models:/app/models mlopsdtu_local_train sh`
+
+In this session we setup a wandb sweep
+wandb sweep src/mlops_project_tcs/sweeps/sweep.yaml
+
+And ran the training agent for training
+
+
+The Google Cloud based models are pushed to Google Cloud Container Registry and runs on Google Cloud Run services and are available at FastAPI backend: https://mlops-api-707742802258.europe-west1.run.app and Streamlit frontend: https://mlops-frontend-707742802258.europe-west1.run.app
+mlops-api-707742802258.europe-west1.run.app
+
+
+To access our dockerfiles, use the following link:
+https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
+ 
+ ---
 
 ### Question 16
 
@@ -605,7 +624,8 @@ We did not do load testing of the API
 >
 > Answer:
 
---- question 26 fill here ---
+--- 
+In this project, we did not have time to implement the monitoring functionality from S8. However, monitoring would potentially have been a very important part of a project like this, where we work with detection of MRI brain scans of cancer patients. Assuming that the application was deployed and able to run, MRI imaging is also a scientific field under development. Hence, the data might change format as time goes by, and this new data might drift away from the data distribution that the model was trained on. Monitoring could help identify such data drift early, ensuring the model's predictions remain accurate. Furthermore, overall system monitoring of the application would also have greatly benefitted the project, allowing us to follow the user requests and system logs. It could also help in tracking model performance metrics over time, identifying cases where the model begins to underperform or where errors might occur. Lastly, monitoring would enable better troubleshooting and improve reliability by flagging issues in real-time, which is critical in a sensitive application like cancer detection. ---
 
 ## Overall discussion of project
 
@@ -625,7 +645,9 @@ We did not do load testing of the API
 > Answer:
 
 --- 
-We ended up spending a total of 1.55 credits. We used very few credits because we did the model training on out local machine insead of doing so in the cloud. The most expensive 
+We ended up spending a total of 1.55 credits. We used very few credits because we performed the model training on our local machine instead of in the cloud. The dataset used for this project is very small, which also ended up contributing to the small amount of credits used. The service that cost the most was Artifact Registry, which accounted for $0.77. This service is used to store and manage Docker images for our application. The second most expensive service was Cloud Run, which cost a total of 0.31 credits. Other services, such as Compute Engine and Cloud Storage, also incurred minor costs.
+
+Overall, working in the cloud was a valuable experience, though it was challenging and occasionally frustrating. However, the possibilities it offers for deployment are significant, especially once you become familiar with the tools and workflows.
  ---
 
 ### Question 28
@@ -642,7 +664,7 @@ We ended up spending a total of 1.55 credits. We used very few credits because w
 >
 > Answer:
 
---- question 28 fill here ---
+--- We invite you to look at the answer in question 23 where we talk about our frontend implementation. ---
 
 ### Question 29
 
