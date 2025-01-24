@@ -1,0 +1,4 @@
+defaults:
+    - dataset: kaggle_brain
+    - model: vgg16_tiny
+    - hyperparameter: hyper1

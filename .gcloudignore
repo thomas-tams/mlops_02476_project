@@ -1,0 +1,13 @@
+# Ignore directories
+.ruff_cache/
+.pytest_cache/
+wandb/
+logs/
+models/
+outputs/
+
+
+# Ignore models
+*.ckpt
+*.pth
+*.pt

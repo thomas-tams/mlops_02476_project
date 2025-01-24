@@ -1,3 +1,7 @@
+# Secrets
+wandb_api.txt
+bucket_manager.json
+
 # Do not include dataset
 data/
 
@@ -6,6 +10,16 @@ models/
 
 # Hydra outputs
 outputs/
+
+# WandB
+dtu_mlops/
+wandb/
+
+# Data statistic plots
+reports/dataset_statistics/*.png
+
+# VSCode stuff
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -179,3 +193,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/data
