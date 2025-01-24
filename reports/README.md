@@ -467,7 +467,7 @@ We tried to setup a simple CPU General purpose E2 instance (e2-medium (2 vCPU, 1
 We also create a GPU N1 instance using NVIDIA T4 GPU instance (n1-standard-2 (1 vCPU, 7.5 GB memory)) with 100 GB storage using one of google PyTorch container images (pytorch-latest-gpu-v20241224: Google, Deep Learning VM for PyTorch 2.4 with CUDA 12.4, M127, Debian 11, Python 3.10, with PyTorch 2.4 and fast.ai preinstalled)
 
 We planned to use VMs for training, however in between getting the VMs setup, getting permissions for DVC, WandB working in the cloud and service accounts setup in Google Cloud within within a limited time frame for the project, we opted to train on our local computers instead. This was possible seeing as the training runs were still rather quick and did have large requirements for hardware, since our model and dataset were somewhat small, atleast compared to models such as LLMs or other Deep Learning architectures.
----
+ ---
 
 ### Question 19
 
@@ -490,7 +490,7 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 --- 
 ![artifact_registry1](our_figures/artifact_registry1.png)
 ![artifact_registry2](our_figures/artifact_registry2.png)
----
+ ---
 
 ### Question 21
 
@@ -501,7 +501,7 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 
 ---
 ![artifact_registry1](our_figures/cloud_build1.png)
----
+ ---
 
 ### Question 22
 
@@ -541,7 +541,7 @@ I would have been nice and powerful to get these services up and running, since 
 ---
 We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output predictions probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing. 
 We also added a Streamlit frontend, which functions as a user interface, talking to the FastAPI backend, for easily uploading pictures and getting the prediction response and the visualization of the preprocessed input.
----
+ ---
 
 
 ### Question 24
@@ -569,9 +569,7 @@ curl -X 'POST' \
   -H 'Content-Type: multipart/form-data' \
   -F 'file=@<image_path>.jpg;type=image/jpeg'
 ```
-
-
----
+ ---
 
 ### Question 25
 
@@ -622,7 +620,7 @@ curl -X 'POST' \
 
 --- 
 We ended up spending a total of 1.55 credits. We used very few credits because we did the model training on out local machine insead of doing so in the cloud. The most expensive 
----
+ ---
 
 ### Question 28
 
