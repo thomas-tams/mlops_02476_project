@@ -608,7 +608,17 @@ We tried implementing unittesting for the FastAPI backend, however we never succ
 
 We would have implemented the unittest using pytest and added these to the github action tests for push/pull request to main branch.
 
-We did not do load testing of the API
+We did load testing of the FastAPI both when running api locally and in the Google Cloud. This we did via Locust package using the command.
+
+```
+locust -f src/mlops_project_tcs/locust_load.py --host https://localhost:8080
+```
+
+```
+locust -f src/mlops_project_tcs/locust_load.py --host https://mlops-api-707742802258.europe-west1.run.app
+```
+
+
  ---
 
 ### Question 26
