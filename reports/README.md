@@ -605,7 +605,26 @@ curl -X 'POST' \
 >
 > Answer:
 
---- question 25 fill here ---
+--- 
+We tried implementing unittesting for the FastAPI backend, however we never succeeded due to errors regarding mocking of global variables assigned in the @asynccontextmanager in the api.py script.
+
+We would have implemented the unittest using pytest and added these to the github action tests for push/pull request to main branch.
+
+We did load testing of the FastAPI both when running api locally and in the Google Cloud. This we did via Locust package using the command.
+
+```
+locust -f src/mlops_project_tcs/locust_load.py --host https://localhost:8080
+```
+
+```
+locust -f src/mlops_project_tcs/locust_load.py --host https://mlops-api-707742802258.europe-west1.run.app
+```
+
+Results of the runs were as follows
+- Local API Test: API stopped responding after around 2500 concurrent users.
+- Google Cloud API Test: using a ramp of 50 and 5000 concurrent users we got to around 2000 users doing 211.4 RPS with 52% Failure before stopping the tests.
+
+ ---
 
 ### Question 26
 
@@ -700,7 +719,18 @@ This structure ensures smooth integration of development, deployment, and user i
 >
 > Answer:
 
---- question 30 fill here ---
+---
+We mostly struggle with 4 things during the project.
+
+The cloud and Google Cloud; We struggled alot with the cloud. From understanding the Console interface to the gcloud CLI. Understanding the service accounts and premissions, as well as understanding glcoud CLI and all the command and possibilities through this. We did however manage to get an overview of both tools in some regard and we are utilizing a handful of Google Cloud tools in our project!
+
+Docker and Secrets; Setting up docker images with premissions for WandB, Google Cloud Services and DVC. Initially the biggest struggle was understanding the process of setting these up locally with environment variables and later we struggle with implementing these variables through secrets in GitHub and Google Cloud. However, we managed to use the secrets from in GitHub and Google Cloud respectively in order to both update models through GitHub into the Google Cloud Artifact Registry, as well as give access the Google Cloud Run Containers running FastAPI and Streamlit.
+
+Training in the cloud; We tried using both Compute Engine VMs and Vertex AI for training. We never managed to get Vertex AI running due, since we did not understand how to inject premission to WandB API and setup GPU quotas for Vertex AI. We did however manage to get a training run going on the VMs, however we opted not to use this for training anyways, since we did not implement a CI way of updating the code running on the VMs. With the fast iterations and changes to the source code, we thus found it easier and more productive to train locally.
+
+Getting proper model predictions; All the models we trained did not converge in a good way. Always either guessing/predicting one a 100% on one class or 100% on the other class. This we could not manage to overcome, however we believe that this could be a due to the limited size of the dataset, simply not containing enough information for the model to understand the problem.
+
+ ---
 
 ### Question 31
 
