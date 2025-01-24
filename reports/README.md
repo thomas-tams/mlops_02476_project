@@ -373,7 +373,23 @@ During training, we use Weights and Biases to sweep over different configuration
 >
 > Answer:
 
---- question 14 fill here ---
+--- 
+![artifact_registry1](our_figures/wandb_graphs1.png)
+![artifact_registry1](our_figures/wandb_graphs2.png)
+
+In our experiments, we used Weights & Biases (W&B) to track key metrics and hyperparameters to evaluate and improve our model's performance systematically.
+
+As seen in the first image, we tracked metrics such as train_loss, val_loss, train_acc, and val_acc over the training steps. These metrics are crucial for understanding the model's learning dynamics:
+
+Training Loss and Validation Loss: These measure the model's performance on the training and validation datasets, respectively. A decreasing training loss indicates that the model is learning from the data, while a stable or decreasing validation loss suggests good generalization.
+
+Training Accuracy and Validation Accuracy: These track how well the model predicts on training and validation sets. A divergence between these accuracies can highlight overfitting or underfitting issues.
+
+In the second image, we conducted a hyperparameter sweep to analyze the impact of parameters such as dropout_p, learning rate, weight decay, batch size, and the number of epochs on the validation loss. The parameter importance chart indicates the significance of each parameter in influencing validation loss. For instance, dropout rate (dropout_p) and learning rate were identified as the most impactful parameters, which guided us in fine-tuning the model. The parallel coordinates plot visualizes how different combinations of hyperparameters correspond to validation loss, helping us select the best-performing configuration.
+
+By logging these metrics and hyperparameters, we gained insights into model optimization and avoided manual trial-and-error processes. This tracking process was essential for ensuring reproducibility and improving the model's robustness.
+
+ ---
 
 ### Question 15
 
@@ -403,7 +419,7 @@ During training, we use Weights and Biases to sweep over different configuration
 >
 > Answer:
 
---- question 16 fill here ---
+--- When running experiments, we naturally encountered a lot of bugs and errors. We have tried to implement try/raise statements to detect errors. Many of our source code scripts are build from *typer* which has convenient error-messages. Besides, we have relied heavily on the VS Code built-in debugger. A major source of support has come from ChatGPT and GitHub copilot. Although there are many learnings in getting to know error and traceback messages properly, we also realized during the development that it can be a time-consuming task to debug and therefore utilized the AI tools availabe. Finally, we have run some profiling runs a few times with the PyTorch Lightning model. ---
 
 ## Working in the cloud
 
@@ -483,7 +499,9 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 21 fill here ---
+---
+![artifact_registry1](our_figures/cloud_build1.png)
+---
 
 ### Question 22
 
@@ -498,7 +516,12 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 22 fill here ---
+---
+We managed with the engine, but opted to run training locally, since we kept iterating and changing the source code quiet often during development and did not figure out how integrate the the newest updated version of the source code automatically with to the VMs. We did not manage to get training running with Vertex AI. Here we struggled with GPU quotas for Vertex AI, service accounts premissions and injecting Weights and Bias api keys into the Vertex AI build/runtime.
+
+I would have been nice and powerful to get these services up and running, since we would be able to scale training as well as run continously in the the cloud without downtime or running locally "locking" our computer. However, as mentioned earlier the model and datasets were somewhat light-weight and training locally was doable, due to low system requirements and GPU acceleration locally with an NVIDIA GeForce RTX 4060 Laptop GPU.
+
+---
 
 ## Deployment
 
@@ -515,7 +538,11 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 23 fill here ---
+---
+We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output predictions probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing. 
+We also added a Streamlit frontend, which functions as a user interface, talking to the FastAPI backend, for easily uploading pictures and getting the prediction response and the visualization of the preprocessed input.
+---
+
 
 ### Question 24
 
@@ -531,7 +558,20 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 24 fill here ---
+---
+First we got the FastAPI and Streamlit frontend working locally, by serving the onnx model build from training runs. After this we build up docker images to accomodate the FastAPI and Streamlit frontend respectively locally. These images were then changed to accomodate Google Cloud Run platform, using environment variables to serve the port (via $PORT) and using Google Cloud Secrets for supplying the service account credentials. We also mounted a bucket to the FastAPI service, containing .onnx model which we used for evaluation/prediction of user inputs.
+
+Here is an example of how to call the Google Cloud API
+```
+curl -X 'POST' \
+  'https://mlops-api-707742802258.europe-west1.run.app/predict/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@<image_path>.jpg;type=image/jpeg'
+```
+
+
+---
 
 ### Question 25
 
