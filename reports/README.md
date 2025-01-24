@@ -460,7 +460,9 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 19 fill here ---
+--- 
+![GCP bucket](our_figures/project-bucket.png)
+ ---
 
 ### Question 20
 
@@ -578,7 +580,9 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- question 27 fill here ---
+--- 
+We ended up spending a total of 1.55 credits. We used very few credits because we did the model training on out local machine insead of doing so in the cloud. The most expensive 
+---
 
 ### Question 28
 
@@ -612,7 +616,7 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 > Answer:
 
 --- The overall architecture of our project is illustrated in the figure:
-![Overall architecture figure](figures/overview.png)
+![Overall architecture figure](our_figures/project-overview.png)
 
 The starting point of our pipeline is the local machine, where all the development takes place. Before the code is pushed to GitHub, pre-commit hooks are run to ensure correct formatting and adherence to coding standards. Once pushed to GitHub, GitHub Actions are triggered, running the same checks as pre-commit (in case pre-commit wasn't installed). Additional tests are also executed to verify functionality before the newly constructed Dockerfile is pushed to Google Registry, where the Docker image is built.
 
