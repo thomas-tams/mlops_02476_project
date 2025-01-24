@@ -116,7 +116,7 @@ will check the repositories and the code to verify your answers.
 ### Question 1
 > **Enter the group number you signed up on <learn.inside.dtu.dk>**
 >
-> Answer: 
+> Answer:
 
 --- Group 84 ---
 
@@ -171,7 +171,7 @@ When the training starts, the sweep launches instances locally and runs training
 <br>`cd mlops_02476_project`
 <br>`conda create -n py39_mlops python=3.9`
 <br>`conda activate py39_mlops`
-<br>`pip install -e .["dev"]` 
+<br>`pip install -e .["dev"]`
 <br>`pre-commit install`
 
 Another smart way to get a copy of the development environment is by using *invoke*. With *conda* and *invoke* a new team member may set up a development environment through these commands invoke in the base conda environment:
@@ -313,7 +313,7 @@ By using pull requests all team members had the ability to review surgested chan
 >
 > Answer:
 
---- 
+---
 We have implemented continuous integration (CI) for various parts of our project to maintain code quality and streamline our development workflow. Using pre-commit hooks, we ensure that workflows perform specific checks both locally during commits and in GitHub Actions. These hooks catch common issues. As mentioned earlier, we also run unit tests on our code in GitHub Actions to ensure that any flaws in updated code, which may not be detected locally during development, are identified and addressed. This ensures that every update integrates without introducing regressions. Additionally, we utilize Ruff as a pre-commit tool for linting, which helps us maintain a clean and consistent codebase by enforcing style guidelines and catching potential bugs early in the development process.
 
 As an example of our continuous integration setup, we invite you to review one of our GitHub Actions workflows. This workflow ensures that when branches are merged into the main branch or commits are pushed to the main branch, a series of automated processes are triggered. These processes include installing dependencies and executing pytest to validate the integrity of our code. In the post-build stage (which runs only if the matrix build completes successfully), an updated Dockerfile for the project is sent to Google Cloud, where an updated Docker image is built. This ensures that any changes made to the project on GitHub are reflected in the Docker image, which users rely on when running the project code.
@@ -375,7 +375,7 @@ During training, we use Weights and Biases to sweep over different configuration
 >
 > Answer:
 
---- 
+---
 ![artifact_registry1](our_figures/wandb_graphs1.png)
 ![artifact_registry1](our_figures/wandb_graphs2.png)
 
@@ -406,7 +406,7 @@ By logging these metrics and hyperparameters, we gained insights into model opti
 >
 > Answer:
 
---- 
+---
 
 We have used Docker in different ways in our project. During development, we have constructed an interactive container sessions from the mlopsdtu_local_train, where we used GPU support, as well as mounted the outputs/ and models/ directories:
 
@@ -424,7 +424,7 @@ mlops-api-707742802258.europe-west1.run.app
 
 To access our project dockerfiles, use the following link:
 https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
- 
+
  ---
 
 ### Question 16
@@ -457,7 +457,7 @@ https://github.com/thomas-tams/mlops_02476_project/tree/main/dockerfiles
 >
 > Answer:
 
---- 
+---
 We used following services on Google Cloud:
 Engine: For testing docker images run capabilities in a cloud environment (during development).
 Bucket: For storing DVC data publicly as well as onnx models for evaluation/ prediction. For version control, backup and public availability.
@@ -482,9 +482,9 @@ We played around with Vertex AI, however we never got it to work properly.
 >
 > Answer:
 
---- 
-We also tried to setup few different virtual machines instances during our try to get training running in the cloud. 
-We tried to setup a simple CPU General purpose E2 instance (e2-medium (2 vCPU, 1 core, 4GB memory)) with 10 GB storage using a custom container image with our project installed. 
+---
+We also tried to setup few different virtual machines instances during our try to get training running in the cloud.
+We tried to setup a simple CPU General purpose E2 instance (e2-medium (2 vCPU, 1 core, 4GB memory)) with 10 GB storage using a custom container image with our project installed.
 We also create a GPU N1 instance using NVIDIA T4 GPU instance (n1-standard-2 (1 vCPU, 7.5 GB memory)) with 100 GB storage using one of google PyTorch container images (pytorch-latest-gpu-v20241224: Google, Deep Learning VM for PyTorch 2.4 with CUDA 12.4, M127, Debian 11, Python 3.10, with PyTorch 2.4 and fast.ai preinstalled)
 
 We planned to use VMs for training, however in between getting the VMs setup, getting permissions for DVC, WandB working in the cloud and service accounts setup in Google Cloud within within a limited time frame for the project, we opted to train on our local computers instead. This was possible seeing as the training runs were still rather quick and did have large requirements for hardware, since our model and dataset were somewhat small, atleast compared to models such as LLMs or other Deep Learning architectures.
@@ -497,7 +497,7 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- 
+---
 ![GCP bucket](our_figures/project-bucket.png)
  ---
 
@@ -508,7 +508,7 @@ We planned to use VMs for training, however in between getting the VMs setup, ge
 >
 > Answer:
 
---- 
+---
 ![artifact_registry1](our_figures/artifact_registry1.png)
 ![artifact_registry2](our_figures/artifact_registry2.png)
  ---
@@ -560,7 +560,7 @@ I would have been nice and powerful to get these services up and running, since 
 > Answer:
 
 ---
-We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output predictions probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing. 
+We managed to setup a FastAPI backend which is able take in a Brain MRI image, run an .onnx model and output predictions probabilities for our binary class problem. Furthermore, the API is also able to return a visualization of what the preprocessed input to the model would look like (for fun and education), which ended up helping us immensely in understanding and fixing a few quirks about or data preprocessing.
 We also added a Streamlit frontend, which functions as a user interface, talking to the FastAPI backend, for easily uploading pictures and getting the prediction response and the visualization of the preprocessed input.
  ---
 
@@ -605,7 +605,7 @@ curl -X 'POST' \
 >
 > Answer:
 
---- 
+---
 We tried implementing unittesting for the FastAPI backend, however we never succeeded due to errors regarding mocking of global variables assigned in the @asynccontextmanager in the api.py script.
 
 We would have implemented the unittest using pytest and added these to the github action tests for push/pull request to main branch.
@@ -639,7 +639,7 @@ Results of the runs were as follows
 >
 > Answer:
 
---- 
+---
 In this project, we did not have time to implement the monitoring functionality from S8. However, monitoring would potentially have been a very important part of a project like this, where we work with detection of MRI brain scans of cancer patients. Assuming that the application was deployed and able to run, MRI imaging is also a scientific field under development. Hence, the data might change format as time goes by, and this new data might drift away from the data distribution that the model was trained on. Monitoring could help identify such data drift early, ensuring the model's predictions remain accurate. Furthermore, overall system monitoring of the application would also have greatly benefitted the project, allowing us to follow the user requests and system logs. It could also help in tracking model performance metrics over time, identifying cases where the model begins to underperform or where errors might occur. Lastly, monitoring would enable better troubleshooting and improve reliability by flagging issues in real-time, which is critical in a sensitive application like cancer detection. ---
 
 ## Overall discussion of project
@@ -659,7 +659,7 @@ In this project, we did not have time to implement the monitoring functionality 
 >
 > Answer:
 
---- 
+---
 We ended up spending a total of 1.55 credits. We used very few credits because we performed the model training on our local machine instead of in the cloud. The dataset used for this project is very small, which also ended up contributing to the small amount of credits used. The service that cost the most was Artifact Registry, which accounted for $0.77. This service is used to store and manage Docker images for our application. The second most expensive service was Cloud Run, which cost a total of 0.31 credits. Other services, such as Compute Engine and Cloud Storage, also incurred minor costs.
 
 Overall, working in the cloud was a valuable experience, though it was challenging and occasionally frustrating. However, the possibilities it offers for deployment are significant, especially once you become familiar with the tools and workflows.
@@ -751,5 +751,5 @@ Getting proper model predictions; All the models we trained did not converge in 
 --- Overall, all students contributed equally to the completion in this project.
 
 On a more granilar level, some where more involved some some processes that others. s204540 did a lot of the actual coding and commits to the GitHub repo while s204281 and s204558 where more involved with ideation and conceptually designing the project.
-Additionally, as an integrated part of our 
+Additionally, as an integrated part of our
  ---
