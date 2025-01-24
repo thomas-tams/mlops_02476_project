@@ -176,7 +176,7 @@ When the training starts, the sweep launches instances locally and runs training
 
 Another smart way to get a copy of the development environment is by using *invoke*. With *conda* and *invoke* a new team member may set up a development environment through these commands invoke in the base conda environment:
 <br>`git clone https://github.com/thomas-tams/mlops_02476_project.git`
-<br>`cd mlops_02476_tcs`
+<br>`cd mlops_02476_project`
 <br>`invoke create-environment`
 <br>`conda activate mlops_project_tcs`
 <br>`pip install invoke # Again in the new conda env`
@@ -335,7 +335,11 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- question 12 fill here ---
+--- To configure our experiments, we used an Hydra setup with config files together with an argparser. A code example of how we would use this could be shown when running the training of the model:
+<br>`python train.py experiment.hyperparameter.n_epochs=1 experiment.hyperparameter.optimizer.weight_decay=0.0001`
+
+During training, we use Weights and Biases to sweep over different configurations.
+ ---
 
 ### Question 13
 
@@ -350,7 +354,8 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- question 13 fill here ---
+--- As already eluded to above, we made use of config files to set up experiments with predefined hyperparameters. With the functionalities in Hydra, we ensure that relevant information about the specific experiment is logged in an *outputs* folder. As mentioned earlier in Q5, we also save the .onnx model file for a specific run in the same folder. During development, if one wishes to run an identical experiment as one from that past, it can be done by accessing the config.yaml file that is saved in the aforementioned *outputs* folder in the following manner:
+<br>`python src/mlops_project_tcs/train.py --config-dir outputs/<date>/<time>/.hydra --config-name config`  ---
 
 ### Question 14
 
@@ -586,12 +591,16 @@ As an example of our continuous integration setup, we invite you to review one o
 >
 > Answer:
 
---- The overall architecture of our project is seen illustrated in the figure:
+--- The overall architecture of our project is illustrated in the figure:
 ![Overall architecture figure](figures/overview.png)
 
-The starting point of our pipeline is the local machine, where all the development has taken place. Before the code is pushed to github, pre-commit checks of the code a run to ensure correct formatting and continous integration. Once pushed to github, github actions are activated, running the same checks as pre-commit, incase pre.commit wasnt installed. A few extra code tests are also triggered, ensuring correct function, before pushing the newly constructed dockerfile to google registry where the docker image is constructed to.
+The starting point of our pipeline is the local machine, where all the development takes place. Before the code is pushed to GitHub, pre-commit hooks are run to ensure correct formatting and adherence to coding standards. Once pushed to GitHub, GitHub Actions are triggered, running the same checks as pre-commit (in case pre-commit wasn't installed). Additional tests are also executed to verify functionality before the newly constructed Dockerfile is pushed to Google Registry, where the Docker image is built.
 
-When training the models on the local machine, the models are logged to weights and biases sweep for tracking the models and for instructing hydra to adjust hyperparameters in order to construct the optimal model. ---
+When training models on the local machine, the models are logged to Weights and Biases (W&B) for experiment tracking and monitoring. Hydra is used for hyperparameter optimization to construct the optimal model. Once the best model is selected, it is uploaded to Google Cloud Storage for storage and accessibility.
+
+The Docker image is then deployed to Google Cloud Run, which hosts the backend application using FastAPI. The frontend is built using Streamlit, where users can upload images. These images are sent to the backend for processing and predictions. The results are then returned to the Streamlit interface for the user to view.
+
+This structure ensures smooth integration of development, deployment, and user interaction, while maintaining reproducibility, experiment tracking, and model optimization. ---
 
 ### Question 30
 
