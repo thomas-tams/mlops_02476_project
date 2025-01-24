@@ -23,3 +23,5 @@ onnxruntime==1.19.2
 onnxscript==0.1.0.dev20250120
 streamlit==1.41.1
 google-cloud-run>=0.10.5
+httpx==0.28.1
+locust==2.32.6
